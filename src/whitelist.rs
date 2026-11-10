@@ -194,9 +194,14 @@ mod tests {
 
     #[test]
     fn prefix_matching_respects_boundaries() {
-        assert!(under("/a/b/c", "/a/b"));
-        assert!(under("/a/b", "/a/b"));
-        assert!(!under("/a/bc", "/a/b"));
-        assert!(!under("/a", "/a/b"));
+        // Go through norm() so separators match the platform (\ on Windows).
+        let n = |s: &str| norm(Path::new(s));
+        assert!(under(&n("/a/b/c"), &n("/a/b")));
+        assert!(under(&n("/a/b"), &n("/a/b/")));
+        assert!(!under(&n("/a/bc"), &n("/a/b")));
+        assert!(!under(&n("/a"), &n("/a/b")));
+        if cfg!(windows) {
+            assert!(under(&n("C:/Users/X/AppData"), &n("c:\\users\\x")));
+        }
     }
 }
