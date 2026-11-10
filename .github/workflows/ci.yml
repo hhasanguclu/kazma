@@ -32,6 +32,10 @@ jobs:
           target/release/kz.exe purge --dry-run "$env:GITHUB_WORKSPACE"
           target/release/kz.exe drivers --installed
           target/release/kz.exe upgrade --dry-run
+          target/release/kz.exe installer --dry-run
+          target/release/kz.exe uninstall --dry-run
+          target/release/kz.exe optimize --dry-run
+          target/release/kz.exe whitelist
       - name: Smoke test (Windows Update driver search)
         continue-on-error: true
         timeout-minutes: 10
@@ -49,11 +53,24 @@ jobs:
         with:
           name: kazma-windows-x64
           path: dist/*
-      - name: Publish release assets
-        if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
+      # A push to main whose Cargo.toml version has no tag yet creates that
+      # release automatically: bump the version, push, done.
+      - name: Detect new version
+        id: ver
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path Cargo.toml -Pattern '^version = "(.+)"').Matches[0].Groups[1].Value
+          $exists = git ls-remote --tags origin "refs/tags/v$v"
+          "tag=v$v" >> $env:GITHUB_OUTPUT
+          "new=$(if ($exists) { 'false' } else { 'true' })" >> $env:GITHUB_OUTPUT
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != '' || steps.ver.outputs.new == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.tag || github.ref_name }}
-          name: kazma ${{ inputs.tag || github.ref_name }}
+          tag_name: ${{ inputs.tag || steps.ver.outputs.tag || github.ref_name }}
+          name: kazma ${{ inputs.tag || steps.ver.outputs.tag || github.ref_name }}
+          target_commitish: ${{ github.sha }}
           body_path: RELEASE_NOTES.md
+          make_latest: true
           files: dist/*

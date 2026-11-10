@@ -4,14 +4,18 @@ mod analyze;
 mod clean;
 mod drivers;
 mod fsutil;
+mod installer;
 mod oplog;
+mod optimize;
 mod ps;
 mod purge;
 mod remove;
 mod status;
 mod sys;
 mod ui;
+mod uninstall;
 mod upgrade;
+mod whitelist;
 
 use clap::{Parser, Subcommand};
 use crossterm::event::{self, KeyCode};
@@ -75,6 +79,44 @@ enum Cmd {
         #[arg(long)]
         no_restore_point: bool,
     },
+    /// Find leftover installer files (setup .exe, .msi, .iso) in Downloads and on the Desktop
+    Installer {
+        /// Folders to scan instead of Downloads / Desktop
+        paths: Vec<PathBuf>,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        #[arg(long, short)]
+        yes: bool,
+    },
+    /// Uninstall programs and clean up their leftovers
+    Uninstall {
+        /// Only list installed programs
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        /// Use the program's silent uninstaller when it has one
+        #[arg(long)]
+        quiet: bool,
+    },
+    /// Windows maintenance: DNS flush, icon cache, SSD TRIM, DISM, SFC
+    Optimize {
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        /// Run the default tasks without the selection screen
+        #[arg(long, short)]
+        yes: bool,
+    },
+    /// Show or edit paths that kazma must never delete
+    Whitelist {
+        /// Protect a path (can be repeated)
+        #[arg(long, value_name = "PATH")]
+        add: Vec<String>,
+        /// Stop protecting a path (can be repeated)
+        #[arg(long, value_name = "PATH")]
+        remove: Vec<String>,
+        /// Open the whitelist file in Notepad
+        #[arg(long)]
+        edit: bool,
+    },
     /// Uninstall kazma from this computer (exe, PATH entry, log)
     Remove {
         #[arg(long, short = 'n')]
@@ -89,26 +131,31 @@ enum Cmd {
     },
 }
 
-const MENU: [(&str, &str); 8] = [
-    ("clean", "free up space: caches, temp files, logs, recycle bin"),
-    ("analyze", "explore what is using your disk"),
-    ("status", "live cpu / memory / disk / network monitor"),
-    ("purge", "delete project build artifacts (node_modules, target...)"),
-    ("upgrade", "update installed programs (winget)"),
-    ("drivers", "driver updates from windows update"),
-    ("history", "show past operations"),
-    ("quit", "exit kazma"),
+/// (hotkey, command, description)
+const MENU: [(char, &str, &str); 12] = [
+    ('1', "clean", "free up space: caches, temp files, logs, recycle bin"),
+    ('2', "analyze", "explore what is using your disk"),
+    ('3', "status", "live cpu / memory / disk / network monitor"),
+    ('4', "purge", "delete project build artifacts (node_modules, target...)"),
+    ('5', "installer", "remove old setup files from Downloads / Desktop"),
+    ('6', "uninstall", "remove programs and their leftovers"),
+    ('7', "upgrade", "update installed programs (winget)"),
+    ('8', "drivers", "driver updates from windows update"),
+    ('9', "optimize", "dns flush, icon cache, ssd trim, dism, sfc"),
+    ('w', "whitelist", "paths kazma must never delete"),
+    ('h', "history", "show past operations"),
+    ('q', "quit", "exit kazma"),
 ];
 
-fn menu() -> anyhow::Result<Option<usize>> {
+fn menu() -> anyhow::Result<&'static str> {
     let mut terminal = ratatui::init();
     let mut state = ListState::default().with_selected(Some(0));
-    let res = (|| -> anyhow::Result<Option<usize>> {
+    let res = (|| -> anyhow::Result<&'static str> {
         loop {
             terminal.draw(|f| {
                 let banner_h = ui::BANNER.lines().count() as u16 + 2;
                 let [top, list, foot] = Layout::vertical([
-                    Constraint::Length(banner_h + 2),
+                    Constraint::Length(banner_h),
                     Constraint::Length(MENU.len() as u16 + 2),
                     Constraint::Min(1),
                 ])
@@ -116,18 +163,17 @@ fn menu() -> anyhow::Result<Option<usize>> {
                 let mut lines: Vec<Line> =
                     ui::BANNER.lines().map(|l| Line::from(Span::styled(format!("  {l}"), Style::new().fg(ui::FG)))).collect();
                 lines.push(Line::from(Span::styled(
-                    format!("  v{}  ::  disk cleaner & explorer for windows", env!("CARGO_PKG_VERSION")),
+                    format!("  v{}  ::  oldschool system toolkit for windows", env!("CARGO_PKG_VERSION")),
                     Style::new().fg(ui::DIM),
                 )));
                 f.render_widget(Paragraph::new(lines), top);
 
                 let items: Vec<ListItem> = MENU
                     .iter()
-                    .enumerate()
-                    .map(|(i, (name, desc))| {
+                    .map(|(key, name, desc)| {
                         ListItem::new(Line::from(vec![
-                            Span::styled(format!(" {}. ", i + 1), Style::new().fg(ui::DIM)),
-                            Span::styled(format!("{name:<9}"), Style::new().fg(ui::HI).add_modifier(Modifier::BOLD)),
+                            Span::styled(format!(" {key}. "), Style::new().fg(ui::DIM)),
+                            Span::styled(format!("{name:<11}"), Style::new().fg(ui::HI).add_modifier(Modifier::BOLD)),
                             Span::styled(*desc, Style::new().fg(ui::FG)),
                         ]))
                     })
@@ -138,7 +184,7 @@ fn menu() -> anyhow::Result<Option<usize>> {
                     .highlight_symbol(">");
                 f.render_stateful_widget(l, list, &mut state);
                 f.render_widget(
-                    Paragraph::new(Span::styled(" [up/down] move  [enter] select  [1-8] jump  [q] quit", Style::new().fg(ui::DIM))),
+                    Paragraph::new(Span::styled(" [up/down] move  [enter] select  [key] jump  [q] quit", Style::new().fg(ui::DIM))),
                     foot,
                 );
             })?;
@@ -147,9 +193,13 @@ fn menu() -> anyhow::Result<Option<usize>> {
             match code {
                 KeyCode::Up | KeyCode::Char('k') => state.select(Some(sel.saturating_sub(1))),
                 KeyCode::Down | KeyCode::Char('j') => state.select(Some((sel + 1).min(MENU.len() - 1))),
-                KeyCode::Enter => return Ok(Some(sel)),
-                KeyCode::Char(c @ '1'..='8') => return Ok(Some(c as usize - '1' as usize)),
-                KeyCode::Char('q') | KeyCode::Esc => return Ok(None),
+                KeyCode::Enter => return Ok(MENU[sel].1),
+                KeyCode::Esc => return Ok("quit"),
+                KeyCode::Char(c) => {
+                    if let Some(m) = MENU.iter().find(|m| m.0 == c) {
+                        return Ok(m.1);
+                    }
+                }
                 _ => {}
             }
         }
@@ -165,30 +215,57 @@ fn pause() {
     }
 }
 
+fn run_menu_item(name: &str) -> anyhow::Result<bool> {
+    let wait = !matches!(name, "analyze" | "status");
+    match name {
+        "clean" => clean::run(false, false)?,
+        "analyze" => analyze::run(None)?,
+        "status" => status::run()?,
+        "purge" => purge::run(vec![], false, false)?,
+        "installer" => installer::run(vec![], false, false)?,
+        "uninstall" => uninstall::run(false, false)?,
+        "upgrade" => upgrade::run(false, false)?,
+        "drivers" => drivers::run(false, false, false, false)?,
+        "optimize" => optimize::run(false, false)?,
+        "whitelist" => whitelist::run(vec![], vec![], false)?,
+        "history" => oplog::show_history(50),
+        _ => return Ok(false),
+    }
+    if wait {
+        pause();
+    }
+    Ok(true)
+}
+
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
+    // Load protected paths first; an unreadable whitelist stops everything.
+    whitelist::init()?;
     match cli.cmd {
         Some(Cmd::Clean { dry_run, yes }) => clean::run(dry_run, yes),
         Some(Cmd::Analyze { path }) => analyze::run(path),
         Some(Cmd::Status) => status::run(),
         Some(Cmd::Purge { paths, dry_run, yes }) => purge::run(paths, dry_run, yes),
+        Some(Cmd::Installer { paths, dry_run, yes }) => installer::run(paths, dry_run, yes),
+        Some(Cmd::Uninstall { dry_run, quiet }) => uninstall::run(dry_run, quiet),
         Some(Cmd::Upgrade { dry_run, yes }) => upgrade::run(dry_run, yes),
         Some(Cmd::Drivers { installed, dry_run, yes, no_restore_point }) => drivers::run(installed, dry_run, yes, no_restore_point),
+        Some(Cmd::Optimize { dry_run, yes }) => optimize::run(dry_run, yes),
+        Some(Cmd::Whitelist { add, remove, edit }) => whitelist::run(add, remove, edit),
         Some(Cmd::Remove { dry_run, yes }) => remove::run(dry_run, yes),
         Some(Cmd::History { limit }) => {
             oplog::show_history(limit);
             Ok(())
         }
         None => loop {
-            match menu()? {
-                Some(0) => { clean::run(false, false)?; pause(); }
-                Some(1) => analyze::run(None)?,
-                Some(2) => status::run()?,
-                Some(3) => { purge::run(vec![], false, false)?; pause(); }
-                Some(4) => { upgrade::run(false, false)?; pause(); }
-                Some(5) => { drivers::run(false, false, false, false)?; pause(); }
-                Some(6) => { oplog::show_history(50); pause(); }
-                _ => return Ok(()),
+            let item = menu()?;
+            match run_menu_item(item) {
+                Ok(true) => {}
+                Ok(false) => return Ok(()),
+                Err(e) => {
+                    ui::warn(&format!("{e}"));
+                    pause();
+                }
             }
         },
     }

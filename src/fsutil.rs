@@ -1,5 +1,6 @@
 //! Filesystem helpers: fast parallel sizing and guarded deletion.
 
+use crate::whitelist;
 use rayon::prelude::*;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
@@ -55,7 +56,7 @@ pub fn scan_tree(path: &Path, cutoff: Option<SystemTime>) -> Stats {
             let Ok(ft) = e.file_type() else {
                 return Stats::default();
             };
-            if ft.is_symlink() {
+            if ft.is_symlink() || whitelist::is_protected(&e.path()) {
                 Stats::default()
             } else if ft.is_dir() {
                 scan_tree(&e.path(), cutoff)
@@ -89,6 +90,9 @@ fn remove_file_forced(path: &Path) -> std::io::Result<()> {
 /// Delete everything inside `dir` (but not `dir` itself) older than `cutoff`.
 /// Files that are locked or otherwise undeletable are skipped and counted as failed.
 pub fn delete_contents(dir: &Path, cutoff: Option<SystemTime>, dry_run: bool) -> Stats {
+    if whitelist::is_protected(dir) {
+        return Stats::default();
+    }
     if !is_safe_target(dir) {
         return Stats { failed: 1, ..Default::default() };
     }
@@ -104,6 +108,9 @@ fn delete_inner(dir: &Path, cutoff: Option<SystemTime>, dry_run: bool) -> Stats 
         .par_iter()
         .map(|e| {
             let path = e.path();
+            if whitelist::is_protected(&path) {
+                return Stats::default();
+            }
             let Ok(ft) = e.file_type() else {
                 return Stats { failed: 1, ..Default::default() };
             };
@@ -138,6 +145,9 @@ fn delete_inner(dir: &Path, cutoff: Option<SystemTime>, dry_run: bool) -> Stats 
 
 /// Delete a whole directory tree (used by purge). Returns stats of what was removed.
 pub fn delete_tree(dir: &Path, dry_run: bool) -> Stats {
+    if whitelist::is_protected(dir) {
+        return Stats::default();
+    }
     if !is_safe_target(dir) {
         return Stats { failed: 1, ..Default::default() };
     }
@@ -150,6 +160,9 @@ pub fn delete_tree(dir: &Path, dry_run: bool) -> Stats {
 
 /// Delete a single file.
 pub fn delete_file(path: &Path, dry_run: bool) -> Stats {
+    if whitelist::is_protected(path) {
+        return Stats::default();
+    }
     let Ok(meta) = fs::symlink_metadata(path) else {
         return Stats::default();
     };
@@ -158,6 +171,20 @@ pub fn delete_file(path: &Path, dry_run: bool) -> Stats {
     } else {
         Stats { failed: 1, ..Default::default() }
     }
+}
+
+/// May `path` be removed as a whole (e.g. sent to the Recycle Bin)?
+pub fn can_remove(path: &Path) -> bool {
+    is_safe_target(path) && !whitelist::is_protected(path) && !whitelist::contains_protected(path)
+}
+
+/// Move a file or folder to the Recycle Bin, honoring all guards.
+pub fn trash(path: &Path) -> anyhow::Result<()> {
+    if !can_remove(path) {
+        anyhow::bail!("{} is protected", path.display());
+    }
+    trash::delete(path)?;
+    Ok(())
 }
 
 /// Refuse to operate on drive roots, the user profile, system folders and other

@@ -53,9 +53,13 @@ This removes the exe, its PATH entry and the log folder `%LOCALAPPDATA%\kazma`.
 | `kz analyze [path]` | Interactive disk usage explorer; delete goes to the Recycle Bin |
 | `kz status` | Live CPU, memory, disk, network and top-process dashboard |
 | `kz purge [paths...]` | Build artifacts: `node_modules`, `target`, `bin/obj`, `.venv`, `__pycache__`, ... |
-| `kz history` | Log of everything kazma removed |
+| `kz installer [paths...]` | Old setup files (`.exe`, `.msi`, `.msix`, `.iso`) in Downloads and on the Desktop |
+| `kz uninstall` | Remove programs with their own uninstaller, then clean up leftover folders |
 | `kz upgrade` | Update installed programs through winget (pick from a checklist, silent install) |
 | `kz drivers` | Driver updates from Windows Update; `--installed` lists third-party drivers by age |
+| `kz optimize` | DNS flush, icon cache refresh, SSD TRIM, DISM component cleanup, SFC |
+| `kz whitelist` | Paths kazma must never delete (`--add`, `--remove`, `--edit`) |
+| `kz history` | Log of everything kazma did |
 | `kz remove` | Uninstall kazma |
 
 Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`) to skip the selection screen.
@@ -72,6 +76,11 @@ Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`)
 - `drivers` only installs drivers offered by **Windows Update** (Microsoft-signed, matched to your exact
   hardware IDs), never from third-party download sites, and creates a **system restore point** first.
 - `upgrade` uses **winget**, the official Windows package manager, so installers come from each vendor's own source.
+- `installer`, `uninstall` leftovers and `analyze` deletions go to the **Recycle Bin**, so they can be restored.
+- `uninstall` runs each program's own uninstaller and only offers leftover folders whose name exactly matches
+  the program, never shared vendor folders such as `Microsoft` or `Google`.
+- **Whitelist**: anything listed in `%LOCALAPPDATA%\kazma\whitelist.txt` is never deleted by any command.
+  If that file exists but cannot be read, kazma refuses to run.
 - Every deletion is appended to `%LOCALAPPDATA%\kazma\operations.log`. Set `KAZMA_NO_OPLOG=1` to disable.
 
 ## Build
@@ -90,6 +99,11 @@ cargo build --release --target x86_64-pc-windows-gnu
 
 The code also builds on Linux/macOS so it can be developed and tested anywhere; Windows-only parts live in `src/sys.rs`.
 
+## Releasing
+
+Bump `version` in `Cargo.toml` and push to `main`. CI builds and tests on Windows, then creates the
+`vX.Y.Z` tag and a GitHub release with `kz.exe`, a zip and `SHA256SUMS.txt`, using `RELEASE_NOTES.md` as the text.
+
 ## Layout
 
 ```
@@ -107,6 +121,10 @@ src/
   upgrade.rs  winget program updates
   drivers.rs  Windows Update driver updates
   ps.rs       PowerShell helpers
+  installer.rs  installer file finder
+  uninstall.rs  program uninstaller + leftovers
+  optimize.rs   maintenance tasks
+  whitelist.rs  protected paths
 ```
 
 ## License

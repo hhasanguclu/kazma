@@ -131,11 +131,11 @@ impl App {
     fn delete_selected(&mut self) {
         let Some(e) = self.selected() else { return };
         let (path, size) = (e.path.clone(), e.size.unwrap_or(0));
-        if !fsutil::is_safe_target(&path) {
-            self.message = format!("refused: {} is a protected location", path.display());
+        if !fsutil::can_remove(&path) {
+            self.message = format!("refused: {} is protected (system folder or whitelist)", path.display());
             return;
         }
-        match trash::delete(&path) {
+        match fsutil::trash(&path) {
             Ok(()) => {
                 self.message = format!("moved to Recycle Bin: {} ({})", path.display(), ui::human(size));
                 oplog::record("analyze", &format!("trashed {} size={size}", path.display()));
