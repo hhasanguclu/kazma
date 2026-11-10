@@ -1,12 +1,12 @@
 {
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Oldschool ASCII system cleaner, disk explorer and toolkit for Windows",
     "homepage": "https://github.com/hhasanguclu/kazma",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/hhasanguclu/kazma/releases/download/v0.2.0/kz.exe",
-            "hash": "8e6aee1008dbc76ce22b880e0f7253a8b9200003daed74a577cff66afd0c57aa"
+            "url": "https://github.com/hhasanguclu/kazma/releases/download/v0.3.0/kz.exe",
+            "hash": "1cb1cf9c045f227368c36dee19e46352292300ef9f71639276b0300161b96b05"
         }
     },
     "bin": "kz.exe",

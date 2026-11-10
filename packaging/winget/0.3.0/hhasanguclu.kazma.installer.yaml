@@ -1,0 +1,13 @@
+# Created by kazma CI (packaging/update_manifests.py)
+PackageIdentifier: hhasanguclu.kazma
+PackageVersion: 0.3.0
+InstallerType: portable
+Commands:
+- kz
+MinimumOSVersion: 10.0.17763.0
+Installers:
+- Architecture: x64
+  InstallerUrl: https://github.com/hhasanguclu/kazma/releases/download/v0.3.0/kz.exe
+  InstallerSha256: 1CB1CF9C045F227368C36DEE19E46352292300EF9F71639276B0300161B96B05
+ManifestType: installer
+ManifestVersion: 1.6.0
