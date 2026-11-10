@@ -5,7 +5,10 @@ fn main() {
         let mut res = winresource::WindowsResource::new();
         res.set_icon("assets/kazma.ico")
             .set("ProductName", "kazma")
-            .set("FileDescription", "kazma - ASCII system cleaner & disk explorer")
+            .set(
+                "FileDescription",
+                "kazma - ASCII system cleaner & disk explorer",
+            )
             .set("CompanyName", "kazma contributors")
             .set("LegalCopyright", "MIT License")
             .set("OriginalFilename", "kz.exe")

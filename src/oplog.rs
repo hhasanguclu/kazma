@@ -17,7 +17,10 @@ pub fn log_path() -> Option<PathBuf> {
 
 /// UTC timestamp "YYYY-MM-DD HH:MM:SS" without pulling in a date crate.
 pub fn now_utc() -> String {
-    let secs = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0) as i64;
+    let secs = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0) as i64;
     let (days, rem) = (secs.div_euclid(86_400), secs.rem_euclid(86_400));
     // Howard Hinnant's civil_from_days
     let z = days + 719_468;
@@ -29,7 +32,12 @@ pub fn now_utc() -> String {
     let d = doy - (153 * mp + 2) / 5 + 1;
     let m = if mp < 10 { mp + 3 } else { mp - 9 };
     let y = yoe + era * 400 + if m <= 2 { 1 } else { 0 };
-    format!("{y:04}-{m:02}-{d:02} {:02}:{:02}:{:02}", rem / 3600, rem % 3600 / 60, rem % 60)
+    format!(
+        "{y:04}-{m:02}-{d:02} {:02}:{:02}:{:02}",
+        rem / 3600,
+        rem % 3600 / 60,
+        rem % 60
+    )
 }
 
 pub fn record(command: &str, message: &str) {
@@ -40,7 +48,11 @@ pub fn record(command: &str, message: &str) {
     if let Some(dir) = path.parent() {
         let _ = std::fs::create_dir_all(dir);
     }
-    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(&path) {
+    if let Ok(mut f) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+    {
         let _ = writeln!(f, "{} UTC  {command:<8} {message}", now_utc());
     }
 }
@@ -54,6 +66,13 @@ pub fn show_history(limit: usize) {
                 println!("{l}");
             }
         }
-        Err(_) => println!("No history yet ({})", path.display()),
+        Err(_) => println!(
+            "{}",
+            crate::tr!(
+                "No history yet ({})",
+                "Henüz geçmiş yok ({})",
+                path.display()
+            )
+        ),
     }
 }

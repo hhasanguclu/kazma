@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing release tag to (re)build and upload assets to, e.g. v0.1.0"
+        description: "Existing release tag to (re)build and upload assets to, e.g. v0.2.0"
         required: false
 
 permissions:
@@ -25,52 +25,138 @@ jobs:
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
       - run: cargo build --release
+
+      # Read-only commands run for real on Windows, so every PowerShell script
+      # they use is executed (a syntax error fails the build).
       - name: Smoke test
+        env:
+          KAZMA_NO_OPLOG: "1"
         run: |
-          target/release/kz.exe --version
-          target/release/kz.exe clean --dry-run
-          target/release/kz.exe purge --dry-run "$env:GITHUB_WORKSPACE"
-          target/release/kz.exe drivers --installed
-          target/release/kz.exe upgrade --dry-run
-          target/release/kz.exe installer --dry-run
-          target/release/kz.exe uninstall --dry-run
-          target/release/kz.exe optimize --dry-run
-          target/release/kz.exe whitelist
+          $ErrorActionPreference = 'Stop'
+          $kz = 'target/release/kz.exe'
+          & $kz --version
+          foreach ($args_ in @(
+            @('clean', '--dry-run'),
+            @('purge', '--dry-run', $env:GITHUB_WORKSPACE),
+            @('installer', '--dry-run'),
+            @('dupes', '--dry-run', $env:GITHUB_WORKSPACE),
+            @('drivers', '--installed'),
+            @('upgrade', '--dry-run'),
+            @('uninstall', '--dry-run'),
+            @('optimize', '--dry-run'),
+            @('startup', '--list'),
+            @('health'),
+            @('debloat', '--dry-run'),
+            @('privacy', '--dry-run'),
+            @('schedule', 'status'),
+            @('whitelist'),
+            @('config')
+          )) {
+            Write-Host "== kz $($args_ -join ' ')"
+            & $kz @args_
+            if ($LASTEXITCODE -ne 0) { throw "kz $($args_ -join ' ') failed with $LASTEXITCODE" }
+          }
+          $env:KAZMA_LANG = 'tr'
+          & $kz health
+          if ($LASTEXITCODE -ne 0) { throw "kz health (tr) failed" }
+      # Network-dependent checks: informative, never block a release.
       - name: Smoke test (Windows Update driver search)
         continue-on-error: true
         timeout-minutes: 10
         run: target/release/kz.exe drivers --dry-run
-      - name: Package
+      - name: Smoke test (self-update check)
+        continue-on-error: true
+        timeout-minutes: 3
+        run: target/release/kz.exe update --check
+
+      # Decide whether this run publishes a release:
+      # a pushed v* tag, a manual run with a tag, or a push to main whose
+      # Cargo.toml version has no tag yet (bump version + push = release).
+      - name: Release decision
+        id: rel
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path Cargo.toml -Pattern '^version = "(.+)"').Matches[0].Groups[1].Value
+          $tag = ''
+          if ('${{ github.ref }}'.StartsWith('refs/tags/v')) { $tag = '${{ github.ref_name }}' }
+          elseif ('${{ inputs.tag }}' -ne '') { $tag = '${{ inputs.tag }}' }
+          elseif ('${{ github.event_name }}' -eq 'push' -and '${{ github.ref }}' -eq 'refs/heads/main') {
+            if (-not (git ls-remote --tags origin "refs/tags/v$v")) { $tag = "v$v" }
+          }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "publish=$(if ($tag) { 'true' } else { 'false' })" >> $env:GITHUB_OUTPUT
+          Write-Host "version=$v tag=$tag"
+
+      - name: Stage exe
         shell: pwsh
         run: |
           New-Item -ItemType Directory dist | Out-Null
           Copy-Item target/release/kz.exe dist/
-          Compress-Archive -Path target/release/kz.exe, README.md, LICENSE -DestinationPath dist/kazma-windows-x64.zip
-          Get-ChildItem dist -File | ForEach-Object {
+      - name: Upload unsigned exe
+        id: unsigned
+        uses: actions/upload-artifact@v4
+        with:
+          name: kz-unsigned
+          path: dist/kz.exe
+
+      # Optional code signing through SignPath (free for open source).
+      # Runs only after the repository variables/secrets in docs/SIGNING.md are set.
+      - name: Sign with SignPath
+        id: sign
+        if: steps.rel.outputs.publish == 'true' && vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'kazma' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+      - name: Use signed exe
+        if: steps.sign.outcome == 'success'
+        shell: pwsh
+        run: |
+          $signed = Get-ChildItem signed -Recurse -Filter kz.exe | Select-Object -First 1
+          Copy-Item $signed.FullName dist/kz.exe -Force
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/kz.exe, README.md, LICENSE -DestinationPath dist/kazma-windows-x64.zip
+          Get-ChildItem dist -File | Where-Object { $_.Name -ne 'SHA256SUMS.txt' } | ForEach-Object {
             "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name
           } | Set-Content dist/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
           name: kazma-windows-x64
           path: dist/*
-      # A push to main whose Cargo.toml version has no tag yet creates that
-      # release automatically: bump the version, push, done.
-      - name: Detect new version
-        id: ver
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        shell: pwsh
-        run: |
-          $v = (Select-String -Path Cargo.toml -Pattern '^version = "(.+)"').Matches[0].Groups[1].Value
-          $exists = git ls-remote --tags origin "refs/tags/v$v"
-          "tag=v$v" >> $env:GITHUB_OUTPUT
-          "new=$(if ($exists) { 'false' } else { 'true' })" >> $env:GITHUB_OUTPUT
+
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != '' || steps.ver.outputs.new == 'true'
+        if: steps.rel.outputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.tag || steps.ver.outputs.tag || github.ref_name }}
-          name: kazma ${{ inputs.tag || steps.ver.outputs.tag || github.ref_name }}
+          tag_name: ${{ steps.rel.outputs.tag }}
+          name: kazma ${{ steps.rel.outputs.tag }}
           target_commitish: ${{ github.sha }}
           body_path: RELEASE_NOTES.md
           make_latest: true
           files: dist/*
+
+      # Keep the Scoop bucket and winget manifests in this repo pointing at the
+      # new release (the commit made with GITHUB_TOKEN does not trigger CI again).
+      - name: Update package manifests
+        if: steps.rel.outputs.publish == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash dist/kz.exe -Algorithm SHA256).Hash.ToLower()
+          python packaging/update_manifests.py "${{ steps.rel.outputs.version }}" $hash
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bucket packaging
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "Update Scoop and winget manifests for v${{ steps.rel.outputs.version }}"
+            git push origin HEAD:main
+          }

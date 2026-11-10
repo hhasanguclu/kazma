@@ -10,7 +10,14 @@ pub fn powershell(script: &str, env: &[(&str, &str)]) -> anyhow::Result<Output> 
          [Console]::OutputEncoding=[Text.Encoding]::UTF8;{script}"
     );
     let mut cmd = Command::new("powershell");
-    cmd.args(["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", &full]);
+    cmd.args([
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        &full,
+    ]);
     for (k, v) in env {
         cmd.env(k, v);
     }
@@ -20,11 +27,20 @@ pub fn powershell(script: &str, env: &[(&str, &str)]) -> anyhow::Result<Output> 
 
 /// Run a PowerShell script that prints JSON and parse it. A single object is
 /// wrapped into a one-element array so callers always get a list.
-pub fn powershell_json<T: serde::de::DeserializeOwned>(script: &str, env: &[(&str, &str)]) -> anyhow::Result<Vec<T>> {
+pub fn powershell_json<T: serde::de::DeserializeOwned>(
+    script: &str,
+    env: &[(&str, &str)],
+) -> anyhow::Result<Vec<T>> {
     let out = powershell(script, env)?;
     if !out.status.success() {
         let err = String::from_utf8_lossy(&out.stderr);
-        anyhow::bail!("{}", err.lines().find(|l| !l.trim().is_empty()).unwrap_or("powershell failed").trim());
+        anyhow::bail!(
+            "{}",
+            err.lines()
+                .find(|l| !l.trim().is_empty())
+                .unwrap_or("powershell failed")
+                .trim()
+        );
     }
     parse_json_list(&String::from_utf8_lossy(&out.stdout))
 }

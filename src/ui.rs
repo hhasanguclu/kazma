@@ -8,11 +8,124 @@ use ratatui::symbols::border;
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, List, ListItem, ListState, Paragraph};
 use std::io::IsTerminal;
+use std::sync::OnceLock;
 
-pub const FG: Color = Color::Green;
-pub const HI: Color = Color::Yellow;
-pub const DIM: Color = Color::DarkGray;
-pub const WARN: Color = Color::Red;
+// ---- theme -------------------------------------------------------------------
+
+#[derive(Clone, Copy)]
+pub struct Theme {
+    pub fg: Color,
+    pub hi: Color,
+    pub dim: Color,
+    pub warn: Color,
+}
+
+pub fn theme_by_name(name: &str) -> Theme {
+    match name {
+        "amber" => Theme {
+            fg: Color::Indexed(214),
+            hi: Color::Indexed(229),
+            dim: Color::Indexed(94),
+            warn: Color::Indexed(196),
+        },
+        "white" => Theme {
+            fg: Color::Gray,
+            hi: Color::White,
+            dim: Color::DarkGray,
+            warn: Color::Red,
+        },
+        "blue" => Theme {
+            fg: Color::Cyan,
+            hi: Color::Indexed(153),
+            dim: Color::Indexed(24),
+            warn: Color::Red,
+        },
+        _ => Theme {
+            fg: Color::Green,
+            hi: Color::Yellow,
+            dim: Color::DarkGray,
+            warn: Color::Red,
+        },
+    }
+}
+
+static THEME: OnceLock<Theme> = OnceLock::new();
+static TURKISH: OnceLock<bool> = OnceLock::new();
+
+fn theme() -> Theme {
+    *THEME.get_or_init(|| theme_by_name("green"))
+}
+pub fn fg() -> Color {
+    theme().fg
+}
+pub fn hi() -> Color {
+    theme().hi
+}
+pub fn dim() -> Color {
+    theme().dim
+}
+pub fn warn_c() -> Color {
+    theme().warn
+}
+
+fn ct(c: Color) -> crossterm::style::Color {
+    use crossterm::style::Color as C;
+    match c {
+        Color::Green => C::Green,
+        Color::Yellow => C::Yellow,
+        Color::DarkGray => C::DarkGrey,
+        Color::Red => C::Red,
+        Color::Gray => C::Grey,
+        Color::White => C::White,
+        Color::Cyan => C::Cyan,
+        Color::Indexed(n) => C::AnsiValue(n),
+        _ => C::Reset,
+    }
+}
+
+// ---- language ------------------------------------------------------------------
+
+/// Turkish if KAZMA_LANG / `kz config lang` say so, or (auto) the Windows display
+/// language / LANG is Turkish.
+fn detect_turkish() -> bool {
+    let pick = std::env::var("KAZMA_LANG")
+        .ok()
+        .map(|v| v.to_lowercase())
+        .or_else(|| crate::settings::get("lang"));
+    match pick.as_deref() {
+        Some("tr") => true,
+        Some("en") => false,
+        _ => crate::sys::ui_language_is_turkish(),
+    }
+}
+
+/// Plain text in the current language.
+pub fn t(en: &'static str, tr: &'static str) -> &'static str {
+    if is_tr() { tr } else { en }
+}
+
+pub fn is_tr() -> bool {
+    *TURKISH.get_or_init(detect_turkish)
+}
+
+/// Load theme and language once at startup.
+pub fn init() {
+    let name = std::env::var("KAZMA_THEME")
+        .ok()
+        .or_else(|| crate::settings::get("theme"))
+        .unwrap_or_default();
+    let _ = THEME.set(theme_by_name(&name.to_lowercase()));
+    let _ = TURKISH.set(detect_turkish());
+}
+
+/// Pick the English or Turkish text. Both arms are `format!` strings and can use
+/// the same arguments: `tr!("{n} files", "{n} dosya")`.
+#[macro_export]
+macro_rules! tr {
+    ($en:literal, $tr:literal $(, $arg:expr)* $(,)?) => {
+        if $crate::ui::is_tr() { format!($tr $(, $arg)*) } else { format!($en $(, $arg)*) }
+    };
+}
 
 pub const BANNER: &str = r"
  _  __    _     _____  __  __     _
@@ -37,8 +150,11 @@ pub const ASCII_BORDER: border::Set = border::Set {
 pub fn block(title: &str) -> Block<'_> {
     Block::bordered()
         .border_set(ASCII_BORDER)
-        .border_style(Style::new().fg(FG))
-        .title(Span::styled(format!("[ {title} ]"), Style::new().fg(HI).add_modifier(Modifier::BOLD)))
+        .border_style(Style::new().fg(fg()))
+        .title(Span::styled(
+            format!("[ {title} ]"),
+            Style::new().fg(hi()).add_modifier(Modifier::BOLD),
+        ))
 }
 
 pub fn human(bytes: u64) -> String {
@@ -49,7 +165,11 @@ pub fn human(bytes: u64) -> String {
         v /= 1024.0;
         i += 1;
     }
-    if i == 0 { format!("{bytes} B") } else { format!("{v:.1} {}", UNITS[i]) }
+    if i == 0 {
+        format!("{bytes} B")
+    } else {
+        format!("{v:.1} {}", UNITS[i])
+    }
 }
 
 /// `[#######.......]` style bar.
@@ -60,24 +180,32 @@ pub fn bar(ratio: f64, width: usize) -> String {
 }
 
 pub fn print_banner(subtitle: &str) {
-    println!("{}", BANNER.green());
-    println!("  {}\n", subtitle.dark_grey());
+    println!("{}", BANNER.with(ct(fg())));
+    println!("  {}\n", subtitle.with(ct(dim())));
 }
 
 pub fn section(title: &str) {
-    println!("\n{} {}", ">>".yellow().bold(), title.bold());
+    println!("\n{} {}", ">>".with(ct(hi())).bold(), title.bold());
 }
 
 pub fn ok(msg: &str) {
-    println!("  {} {msg}", "[ok]".green());
+    println!("  {} {msg}", "[ok]".with(ct(fg())));
 }
 
 pub fn skip(msg: &str) {
-    println!("  {} {}", "[--]".dark_grey(), msg.dark_grey());
+    println!("  {} {}", "[--]".with(ct(dim())), msg.with(ct(dim())));
+}
+
+pub fn bad(msg: &str) {
+    println!("  {} {msg}", "[xx]".with(ct(warn_c())).bold());
+}
+
+pub fn info(msg: &str) {
+    println!("  {} {msg}", "[..]".with(ct(hi())));
 }
 
 pub fn warn(msg: &str) {
-    println!("  {} {msg}", "[!!]".red());
+    println!("  {} {msg}", "[!!]".with(ct(warn_c())));
 }
 
 pub fn interactive() -> bool {
@@ -104,7 +232,11 @@ pub fn checklist(title: &str, items: Vec<CheckItem>) -> anyhow::Result<Option<Ve
 }
 
 /// Checklist; `show_size` hides the size column for items without a size (programs, drivers).
-pub fn checklist_opts(title: &str, mut items: Vec<CheckItem>, show_size: bool) -> anyhow::Result<Option<Vec<bool>>> {
+pub fn checklist_opts(
+    title: &str,
+    mut items: Vec<CheckItem>,
+    show_size: bool,
+) -> anyhow::Result<Option<Vec<bool>>> {
     if items.is_empty() {
         return Ok(Some(vec![]));
     }
@@ -114,21 +246,32 @@ pub fn checklist_opts(title: &str, mut items: Vec<CheckItem>, show_size: bool) -
         let total: u64 = items.iter().filter(|i| i.checked).map(|i| i.size).sum();
         let count = items.iter().filter(|i| i.checked).count();
         terminal.draw(|f| {
-            let [main, foot] = Layout::vertical([Constraint::Min(3), Constraint::Length(3)]).areas(f.area());
+            let [main, foot] =
+                Layout::vertical([Constraint::Min(3), Constraint::Length(3)]).areas(f.area());
             let w = main.width.saturating_sub(4) as usize;
             let rows: Vec<ListItem> = items
                 .iter()
                 .map(|i| {
                     let mark = if i.checked { "[x]" } else { "[ ]" };
-                    let size = if show_size { format!("{:>10}", human(i.size)) } else { String::new() };
+                    let size = if show_size {
+                        format!("{:>10}", human(i.size))
+                    } else {
+                        String::new()
+                    };
                     let label_w = w.saturating_sub(20).min(40);
                     let label = truncate(&i.label, label_w);
                     let detail_w = w.saturating_sub(label_w + 20);
                     ListItem::new(Line::from(vec![
-                        Span::styled(format!("{mark} "), Style::new().fg(if i.checked { HI } else { DIM })),
-                        Span::styled(format!("{label:<label_w$}"), Style::new().fg(FG)),
-                        Span::styled(size, Style::new().fg(HI)),
-                        Span::styled(format!("  {}", truncate(&i.detail, detail_w)), Style::new().fg(DIM)),
+                        Span::styled(
+                            format!("{mark} "),
+                            Style::new().fg(if i.checked { hi() } else { dim() }),
+                        ),
+                        Span::styled(format!("{label:<label_w$}"), Style::new().fg(fg())),
+                        Span::styled(size, Style::new().fg(hi())),
+                        Span::styled(
+                            format!("  {}", truncate(&i.detail, detail_w)),
+                            Style::new().fg(dim()),
+                        ),
                     ]))
                 })
                 .collect();
@@ -139,19 +282,35 @@ pub fn checklist_opts(title: &str, mut items: Vec<CheckItem>, show_size: bool) -
             f.render_stateful_widget(list, main, &mut state);
             let help = Line::from(vec![
                 Span::styled(
-                    if show_size { format!(" selected: {count}  ->  {}   ", human(total)) } else { format!(" selected: {count}   ") },
-                    Style::new().fg(HI).bold(),
+                    if show_size {
+                        crate::tr!(
+                            " selected: {count}  ->  {}   ",
+                            " seçili: {count}  ->  {}   ",
+                            human(total)
+                        )
+                    } else {
+                        crate::tr!(" selected: {count}   ", " seçili: {count}   ")
+                    },
+                    Style::new().fg(hi()).bold(),
                 ),
-                Span::styled("[space] toggle  [a] all  [n] none  [enter] go  [q] cancel", Style::new().fg(DIM)),
+                Span::styled(
+                    t(
+                        "[space] toggle  [a] all  [n] none  [enter] go  [q] cancel",
+                        "[boşluk] seç  [a] hepsi  [n] hiçbiri  [enter] uygula  [q] iptal",
+                    ),
+                    Style::new().fg(dim()),
+                ),
             ]);
-            f.render_widget(Paragraph::new(help).block(block("keys")), foot);
+            f.render_widget(Paragraph::new(help).block(block(t("keys", "tuşlar"))), foot);
         })?;
         let ev = event::read()?;
         let Some(code) = pressed(&ev) else { continue };
         let sel = state.selected().unwrap_or(0);
         match code {
             KeyCode::Up | KeyCode::Char('k') => state.select(Some(sel.saturating_sub(1))),
-            KeyCode::Down | KeyCode::Char('j') => state.select(Some((sel + 1).min(items.len() - 1))),
+            KeyCode::Down | KeyCode::Char('j') => {
+                state.select(Some((sel + 1).min(items.len() - 1)))
+            }
             KeyCode::Home => state.select(Some(0)),
             KeyCode::End => state.select(Some(items.len() - 1)),
             KeyCode::Char(' ') => items[sel].checked = !items[sel].checked,

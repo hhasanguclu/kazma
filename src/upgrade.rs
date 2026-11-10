@@ -1,6 +1,6 @@
 //! `kz upgrade`: update installed programs through winget.
 
-use crate::{oplog, ps, ui};
+use crate::{oplog, ps, tr, ui};
 use std::process::Command;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -16,29 +16,46 @@ pub struct Pkg {
 /// (winget redraws its spinner with `\r`) and drop control characters.
 fn clean_line(raw: &str) -> String {
     let after_cr = raw.rsplit('\r').next().unwrap_or(raw);
-    after_cr.chars().filter(|c| !c.is_control()).collect::<String>().trim_end().to_string()
+    after_cr
+        .chars()
+        .filter(|c| !c.is_control())
+        .collect::<String>()
+        .trim_end()
+        .to_string()
 }
 
 /// Parse the table printed by `winget upgrade`. Column boundaries are taken from
 /// the header line, so it works whatever language winget prints its headers in.
 pub fn parse_winget_table(output: &str) -> Vec<Pkg> {
     let lines: Vec<String> = output.lines().map(clean_line).collect();
-    let Some(dash) = lines.iter().position(|l| l.len() >= 10 && l.chars().all(|c| c == '-')) else {
+    let Some(dash) = lines
+        .iter()
+        .position(|l| l.len() >= 10 && l.chars().all(|c| c == '-'))
+    else {
         return vec![];
     };
     if dash == 0 {
         return vec![];
     }
     let header: Vec<char> = lines[dash - 1].chars().collect();
-    let starts: Vec<usize> =
-        (0..header.len()).filter(|&i| header[i] != ' ' && (i == 0 || header[i - 1] == ' ')).collect();
+    let starts: Vec<usize> = (0..header.len())
+        .filter(|&i| header[i] != ' ' && (i == 0 || header[i - 1] == ' '))
+        .collect();
     if starts.len() < 4 {
         return vec![];
     }
     let col = |chars: &[char], i: usize| -> String {
         let from = starts[i].min(chars.len());
-        let to = starts.get(i + 1).copied().unwrap_or(chars.len()).min(chars.len());
-        chars[from..to].iter().collect::<String>().trim().to_string()
+        let to = starts
+            .get(i + 1)
+            .copied()
+            .unwrap_or(chars.len())
+            .min(chars.len());
+        chars[from..to]
+            .iter()
+            .collect::<String>()
+            .trim()
+            .to_string()
     };
     let mut out = vec![];
     for line in &lines[dash + 1..] {
@@ -54,7 +71,11 @@ pub fn parse_winget_table(output: &str) -> Vec<Pkg> {
             id: col(&chars, 1),
             version: col(&chars, 2),
             available: col(&chars, 3),
-            source: if starts.len() > 4 { col(&chars, 4) } else { String::new() },
+            source: if starts.len() > 4 {
+                col(&chars, 4)
+            } else {
+                String::new()
+            },
         };
         if pkg.id.is_empty() || pkg.id.contains(' ') || pkg.available.is_empty() {
             continue;
@@ -71,20 +92,34 @@ fn winget() -> Command {
 }
 
 fn winget_available() -> bool {
-    winget().arg("--version").output().map(|o| o.status.success()).unwrap_or(false)
+    winget()
+        .arg("--version")
+        .output()
+        .map(|o| o.status.success())
+        .unwrap_or(false)
 }
 
 pub fn list_upgrades() -> anyhow::Result<Vec<Pkg>> {
     let out = winget()
-        .args(["upgrade", "--accept-source-agreements", "--disable-interactivity"])
+        .args([
+            "upgrade",
+            "--accept-source-agreements",
+            "--disable-interactivity",
+        ])
         .output()?;
     Ok(parse_winget_table(&String::from_utf8_lossy(&out.stdout)))
 }
 
 fn upgrade_one(p: &Pkg) -> (bool, String) {
     let mut args = vec![
-        "upgrade", "--id", &p.id, "--exact", "--silent", "--accept-package-agreements",
-        "--accept-source-agreements", "--disable-interactivity",
+        "upgrade",
+        "--id",
+        &p.id,
+        "--exact",
+        "--silent",
+        "--accept-package-agreements",
+        "--accept-source-agreements",
+        "--disable-interactivity",
     ];
     if !p.source.is_empty() {
         args.extend(["--source", &p.source]);
@@ -93,32 +128,61 @@ fn upgrade_one(p: &Pkg) -> (bool, String) {
         Ok(o) if o.status.success() => (true, String::new()),
         Ok(o) => {
             let text = String::from_utf8_lossy(&o.stdout);
-            let last = text.lines().map(clean_line).rfind(|l| !l.trim().is_empty()).unwrap_or_default();
-            (false, format!("exit {:#x}: {}", o.status.code().unwrap_or(-1) as u32, last.trim()))
+            let last = text
+                .lines()
+                .map(clean_line)
+                .rfind(|l| !l.trim().is_empty())
+                .unwrap_or_default();
+            (
+                false,
+                format!(
+                    "exit {:#x}: {}",
+                    o.status.code().unwrap_or(-1) as u32,
+                    last.trim()
+                ),
+            )
         }
         Err(e) => (false, e.to_string()),
     }
 }
 
 pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
-    ui::print_banner(if dry { "upgrade :: dry run, nothing will be installed" } else { "upgrade :: update installed programs (winget)" });
+    ui::print_banner(if dry {
+        ui::t(
+            "upgrade :: dry run, nothing will be installed",
+            "upgrade :: deneme, hiçbir şey kurulmayacak",
+        )
+    } else {
+        ui::t(
+            "upgrade :: update installed programs (winget)",
+            "upgrade :: yüklü programları güncelle (winget)",
+        )
+    });
     if !cfg!(windows) {
-        ui::warn("kz upgrade works on Windows only.");
+        ui::warn(ui::t(
+            "kz upgrade works on Windows only.",
+            "kz upgrade yalnızca Windows'ta çalışır.",
+        ));
         return Ok(());
     }
     if !winget_available() {
-        ui::warn("winget not found. Install 'App Installer' from the Microsoft Store, then try again.");
+        ui::warn(
+            "winget not found. Install 'App Installer' from the Microsoft Store, then try again.",
+        );
         return Ok(());
     }
     ps::working("asking winget for updates (this can take a few seconds)...");
     let pkgs = list_upgrades()?;
     println!("{:60}", "");
     if pkgs.is_empty() {
-        ui::ok("Everything is up to date.");
+        ui::ok(ui::t("Everything is up to date.", "Her şey güncel."));
         return Ok(());
     }
     if !dry && !yes && !ui::interactive() {
-        ui::warn("not an interactive terminal: re-run with --yes to upgrade, or --dry-run to preview");
+        ui::warn(ui::t(
+            "not an interactive terminal: re-run with --yes to upgrade, or --dry-run to preview",
+            "etkileşimli terminal değil: güncellemek için --yes, önizlemek için --dry-run kullanın",
+        ));
         return Ok(());
     }
 
@@ -134,33 +198,52 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
                 checked: true,
             })
             .collect();
-        match ui::checklist_opts("kazma upgrade :: select programs to update", items, false)? {
+        match ui::checklist_opts(
+            ui::t(
+                "kazma upgrade :: select programs to update",
+                "kazma upgrade :: güncellenecek programları seç",
+            ),
+            items,
+            false,
+        )? {
             Some(s) => s,
             None => {
-                println!("  cancelled.");
+                println!("  {}", ui::t("cancelled.", "iptal edildi."));
                 return Ok(());
             }
         }
     };
 
-    ui::section(if dry { "Available updates" } else { "Upgrading" });
+    ui::section(if dry {
+        ui::t("Available updates", "Mevcut güncellemeler")
+    } else {
+        ui::t("Upgrading", "Güncelleniyor")
+    });
     let (mut ok, mut fail) = (0, 0);
     for (p, on) in pkgs.iter().zip(selection) {
-        let line = format!("{:<36} {:>14} -> {:<14}", ui::truncate(&p.name, 36), ui::truncate(&p.version, 14), ui::truncate(&p.available, 14));
+        let line = format!(
+            "{:<36} {:>14} -> {:<14}",
+            ui::truncate(&p.name, 36),
+            ui::truncate(&p.version, 14),
+            ui::truncate(&p.available, 14)
+        );
         if !on {
-            ui::skip(&format!("{line}  (skipped)"));
+            ui::skip(&tr!("{line}  (skipped)", "{line}  (atlandı)"));
             continue;
         }
         if dry {
             ui::ok(&line);
             continue;
         }
-        ps::working(&format!("{line}  installing..."));
+        ps::working(&tr!("{line}  installing...", "{line}  kuruluyor..."));
         let (success, err) = upgrade_one(p);
         if success {
             ok += 1;
             ui::ok(&format!("{line}           "));
-            oplog::record("upgrade", &format!("{} {} -> {}", p.id, p.version, p.available));
+            oplog::record(
+                "upgrade",
+                &format!("{} {} -> {}", p.id, p.version, p.available),
+            );
         } else {
             fail += 1;
             ui::warn(&format!("{line}  {err}"));
@@ -168,9 +251,21 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         }
     }
     if !dry {
-        println!("\n  upgraded {ok}, failed {fail}");
+        println!(
+            "\n  {}",
+            tr!(
+                "upgraded {ok}, failed {fail}",
+                "güncellenen {ok}, başarısız {fail}"
+            )
+        );
         if fail > 0 {
-            println!("  tip: some installers need an elevated terminal, or the program to be closed first.");
+            println!(
+                "  {}",
+                ui::t(
+                    "tip: some installers need an elevated terminal, or the program to be closed first.",
+                    "ipucu: bazı kurulumlar yönetici terminali ya da programın kapalı olmasını ister."
+                )
+            );
         }
     }
     println!();
@@ -217,9 +312,27 @@ The following packages have an upgrade available, but require explicit targeting
     #[test]
     fn parses_turkish_headers_and_unicode_names() {
         let tr = table(&[
-            ["Ad", "Kimlik", "S\u{fc}r\u{fc}m", "Kullan\u{131}labilir", "Kaynak"],
-            ["Mozilla Firefox (x64)", "Mozilla.Firefox", "131.0", "132.0.1", "winget"],
-            ["Discord \u{2026}", "Discord.Discord", "1.0.9163", "1.0.9171", "winget"],
+            [
+                "Ad",
+                "Kimlik",
+                "S\u{fc}r\u{fc}m",
+                "Kullan\u{131}labilir",
+                "Kaynak",
+            ],
+            [
+                "Mozilla Firefox (x64)",
+                "Mozilla.Firefox",
+                "131.0",
+                "132.0.1",
+                "winget",
+            ],
+            [
+                "Discord \u{2026}",
+                "Discord.Discord",
+                "1.0.9163",
+                "1.0.9171",
+                "winget",
+            ],
         ]);
         let p = parse_winget_table(&tr);
         assert_eq!(p.len(), 2);
@@ -230,6 +343,8 @@ The following packages have an upgrade available, but require explicit targeting
 
     #[test]
     fn empty_when_up_to_date() {
-        assert!(parse_winget_table("No installed package found matching input criteria.\n").is_empty());
+        assert!(
+            parse_winget_table("No installed package found matching input criteria.\n").is_empty()
+        );
     }
 }

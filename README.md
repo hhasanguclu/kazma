@@ -6,8 +6,9 @@
 |_|\_\/_/   \_\/____| |_|  |_|/_/   \_\
 ```
 
-**kazma** is an oldschool, all-ASCII system cleaner and disk explorer for Windows.
-One small native binary (`kz.exe`), no installer, no telemetry.
+**kazma** is an oldschool, all-ASCII system toolkit for Windows: cleaner, disk explorer, uninstaller,
+program & driver updater, startup manager and health check in one small native binary (`kz.exe`).
+No installer, no telemetry. English and Turkish (Türkçe) interface.
 
 ```
 +[ kazma analyze ]-------------------------------------------------------+
@@ -31,9 +32,20 @@ Windows 10/11 x64. No admin rights needed.
 iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 | iex
 ```
 
+**Scoop**:
+
+```powershell
+scoop bucket add kazma https://github.com/hhasanguclu/kazma
+scoop install kazma
+```
+
+**winget**: manifests are generated for every release in `packaging/winget/`; once accepted into
+the winget repository: `winget install hhasanguclu.kazma`.
+
 **Manual**: grab `kz.exe` from the [latest release](https://github.com/hhasanguclu/kazma/releases/latest) and run it from a terminal.
 
 > The exe is not code-signed yet, so SmartScreen may warn: **More info -> Run anyway**.
+> Signing via SignPath is prepared, see [docs/SIGNING.md](docs/SIGNING.md).
 
 ## Uninstall
 
@@ -49,20 +61,38 @@ This removes the exe, its PATH entry and the log folder `%LOCALAPPDATA%\kazma`.
 | Command | What it does |
 |---|---|
 | `kz` | Interactive menu |
+| **Clean up** | |
 | `kz clean` | Temp files, crash dumps, browser / app / developer caches, Recycle Bin |
-| `kz analyze [path]` | Interactive disk usage explorer; delete goes to the Recycle Bin |
-| `kz status` | Live CPU, memory, disk, network and top-process dashboard |
+| `kz analyze [path]` | Disk usage explorer; `b` shows the largest files; delete goes to the Recycle Bin |
 | `kz purge [paths...]` | Build artifacts: `node_modules`, `target`, `bin/obj`, `.venv`, `__pycache__`, ... |
 | `kz installer [paths...]` | Old setup files (`.exe`, `.msi`, `.msix`, `.iso`) in Downloads and on the Desktop |
+| `kz dupes [paths...]` | Duplicate files (size -> partial hash -> BLAKE3, all parallel) |
+| `kz privacy` | Recent files, Run / Explorer history, clipboard, browser history and cookies (opt-in) |
+| **Programs & drivers** | |
 | `kz uninstall` | Remove programs with their own uninstaller, then clean up leftover folders |
-| `kz upgrade` | Update installed programs through winget (pick from a checklist, silent install) |
+| `kz upgrade` | Update installed programs through winget |
 | `kz drivers` | Driver updates from Windows Update; `--installed` lists third-party drivers by age |
+| `kz startup` | Turn startup programs on/off (same flags as Task Manager, fully reversible) |
+| `kz debloat` | Remove preinstalled promo apps from a fixed list, turn off ads; `--restore` undoes |
+| **System** | |
+| `kz health` | Disk SMART, battery wear, blue screens, errors, updates, Defender, firewall |
+| `kz status` | Live CPU, memory, disk, network and top-process dashboard |
 | `kz optimize` | DNS flush, icon cache refresh, SSD TRIM, DISM component cleanup, SFC |
+| `kz schedule weekly` | Run `kz clean --yes` automatically (`daily`, `weekly`, `monthly`, `off`, `status`) |
+| **kazma** | |
 | `kz whitelist` | Paths kazma must never delete (`--add`, `--remove`, `--edit`) |
+| `kz config` | `kz config lang tr`, `kz config theme amber` (green, amber, white, blue) |
+| `kz update` | Update kazma itself from GitHub (checksum verified) |
 | `kz history` | Log of everything kazma did |
 | `kz remove` | Uninstall kazma |
 
 Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`) to skip the selection screen.
+
+## Language and theme
+
+The interface follows the Windows display language (Turkish or English). Override it with
+`kz config lang tr|en|auto` or the `KAZMA_LANG` environment variable. Colors:
+`kz config theme green|amber|white|blue` or `KAZMA_THEME`.
 
 ## Safety
 
@@ -81,6 +111,11 @@ Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`)
   the program, never shared vendor folders such as `Microsoft` or `Google`.
 - **Whitelist**: anything listed in `%LOCALAPPDATA%\kazma\whitelist.txt` is never deleted by any command.
   If that file exists but cannot be read, kazma refuses to run.
+- `startup` only flips the same on/off flags Task Manager uses; nothing is deleted.
+- `debloat` only removes apps on a fixed list (never Store, Photos, Calculator, Terminal...) and they can be
+  reinstalled from the Microsoft Store.
+- `dupes` sends copies to the Recycle Bin and always keeps at least one file of every group.
+- `update` checks the download against the release's `SHA256SUMS.txt` before replacing `kz.exe`.
 - Every deletion is appended to `%LOCALAPPDATA%\kazma\operations.log`. Set `KAZMA_NO_OPLOG=1` to disable.
 
 ## Build
@@ -125,6 +160,16 @@ src/
   uninstall.rs  program uninstaller + leftovers
   optimize.rs   maintenance tasks
   whitelist.rs  protected paths
+  startup.rs    startup manager
+  health.rs     health report
+  dupes.rs      duplicate finder
+  debloat.rs    promo apps + ad settings
+  privacy.rs    usage traces
+  schedule.rs   scheduled cleaning
+  update.rs     self-update
+  settings.rs   config file (language, theme)
+packaging/      Scoop / winget manifest generator
+bucket/         Scoop bucket
 ```
 
 ## License

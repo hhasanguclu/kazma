@@ -1,6 +1,6 @@
 //! `kz remove`: uninstall kazma itself (exe, PATH entry, log/data folder).
 
-use crate::{oplog, ui};
+use crate::{oplog, tr, ui};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
@@ -8,7 +8,8 @@ pub fn ask(question: &str) -> bool {
     print!("  ?? {question} [y/N] ");
     let _ = std::io::stdout().flush();
     let mut s = String::new();
-    std::io::stdin().read_line(&mut s).is_ok() && matches!(s.trim().to_lowercase().as_str(), "y" | "yes" | "e" | "evet")
+    std::io::stdin().read_line(&mut s).is_ok()
+        && matches!(s.trim().to_lowercase().as_str(), "y" | "yes" | "e" | "evet")
 }
 
 /// Is `dir` in the user's PATH? Compared case-insensitively, ignoring trailing slashes.
@@ -20,17 +21,27 @@ fn same_dir(a: &str, b: &Path) -> bool {
 #[cfg(windows)]
 fn user_path() -> Option<String> {
     let out = std::process::Command::new("powershell")
-        .args(["-NoProfile", "-Command", "[Environment]::GetEnvironmentVariable('Path','User')"])
+        .args([
+            "-NoProfile",
+            "-Command",
+            "[Environment]::GetEnvironmentVariable('Path','User')",
+        ])
         .output()
         .ok()?;
-    out.status.success().then(|| String::from_utf8_lossy(&out.stdout).trim().to_string())
+    out.status
+        .success()
+        .then(|| String::from_utf8_lossy(&out.stdout).trim().to_string())
 }
 
 #[cfg(windows)]
 fn set_user_path(value: &str) -> bool {
     // Pass the value through an env var so no quoting/escaping of paths is needed.
     std::process::Command::new("powershell")
-        .args(["-NoProfile", "-Command", "[Environment]::SetEnvironmentVariable('Path',$env:KAZMA_NEW_PATH,'User')"])
+        .args([
+            "-NoProfile",
+            "-Command",
+            "[Environment]::SetEnvironmentVariable('Path',$env:KAZMA_NEW_PATH,'User')",
+        ])
         .env("KAZMA_NEW_PATH", value)
         .status()
         .map(|s| s.success())
@@ -70,14 +81,25 @@ fn schedule_self_delete(exe: &Path, _dir: Option<&Path>) -> bool {
 }
 
 pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
-    ui::print_banner(if dry { "remove :: dry run" } else { "remove :: uninstall kazma from this computer" });
+    ui::print_banner(if dry {
+        ui::t("remove :: dry run", "remove :: deneme")
+    } else {
+        ui::t(
+            "remove :: uninstall kazma from this computer",
+            "remove :: kazma'yı bu bilgisayardan kaldır",
+        )
+    });
     let exe = std::env::current_exe()?;
     let exe = std::fs::canonicalize(&exe).unwrap_or(exe);
     let exe = PathBuf::from(exe.to_string_lossy().trim_start_matches(r"\\?\"));
     let dir = exe.parent().map(Path::to_path_buf);
     // Only remove the folder itself if it is kazma's own install folder.
     let own_dir = dir.clone().filter(|d| {
-        let n = d.file_name().unwrap_or_default().to_string_lossy().to_lowercase();
+        let n = d
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_lowercase();
         n == "kazma"
     });
     let data = oplog::data_dir().filter(|d| d.exists());
@@ -86,46 +108,87 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         _ => None,
     };
 
-    ui::section("Will remove");
-    println!("  program     {}", exe.display());
+    ui::section(ui::t("Will remove", "Kaldırılacaklar"));
+    println!(
+        "{}",
+        tr!("  program     {}", "  program     {}", exe.display())
+    );
     if let Some(d) = &own_dir {
-        println!("  folder      {}", d.display());
+        println!(
+            "{}",
+            tr!("  folder      {}", "  klasör      {}", d.display())
+        );
     }
     if let Some((d, _)) = &path_entry {
-        println!("  PATH entry  {}", d.display());
+        println!(
+            "{}",
+            tr!("  PATH entry  {}", "  PATH kaydı  {}", d.display())
+        );
     }
     if let Some(d) = &data {
-        println!("  data & log  {}", d.display());
+        println!(
+            "{}",
+            tr!("  data & log  {}", "  veri ve log {}", d.display())
+        );
     }
     println!();
 
     if dry {
-        ui::ok("dry run, nothing removed.");
+        ui::ok(ui::t(
+            "dry run, nothing removed.",
+            "deneme, hiçbir şey kaldırılmadı.",
+        ));
         return Ok(());
     }
     if !yes {
         if !ui::interactive() {
-            ui::warn("not an interactive terminal: re-run with --yes to uninstall");
+            ui::warn(ui::t(
+                "not an interactive terminal: re-run with --yes to uninstall",
+                "etkileşimli terminal değil: kaldırmak için --yes ile çalıştırın",
+            ));
             return Ok(());
         }
-        if !ask("Uninstall kazma?") {
-            println!("  cancelled.");
+        if !ask(ui::t("Uninstall kazma?", "kazma kaldırılsın mı?")) {
+            println!("  {}", ui::t("cancelled.", "iptal edildi."));
             return Ok(());
         }
     }
 
     if let Some((d, p)) = path_entry {
-        let kept: Vec<&str> = p.split(';').filter(|e| !e.is_empty() && !same_dir(e, &d)).collect();
-        if set_user_path(&kept.join(";")) { ui::ok("PATH entry removed") } else { ui::warn("could not update PATH") }
+        let kept: Vec<&str> = p
+            .split(';')
+            .filter(|e| !e.is_empty() && !same_dir(e, &d))
+            .collect();
+        if set_user_path(&kept.join(";")) {
+            ui::ok(ui::t("PATH entry removed", "PATH kaydı kaldırıldı"))
+        } else {
+            ui::warn(ui::t("could not update PATH", "PATH güncellenemedi"))
+        }
     }
     if let Some(d) = data {
-        if std::fs::remove_dir_all(&d).is_ok() { ui::ok("data & log removed") } else { ui::warn("could not remove data folder") }
+        if std::fs::remove_dir_all(&d).is_ok() {
+            ui::ok(ui::t("data & log removed", "veri ve log kaldırıldı"))
+        } else {
+            ui::warn(ui::t(
+                "could not remove data folder",
+                "veri klasörü kaldırılamadı",
+            ))
+        }
     }
     if schedule_self_delete(&exe, own_dir.as_deref()) {
-        ui::ok("program removed (finishes when this window returns)");
+        ui::ok(ui::t(
+            "program removed (finishes when this window returns)",
+            "program kaldırıldı (bu pencere dönünce tamamlanır)",
+        ));
     } else {
         ui::warn(&format!("delete {} manually", exe.display()));
     }
-    println!("\n  bye. thanks for using kazma.\n");
+    println!(
+        "\n  {}\n",
+        ui::t(
+            "bye. thanks for using kazma.",
+            "hoşça kal. kazma'yı kullandığın için teşekkürler."
+        )
+    );
     Ok(())
 }

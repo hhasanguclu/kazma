@@ -4,16 +4,26 @@
 #[cfg(windows)]
 mod imp {
     use windows_sys::Win32::UI::Shell::{
-        IsUserAnAdmin, SHEmptyRecycleBinW, SHQueryRecycleBinW, SHERB_NOCONFIRMATION, SHERB_NOPROGRESSUI,
-        SHERB_NOSOUND, SHQUERYRBINFO,
+        IsUserAnAdmin, SHERB_NOCONFIRMATION, SHERB_NOPROGRESSUI, SHERB_NOSOUND, SHEmptyRecycleBinW,
+        SHQUERYRBINFO, SHQueryRecycleBinW,
     };
 
     pub fn is_admin() -> bool {
         unsafe { IsUserAnAdmin() != 0 }
     }
 
+    /// Windows display language is Turkish (primary language id 0x1F).
+    pub fn ui_language_is_turkish() -> bool {
+        let lang = unsafe { windows_sys::Win32::Globalization::GetUserDefaultUILanguage() };
+        lang & 0x3ff == 0x1f
+    }
+
     pub fn recycle_bin_size() -> Option<(u64, u64)> {
-        let mut info = SHQUERYRBINFO { cbSize: std::mem::size_of::<SHQUERYRBINFO>() as u32, i64Size: 0, i64NumItems: 0 };
+        let mut info = SHQUERYRBINFO {
+            cbSize: std::mem::size_of::<SHQUERYRBINFO>() as u32,
+            i64Size: 0,
+            i64NumItems: 0,
+        };
         let hr = unsafe { SHQueryRecycleBinW(std::ptr::null(), &mut info) };
         (hr >= 0).then(|| (info.i64Size.max(0) as u64, info.i64NumItems.max(0) as u64))
     }
@@ -34,6 +44,11 @@ mod imp {
     pub fn recycle_bin_size() -> Option<(u64, u64)> {
         None
     }
+    pub fn ui_language_is_turkish() -> bool {
+        std::env::var("LANG")
+            .map(|l| l.to_lowercase().starts_with("tr"))
+            .unwrap_or(false)
+    }
     pub fn empty_recycle_bin() -> bool {
         false
     }
@@ -44,17 +59,27 @@ pub use imp::*;
 /// Free space on the system drive (C:\ on Windows, / elsewhere).
 pub fn system_drive_free() -> Option<u64> {
     let disks = sysinfo::Disks::new_with_refreshed_list().ok()?;
-    let want = std::env::var("SystemDrive").map(|d| format!("{d}\\")).unwrap_or_else(|_| "/".into());
+    let want = std::env::var("SystemDrive")
+        .map(|d| format!("{d}\\"))
+        .unwrap_or_else(|_| "/".into());
     disks
         .iter()
-        .find(|d| d.mount_point().to_string_lossy().eq_ignore_ascii_case(&want))
+        .find(|d| {
+            d.mount_point()
+                .to_string_lossy()
+                .eq_ignore_ascii_case(&want)
+        })
         .map(|d| d.available_space())
 }
 
 /// Reveal a path in Explorer (or the platform file manager).
 pub fn reveal(path: &std::path::Path) {
     #[cfg(windows)]
-    let _ = std::process::Command::new("explorer.exe").arg(format!("/select,{}", path.display())).spawn();
+    let _ = std::process::Command::new("explorer.exe")
+        .arg(format!("/select,{}", path.display()))
+        .spawn();
     #[cfg(not(windows))]
-    let _ = std::process::Command::new("xdg-open").arg(path.parent().unwrap_or(path)).spawn();
+    let _ = std::process::Command::new("xdg-open")
+        .arg(path.parent().unwrap_or(path))
+        .spawn();
 }

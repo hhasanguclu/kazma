@@ -1,7 +1,7 @@
 //! `kz purge`: find and remove regenerable project build artifacts.
 
-use crate::fsutil::{self, home, Stats};
-use crate::{oplog, ui};
+use crate::fsutil::{self, Stats, home};
+use crate::{oplog, tr, ui};
 use rayon::prelude::*;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -36,10 +36,19 @@ fn has_ext(dir: &Path, exts: &[&str]) -> bool {
 /// Every rule requires a project marker next to it, so random folders called
 /// "build" or "bin" are never touched.
 fn artifact_kind(dir: &Path, name: &str, parent: &Path) -> Option<&'static str> {
-    let gradle = || has_file(parent, "build.gradle") || has_file(parent, "build.gradle.kts") || has_file(parent, "settings.gradle") || has_file(parent, "settings.gradle.kts");
+    let gradle = || {
+        has_file(parent, "build.gradle")
+            || has_file(parent, "build.gradle.kts")
+            || has_file(parent, "settings.gradle")
+            || has_file(parent, "settings.gradle.kts")
+    };
     match name {
         "node_modules" if has_file(parent, "package.json") => Some("node"),
-        ".next" | ".nuxt" | ".turbo" | ".parcel-cache" | ".svelte-kit" | ".angular" if has_file(parent, "package.json") => Some("js"),
+        ".next" | ".nuxt" | ".turbo" | ".parcel-cache" | ".svelte-kit" | ".angular"
+            if has_file(parent, "package.json") =>
+        {
+            Some("js")
+        }
         "target" if has_file(parent, "Cargo.toml") => Some("rust"),
         "target" if has_file(parent, "pom.xml") => Some("maven"),
         "bin" | "obj" if has_ext(parent, &[".csproj", ".fsproj", ".vbproj"]) => Some(".net"),
@@ -55,17 +64,34 @@ fn artifact_kind(dir: &Path, name: &str, parent: &Path) -> Option<&'static str> 
 }
 
 fn skip_dir(name: &str) -> bool {
-    matches!(name, ".git" | ".hg" | ".svn" | "AppData" | "$Recycle.Bin" | "Windows" | ".cargo" | ".rustup" | ".nuget")
+    matches!(
+        name,
+        ".git"
+            | ".hg"
+            | ".svn"
+            | "AppData"
+            | "$Recycle.Bin"
+            | "Windows"
+            | ".cargo"
+            | ".rustup"
+            | ".nuget"
+    )
 }
 
 fn walk(dir: &Path, depth: usize) -> Vec<(PathBuf, &'static str)> {
     if depth > MAX_DEPTH {
         return vec![];
     }
-    let Ok(rd) = fs::read_dir(dir) else { return vec![] };
+    let Ok(rd) = fs::read_dir(dir) else {
+        return vec![];
+    };
     let subs: Vec<(PathBuf, String)> = rd
         .flatten()
-        .filter(|e| e.file_type().map(|t| t.is_dir() && !t.is_symlink()).unwrap_or(false))
+        .filter(|e| {
+            e.file_type()
+                .map(|t| t.is_dir() && !t.is_symlink())
+                .unwrap_or(false)
+        })
         .map(|e| (e.path(), e.file_name().to_string_lossy().into_owned()))
         .collect();
     subs.par_iter()
@@ -84,8 +110,19 @@ fn walk(dir: &Path, depth: usize) -> Vec<(PathBuf, &'static str)> {
 fn default_roots() -> Vec<PathBuf> {
     let Some(h) = home() else { return vec![] };
     let mut roots: Vec<PathBuf> = [
-        "source", "src", "dev", "Dev", "Projects", "projects", "code", "Code", "repos", "workspace",
-        "Documents\\GitHub", "Documents/GitHub", "Desktop",
+        "source",
+        "src",
+        "dev",
+        "Dev",
+        "Projects",
+        "projects",
+        "code",
+        "Code",
+        "repos",
+        "workspace",
+        "Documents\\GitHub",
+        "Documents/GitHub",
+        "Desktop",
     ]
     .iter()
     .map(|p| h.join(p))
@@ -101,38 +138,70 @@ fn default_roots() -> Vec<PathBuf> {
 }
 
 pub fn run(paths: Vec<PathBuf>, dry: bool, yes: bool) -> anyhow::Result<()> {
-    ui::print_banner(if dry { "purge :: dry run, nothing will be deleted" } else { "purge :: clean project build artifacts" });
-    let roots = if paths.is_empty() { default_roots() } else { paths };
+    ui::print_banner(if dry {
+        ui::t(
+            "purge :: dry run, nothing will be deleted",
+            "purge :: deneme, hiçbir şey silinmeyecek",
+        )
+    } else {
+        ui::t(
+            "purge :: clean project build artifacts",
+            "purge :: proje derleme çıktılarını temizle",
+        )
+    });
+    let roots = if paths.is_empty() {
+        default_roots()
+    } else {
+        paths
+    };
     if roots.is_empty() {
-        ui::warn("No project folders found. Pass one explicitly: kz purge D:\\code");
+        ui::warn(ui::t(
+            "No project folders found. Pass one explicitly: kz purge D:\\code",
+            "Proje klasörü bulunamadı. Klasörü belirtin: kz purge D:\\code",
+        ));
         return Ok(());
     }
     for r in &roots {
-        println!("  scanning {}", r.display());
+        println!("{}", tr!("  scanning {}", "  taranıyor {}", r.display()));
     }
 
     let recent_cut = SystemTime::now() - Duration::from_secs(RECENT_DAYS * 86_400);
-    let mut hits: Vec<(PathBuf, &'static str)> = roots.par_iter().flat_map(|r| walk(r, 0)).collect();
+    let mut hits: Vec<(PathBuf, &'static str)> =
+        roots.par_iter().flat_map(|r| walk(r, 0)).collect();
     hits.sort();
     hits.dedup();
     let mut found: Vec<Found> = hits
         .into_par_iter()
         .map(|(path, kind)| {
             let size = fsutil::dir_size(&path);
-            let recent = fs::metadata(&path).and_then(|m| m.modified()).map(|m| m > recent_cut).unwrap_or(false);
-            Found { path, kind, size, recent }
+            let recent = fs::metadata(&path)
+                .and_then(|m| m.modified())
+                .map(|m| m > recent_cut)
+                .unwrap_or(false);
+            Found {
+                path,
+                kind,
+                size,
+                recent,
+            }
         })
         .filter(|f| f.size > 0)
         .collect();
     found.sort_by_key(|f| std::cmp::Reverse(f.size));
 
     if found.is_empty() {
-        ui::ok("No build artifacts found.");
+        ui::ok(ui::t(
+            "No build artifacts found.",
+            "Derleme çıktısı bulunamadı.",
+        ));
         return Ok(());
     }
 
     if !dry && !yes && !ui::interactive() {
-        ui::warn("not an interactive terminal: re-run with --yes to delete, or --dry-run to preview");
+        ui::warn(ui::t(
+            "not an interactive terminal: re-run with --yes to delete, or --dry-run to preview",
+            "etkileşimli terminal değil: silmek için --yes, önizlemek için --dry-run ile çalıştırın",
+        ));
         return Ok(());
     }
     let selection: Vec<bool> = if dry || yes || !ui::interactive() {
@@ -142,37 +211,81 @@ pub fn run(paths: Vec<PathBuf>, dry: bool, yes: bool) -> anyhow::Result<()> {
             .iter()
             .map(|f| ui::CheckItem {
                 label: format!("{:<7}{}", f.kind, f.path.display()),
-                detail: if f.recent { format!("touched < {RECENT_DAYS}d ago") } else { String::new() },
+                detail: if f.recent {
+                    tr!(
+                        "touched < {RECENT_DAYS}d ago",
+                        "< {RECENT_DAYS} gün önce değişti"
+                    )
+                } else {
+                    String::new()
+                },
                 size: f.size,
                 checked: !f.recent,
             })
             .collect();
-        match ui::checklist("kazma purge :: select artifacts to delete", items)? {
+        match ui::checklist(
+            ui::t(
+                "kazma purge :: select artifacts to delete",
+                "kazma purge :: silinecek çıktıları seç",
+            ),
+            items,
+        )? {
             Some(s) => s,
             None => {
-                println!("  cancelled.");
+                println!("  {}", ui::t("cancelled.", "iptal edildi."));
                 return Ok(());
             }
         }
     };
 
     let mut total = Stats::default();
-    ui::section(if dry { "Would delete" } else { "Deleting" });
+    ui::section(if dry {
+        ui::t("Would delete", "Silinecekler")
+    } else {
+        ui::t("Deleting", "Siliniyor")
+    });
     for (f, on) in found.iter().zip(&selection) {
         if !*on {
-            let why = if f.recent { format!("recent (< {RECENT_DAYS}d), kept") } else { "not selected".into() };
-            ui::skip(&format!("{:>10}  {}  ({why})", ui::human(f.size), f.path.display()));
+            let why = if f.recent {
+                tr!(
+                    "recent (< {RECENT_DAYS}d), kept",
+                    "yeni (< {RECENT_DAYS} gün), tutuldu"
+                )
+            } else {
+                ui::t("not selected", "seçilmedi").into()
+            };
+            ui::skip(&format!(
+                "{:>10}  {}  ({why})",
+                ui::human(f.size),
+                f.path.display()
+            ));
             continue;
         }
         let r = fsutil::delete_tree(&f.path, dry);
-        let note = if r.failed > 0 { format!("  ({} locked)", r.failed) } else { String::new() };
-        ui::ok(&format!("{:>10}  {}{note}", ui::human(r.bytes), f.path.display()));
+        let note = if r.failed > 0 {
+            tr!("  ({} locked)", "  ({} kilitli)", r.failed)
+        } else {
+            String::new()
+        };
+        ui::ok(&format!(
+            "{:>10}  {}{note}",
+            ui::human(r.bytes),
+            f.path.display()
+        ));
         total.bytes += r.bytes;
         total.files += r.files;
         if !dry {
             oplog::record("purge", &format!("{} freed={}", f.path.display(), r.bytes));
         }
     }
-    println!("\n  {} {}\n", if dry { "would free" } else { "freed" }, ui::human(total.bytes));
+    println!(
+        "\n  {} {}\n",
+        if dry {
+            ui::t("would free", "kazanılacak")
+        } else {
+            ui::t("freed", "kazanılan")
+        },
+        ui::human(total.bytes)
+    );
     Ok(())
 }

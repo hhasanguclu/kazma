@@ -9,16 +9,20 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64).
 One ~1.5 MB exe. No installer required, no telemetry.
 
-## What's new in v0.2.0
+## What's new in v0.3.0
 
-- **`kz uninstall`**: remove programs with their own uninstaller, then send leftover folders to the Recycle Bin
-- **`kz upgrade`**: update installed programs through winget, picked from a checklist
-- **`kz drivers`**: driver updates from Windows Update, with a restore point first; `--installed` shows driver ages
-- **`kz optimize`**: DNS flush, icon cache refresh, SSD TRIM, DISM cleanup, SFC
-- **`kz installer`**: find old setup files (`.exe`, `.msi`, `.iso`...) in Downloads and on the Desktop
-- **`kz whitelist`**: paths that kazma must never delete
-- **`kz remove`**: uninstall kazma itself
-- Icon and version info in `kz.exe`, install / uninstall scripts
+- **Türkçe arayüz**: follows the Windows display language; `kz config lang tr|en`
+- **Color themes**: `kz config theme green|amber|white|blue`
+- **`kz startup`**: turn startup programs on/off (Task Manager compatible, reversible)
+- **`kz health`**: disk SMART, battery wear, blue screens, system errors, updates, Defender, firewall
+- **`kz dupes`**: fast duplicate finder (size, partial hash, BLAKE3; parallel)
+- **`kz debloat`**: remove promo apps from a fixed list, turn off Windows ads; `--restore` undoes
+- **`kz privacy`**: recent files, Run / Explorer history, clipboard, browser history & cookies (opt-in)
+- **`kz schedule`**: automatic cleaning with Task Scheduler
+- **`kz update`**: self-update from GitHub with SHA-256 verification
+- **`kz analyze`**: press `b` for the largest files under the current folder
+- **Scoop**: `scoop bucket add kazma https://github.com/hhasanguclu/kazma` then `scoop install kazma`
+- Grouped main menu with hotkeys
 
 ## Download
 
@@ -38,22 +42,36 @@ One ~1.5 MB exe. No installer required, no telemetry.
 iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 | iex
 ```
 
+**Scoop**:
+
+```powershell
+scoop bucket add kazma https://github.com/hhasanguclu/kazma
+scoop install kazma
+```
+
 **Manual**: download `kz.exe` above and run it from a terminal (Windows Terminal recommended).
 
 ## Usage
 
 ```
-kz                       interactive menu
+kz                       interactive menu (English / Türkçe)
 kz clean                 caches, temp files, logs, Recycle Bin
-kz analyze [path]        disk usage explorer
-kz status                live cpu / memory / disk / network monitor
+kz analyze [path]        disk usage explorer (b = largest files)
 kz purge [paths]         node_modules, target, bin/obj, .venv ...
 kz installer             old setup files in Downloads / Desktop
+kz dupes [paths]         duplicate files
+kz privacy               usage traces
 kz uninstall             remove programs + leftovers
 kz upgrade               update installed programs (winget)
 kz drivers               driver updates from Windows Update
-kz drivers --installed   installed drivers, oldest first
+kz startup               startup programs on / off
+kz debloat               promo apps and Windows ads
+kz health                system health report
+kz status                live cpu / memory / disk / network
 kz optimize              dns flush, icon cache, ssd trim, dism, sfc
+kz schedule weekly       automatic cleaning
+kz config lang tr        language / theme
+kz update                update kazma
 kz whitelist             paths kazma must never delete
 kz history               what kazma has done
 ```

@@ -14,21 +14,26 @@ const HISTORY: usize = 120;
 
 fn level_color(pct: f64) -> Color {
     if pct >= 85.0 {
-        ui::WARN
+        ui::warn_c()
     } else if pct >= 60.0 {
-        ui::HI
+        ui::hi()
     } else {
-        ui::FG
+        ui::fg()
     }
 }
 
 fn meter(label: &str, pct: f64, extra: String, width: u16) -> Line<'static> {
-    let bar_w = (width as usize).saturating_sub(label.len() + extra.len() + 12).clamp(5, 60);
+    let bar_w = (width as usize)
+        .saturating_sub(label.len() + extra.len() + 12)
+        .clamp(5, 60);
     Line::from(vec![
-        Span::styled(format!("{label} "), Style::new().fg(ui::FG)),
-        Span::styled(ui::bar(pct / 100.0, bar_w), Style::new().fg(level_color(pct))),
-        Span::styled(format!(" {pct:>5.1}% "), Style::new().fg(ui::HI)),
-        Span::styled(extra, Style::new().fg(ui::DIM)),
+        Span::styled(format!("{label} "), Style::new().fg(ui::fg())),
+        Span::styled(
+            ui::bar(pct / 100.0, bar_w),
+            Style::new().fg(level_color(pct)),
+        ),
+        Span::styled(format!(" {pct:>5.1}% "), Style::new().fg(ui::hi())),
+        Span::styled(extra, Style::new().fg(ui::dim())),
     ])
 }
 
@@ -40,7 +45,8 @@ fn spark(data: &VecDeque<f64>, width: usize, max: f64) -> String {
         .iter()
         .skip(start)
         .map(|v| {
-            let idx = ((v / max.max(1e-9)).clamp(0.0, 1.0) * (RAMP.len() - 1) as f64).round() as usize;
+            let idx =
+                ((v / max.max(1e-9)).clamp(0.0, 1.0) * (RAMP.len() - 1) as f64).round() as usize;
             RAMP[idx] as char
         })
         .collect();
@@ -51,7 +57,12 @@ fn spark(data: &VecDeque<f64>, width: usize, max: f64) -> String {
 }
 
 fn uptime(secs: u64) -> String {
-    format!("{}d {:02}h {:02}m", secs / 86_400, secs % 86_400 / 3600, secs % 3600 / 60)
+    format!(
+        "{}d {:02}h {:02}m",
+        secs / 86_400,
+        secs % 86_400 / 3600,
+        secs % 3600 / 60
+    )
 }
 
 pub fn run() -> anyhow::Result<()> {
@@ -82,9 +93,15 @@ pub fn run() -> anyhow::Result<()> {
             }
             tick += 1;
 
-            let (rx, tx) = nets.iter().fold((0u64, 0u64), |(r, t), (_, d)| (r + d.received(), t + d.transmitted()));
+            let (rx, tx) = nets.iter().fold((0u64, 0u64), |(r, t), (_, d)| {
+                (r + d.received(), t + d.transmitted())
+            });
             let (rx_s, tx_s) = (rx as f64 / dt, tx as f64 / dt);
-            for (h, v) in [(&mut cpu_hist, sys.global_cpu_usage() as f64), (&mut rx_hist, rx_s), (&mut tx_hist, tx_s)] {
+            for (h, v) in [
+                (&mut cpu_hist, sys.global_cpu_usage() as f64),
+                (&mut rx_hist, rx_s),
+                (&mut tx_hist, tx_s),
+            ] {
                 if h.len() == HISTORY {
                     h.pop_front();
                 }
@@ -105,20 +122,34 @@ pub fn run() -> anyhow::Result<()> {
                 .areas(f.area());
 
                 let header = Line::from(vec![
-                    Span::styled(format!(" {host} "), Style::new().fg(ui::HI).bold()),
-                    Span::styled(format!(" {os} "), Style::new().fg(ui::FG)),
-                    Span::styled(format!(" up {}", uptime(System::uptime().unwrap_or(0))), Style::new().fg(ui::DIM)),
+                    Span::styled(format!(" {host} "), Style::new().fg(ui::hi()).bold()),
+                    Span::styled(format!(" {os} "), Style::new().fg(ui::fg())),
+                    Span::styled(
+                        crate::tr!(" up {}", " açık {}", uptime(System::uptime().unwrap_or(0))),
+                        Style::new().fg(ui::dim()),
+                    ),
                 ]);
-                f.render_widget(Paragraph::new(header).block(ui::block("kazma status")), head);
+                f.render_widget(
+                    Paragraph::new(header).block(ui::block("kazma status")),
+                    head,
+                );
 
                 // CPU
                 let inner_w = cpu.width.saturating_sub(4);
                 let g = sys.global_cpu_usage() as f64;
                 let mut lines = vec![
-                    meter("CPU", g, format!("{} cores", cpus.len()), inner_w),
+                    meter(
+                        "CPU",
+                        g,
+                        crate::tr!("{} cores", "{} çekirdek", cpus.len()),
+                        inner_w,
+                    ),
                     Line::from(Span::styled(
-                        format!("    {}", spark(&cpu_hist, inner_w.saturating_sub(4) as usize, 100.0)),
-                        Style::new().fg(ui::FG),
+                        format!(
+                            "    {}",
+                            spark(&cpu_hist, inner_w.saturating_sub(4) as usize, 100.0)
+                        ),
+                        Style::new().fg(ui::fg()),
                     )),
                 ];
                 let half = inner_w / 2;
@@ -127,7 +158,12 @@ pub fn run() -> anyhow::Result<()> {
                     let mut spans = vec![];
                     for (j, c) in chunk.iter().enumerate() {
                         let idx = row * 2 + j;
-                        let m = meter(&format!("{idx:>3}"), c.usage() as f64, String::new(), half.saturating_sub(1));
+                        let m = meter(
+                            &format!("{idx:>3}"),
+                            c.usage() as f64,
+                            String::new(),
+                            half.saturating_sub(1),
+                        );
                         spans.extend(m.spans);
                         spans.push(Span::raw(" "));
                     }
@@ -136,34 +172,70 @@ pub fn run() -> anyhow::Result<()> {
                 f.render_widget(Paragraph::new(lines).block(ui::block("cpu")), cpu);
 
                 // Memory + network
-                let [mem_l, net_r] = Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)]).areas(mem);
+                let [mem_l, net_r] =
+                    Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)])
+                        .areas(mem);
                 let (tm, um) = (sys.total_memory(), sys.used_memory());
                 let (ts, us) = (sys.total_swap(), sys.used_swap());
-                let pct = |u: u64, t: u64| if t == 0 { 0.0 } else { u as f64 * 100.0 / t as f64 };
+                let pct = |u: u64, t: u64| {
+                    if t == 0 {
+                        0.0
+                    } else {
+                        u as f64 * 100.0 / t as f64
+                    }
+                };
                 let w = mem_l.width.saturating_sub(4);
                 f.render_widget(
                     Paragraph::new(vec![
-                        meter("RAM ", pct(um, tm), format!("{}/{}", ui::human(um), ui::human(tm)), w),
-                        meter("SWAP", pct(us, ts), format!("{}/{}", ui::human(us), ui::human(ts)), w),
+                        meter(
+                            "RAM ",
+                            pct(um, tm),
+                            format!("{}/{}", ui::human(um), ui::human(tm)),
+                            w,
+                        ),
+                        meter(
+                            "SWAP",
+                            pct(us, ts),
+                            format!("{}/{}", ui::human(us), ui::human(ts)),
+                            w,
+                        ),
                     ])
-                    .block(ui::block("memory")),
+                    .block(ui::block(ui::t("memory", "bellek"))),
                     mem_l,
                 );
                 let nw = net_r.width.saturating_sub(4) as usize;
-                let net_max = rx_hist.iter().chain(tx_hist.iter()).cloned().fold(1.0, f64::max);
+                let net_max = rx_hist
+                    .iter()
+                    .chain(tx_hist.iter())
+                    .cloned()
+                    .fold(1.0, f64::max);
                 let sw = nw.saturating_sub(18);
                 f.render_widget(
                     Paragraph::new(vec![
                         Line::from(vec![
-                            Span::styled(format!("down {:>10}/s ", ui::human(rx_s as u64)), Style::new().fg(ui::HI)),
-                            Span::styled(spark(&rx_hist, sw, net_max), Style::new().fg(ui::FG)),
+                            Span::styled(
+                                crate::tr!(
+                                    "down {:>10}/s ",
+                                    "indir {:>10}/s ",
+                                    ui::human(rx_s as u64)
+                                ),
+                                Style::new().fg(ui::hi()),
+                            ),
+                            Span::styled(spark(&rx_hist, sw, net_max), Style::new().fg(ui::fg())),
                         ]),
                         Line::from(vec![
-                            Span::styled(format!("up   {:>10}/s ", ui::human(tx_s as u64)), Style::new().fg(ui::HI)),
-                            Span::styled(spark(&tx_hist, sw, net_max), Style::new().fg(ui::FG)),
+                            Span::styled(
+                                crate::tr!(
+                                    "up   {:>10}/s ",
+                                    "yükle {:>10}/s ",
+                                    ui::human(tx_s as u64)
+                                ),
+                                Style::new().fg(ui::hi()),
+                            ),
+                            Span::styled(spark(&tx_hist, sw, net_max), Style::new().fg(ui::fg())),
                         ]),
                     ])
-                    .block(ui::block("network")),
+                    .block(ui::block(ui::t("network", "ağ"))),
                     net_r,
                 );
 
@@ -175,33 +247,66 @@ pub fn run() -> anyhow::Result<()> {
                         let (t, a) = (d.total_space(), d.available_space());
                         let used = t.saturating_sub(a);
                         let mp = d.mount_point().to_string_lossy();
-                        meter(&format!("{:<6}", ui::truncate(&mp, 6)), pct(used, t), format!("{} free of {}", ui::human(a), ui::human(t)), dw)
+                        meter(
+                            &format!("{:<6}", ui::truncate(&mp, 6)),
+                            pct(used, t),
+                            crate::tr!("{} free of {}", "{} boş / {}", ui::human(a), ui::human(t)),
+                            dw,
+                        )
                     })
                     .collect();
-                f.render_widget(Paragraph::new(dl).block(ui::block("disks")), mid);
+                f.render_widget(
+                    Paragraph::new(dl).block(ui::block(ui::t("disks", "diskler"))),
+                    mid,
+                );
 
                 // Processes
                 let mut ps: Vec<_> = sys.processes().values().collect();
-                ps.sort_by(|a, b| b.cpu_usage().total_cmp(&a.cpu_usage()).then(b.memory().cmp(&a.memory())));
+                ps.sort_by(|a, b| {
+                    b.cpu_usage()
+                        .total_cmp(&a.cpu_usage())
+                        .then(b.memory().cmp(&a.memory()))
+                });
                 let rows = procs.height.saturating_sub(3) as usize;
                 let ncpu = cpus.len().max(1) as f32;
                 let mut pl = vec![Line::from(Span::styled(
                     format!("{:>7}  {:>6}  {:>10}  {}", "PID", "CPU%", "MEM", "NAME"),
-                    Style::new().fg(ui::DIM),
+                    Style::new().fg(ui::dim()),
                 ))];
                 pl.extend(ps.iter().take(rows).map(|p| {
                     let c = p.cpu_usage() / ncpu;
                     Line::from(vec![
-                        Span::styled(format!("{:>7}  ", p.pid().as_u32()), Style::new().fg(ui::DIM)),
-                        Span::styled(format!("{c:>6.1}  "), Style::new().fg(level_color(c as f64))),
-                        Span::styled(format!("{:>10}  ", ui::human(p.memory())), Style::new().fg(ui::HI)),
-                        Span::styled(p.name().to_string_lossy().into_owned(), Style::new().fg(ui::FG)),
+                        Span::styled(
+                            format!("{:>7}  ", p.pid().as_u32()),
+                            Style::new().fg(ui::dim()),
+                        ),
+                        Span::styled(
+                            format!("{c:>6.1}  "),
+                            Style::new().fg(level_color(c as f64)),
+                        ),
+                        Span::styled(
+                            format!("{:>10}  ", ui::human(p.memory())),
+                            Style::new().fg(ui::hi()),
+                        ),
+                        Span::styled(
+                            p.name().to_string_lossy().into_owned(),
+                            Style::new().fg(ui::fg()),
+                        ),
                     ])
                 }));
-                f.render_widget(Paragraph::new(pl).block(ui::block("top processes")), procs);
+                f.render_widget(
+                    Paragraph::new(pl).block(ui::block(ui::t(
+                        "top processes",
+                        "en çok kaynak kullananlar",
+                    ))),
+                    procs,
+                );
 
                 f.render_widget(
-                    Paragraph::new(Span::styled(" [q] quit   refresh 1s", Style::new().fg(ui::DIM))),
+                    Paragraph::new(Span::styled(
+                        ui::t(" [q] quit   refresh 1s", " [q] çık   yenileme 1 sn"),
+                        Style::new().fg(ui::dim()),
+                    )),
                     Rect { ..foot },
                 );
             })?;

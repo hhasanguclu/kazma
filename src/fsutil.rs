@@ -62,7 +62,11 @@ pub fn scan_tree(path: &Path, cutoff: Option<SystemTime>) -> Stats {
                 scan_tree(&e.path(), cutoff)
             } else {
                 match e.metadata() {
-                    Ok(m) if old_enough(&m, cutoff) => Stats { bytes: m.len(), files: 1, failed: 0 },
+                    Ok(m) if old_enough(&m, cutoff) => Stats {
+                        bytes: m.len(),
+                        files: 1,
+                        failed: 0,
+                    },
                     _ => Stats::default(),
                 }
             }
@@ -94,7 +98,10 @@ pub fn delete_contents(dir: &Path, cutoff: Option<SystemTime>, dry_run: bool) ->
         return Stats::default();
     }
     if !is_safe_target(dir) {
-        return Stats { failed: 1, ..Default::default() };
+        return Stats {
+            failed: 1,
+            ..Default::default()
+        };
     }
     delete_inner(dir, cutoff, dry_run)
 }
@@ -112,12 +119,18 @@ fn delete_inner(dir: &Path, cutoff: Option<SystemTime>, dry_run: bool) -> Stats 
                 return Stats::default();
             }
             let Ok(ft) = e.file_type() else {
-                return Stats { failed: 1, ..Default::default() };
+                return Stats {
+                    failed: 1,
+                    ..Default::default()
+                };
             };
             if ft.is_symlink() {
                 // Remove the link only, never its target.
                 if !dry_run && fs::remove_file(&path).is_err() && fs::remove_dir(&path).is_err() {
-                    return Stats { failed: 1, ..Default::default() };
+                    return Stats {
+                        failed: 1,
+                        ..Default::default()
+                    };
                 }
                 Stats::default()
             } else if ft.is_dir() {
@@ -128,15 +141,25 @@ fn delete_inner(dir: &Path, cutoff: Option<SystemTime>, dry_run: bool) -> Stats 
                 s
             } else {
                 let Ok(meta) = e.metadata() else {
-                    return Stats { failed: 1, ..Default::default() };
+                    return Stats {
+                        failed: 1,
+                        ..Default::default()
+                    };
                 };
                 if !old_enough(&meta, cutoff) {
                     return Stats::default();
                 }
                 if dry_run || remove_file_forced(&path).is_ok() {
-                    Stats { bytes: meta.len(), files: 1, failed: 0 }
+                    Stats {
+                        bytes: meta.len(),
+                        files: 1,
+                        failed: 0,
+                    }
                 } else {
-                    Stats { failed: 1, ..Default::default() }
+                    Stats {
+                        failed: 1,
+                        ..Default::default()
+                    }
                 }
             }
         })
@@ -149,7 +172,10 @@ pub fn delete_tree(dir: &Path, dry_run: bool) -> Stats {
         return Stats::default();
     }
     if !is_safe_target(dir) {
-        return Stats { failed: 1, ..Default::default() };
+        return Stats {
+            failed: 1,
+            ..Default::default()
+        };
     }
     let s = delete_inner(dir, None, dry_run);
     if !dry_run {
@@ -167,9 +193,16 @@ pub fn delete_file(path: &Path, dry_run: bool) -> Stats {
         return Stats::default();
     };
     if dry_run || remove_file_forced(path).is_ok() {
-        Stats { bytes: meta.len(), files: 1, failed: 0 }
+        Stats {
+            bytes: meta.len(),
+            files: 1,
+            failed: 0,
+        }
     } else {
-        Stats { failed: 1, ..Default::default() }
+        Stats {
+            failed: 1,
+            ..Default::default()
+        }
     }
 }
 
@@ -193,27 +226,46 @@ pub fn is_safe_target(path: &Path) -> bool {
     if !path.is_absolute() {
         return false;
     }
-    let normal = path.components().filter(|c| matches!(c, Component::Normal(_))).count();
+    let normal = path
+        .components()
+        .filter(|c| matches!(c, Component::Normal(_)))
+        .count();
     if normal < 2 {
         return false;
     }
     let deny = [
-        "USERPROFILE", "HOME", "SystemRoot", "windir", "ProgramFiles", "ProgramFiles(x86)",
-        "ProgramData", "LOCALAPPDATA", "APPDATA", "SystemDrive", "PUBLIC",
+        "USERPROFILE",
+        "HOME",
+        "SystemRoot",
+        "windir",
+        "ProgramFiles",
+        "ProgramFiles(x86)",
+        "ProgramData",
+        "LOCALAPPDATA",
+        "APPDATA",
+        "SystemDrive",
+        "PUBLIC",
     ];
-    let canon = |p: &Path| p.to_string_lossy().trim_end_matches(['\\', '/']).to_lowercase();
+    let canon = |p: &Path| {
+        p.to_string_lossy()
+            .trim_end_matches(['\\', '/'])
+            .to_lowercase()
+    };
     let target = canon(path);
     for var in deny {
         if let Some(v) = std::env::var_os(var)
-            && canon(Path::new(&v)) == target {
-                return false;
-            }
+            && canon(Path::new(&v)) == target
+        {
+            return false;
+        }
     }
     true
 }
 
 pub fn env_path(var: &str) -> Option<PathBuf> {
-    std::env::var_os(var).filter(|v| !v.is_empty()).map(PathBuf::from)
+    std::env::var_os(var)
+        .filter(|v| !v.is_empty())
+        .map(PathBuf::from)
 }
 
 pub fn home() -> Option<PathBuf> {
