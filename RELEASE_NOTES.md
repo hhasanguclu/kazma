@@ -37,11 +37,15 @@ kz clean            caches, temp files, logs, Recycle Bin
 kz analyze [path]   disk usage explorer
 kz status           live cpu / memory / disk / network monitor
 kz purge [paths]    node_modules, target, bin/obj, .venv ...
+kz upgrade          update installed programs (winget)
+kz drivers          driver updates from Windows Update
+kz drivers --installed   installed drivers, oldest first
 kz history          what kazma has removed
 ```
 
 Every command that deletes supports `--dry-run` (`-n`) to preview first.
-Run `kz clean` from an **elevated** terminal to also clean Windows Update and system temp caches.
+Run from an **elevated** terminal (Run as administrator) to install drivers and to also clean
+Windows Update and system temp caches. A restore point is created before any driver install.
 
 ## Uninstall
 

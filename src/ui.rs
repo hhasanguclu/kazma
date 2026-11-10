@@ -99,7 +99,12 @@ pub struct CheckItem {
 }
 
 /// Full-screen checklist. Returns the checked flags, or None if cancelled.
-pub fn checklist(title: &str, mut items: Vec<CheckItem>) -> anyhow::Result<Option<Vec<bool>>> {
+pub fn checklist(title: &str, items: Vec<CheckItem>) -> anyhow::Result<Option<Vec<bool>>> {
+    checklist_opts(title, items, true)
+}
+
+/// Checklist; `show_size` hides the size column for items without a size (programs, drivers).
+pub fn checklist_opts(title: &str, mut items: Vec<CheckItem>, show_size: bool) -> anyhow::Result<Option<Vec<bool>>> {
     if items.is_empty() {
         return Ok(Some(vec![]));
     }
@@ -115,7 +120,7 @@ pub fn checklist(title: &str, mut items: Vec<CheckItem>) -> anyhow::Result<Optio
                 .iter()
                 .map(|i| {
                     let mark = if i.checked { "[x]" } else { "[ ]" };
-                    let size = format!("{:>10}", human(i.size));
+                    let size = if show_size { format!("{:>10}", human(i.size)) } else { String::new() };
                     let label_w = w.saturating_sub(20).min(40);
                     let label = truncate(&i.label, label_w);
                     let detail_w = w.saturating_sub(label_w + 20);
@@ -133,7 +138,10 @@ pub fn checklist(title: &str, mut items: Vec<CheckItem>) -> anyhow::Result<Optio
                 .highlight_symbol(">");
             f.render_stateful_widget(list, main, &mut state);
             let help = Line::from(vec![
-                Span::styled(format!(" selected: {count}  ->  {}   ", human(total)), Style::new().fg(HI).bold()),
+                Span::styled(
+                    if show_size { format!(" selected: {count}  ->  {}   ", human(total)) } else { format!(" selected: {count}   ") },
+                    Style::new().fg(HI).bold(),
+                ),
                 Span::styled("[space] toggle  [a] all  [n] none  [enter] go  [q] cancel", Style::new().fg(DIM)),
             ]);
             f.render_widget(Paragraph::new(help).block(block("keys")), foot);

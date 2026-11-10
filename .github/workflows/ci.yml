@@ -30,6 +30,12 @@ jobs:
           target/release/kz.exe --version
           target/release/kz.exe clean --dry-run
           target/release/kz.exe purge --dry-run "$env:GITHUB_WORKSPACE"
+          target/release/kz.exe drivers --installed
+          target/release/kz.exe upgrade --dry-run
+      - name: Smoke test (Windows Update driver search)
+        continue-on-error: true
+        timeout-minutes: 10
+        run: target/release/kz.exe drivers --dry-run
       - name: Package
         shell: pwsh
         run: |

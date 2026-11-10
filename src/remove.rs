@@ -4,7 +4,7 @@ use crate::{oplog, ui};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
-fn ask(question: &str) -> bool {
+pub fn ask(question: &str) -> bool {
     print!("  ?? {question} [y/N] ");
     let _ = std::io::stdout().flush();
     let mut s = String::new();

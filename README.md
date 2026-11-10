@@ -54,6 +54,8 @@ This removes the exe, its PATH entry and the log folder `%LOCALAPPDATA%\kazma`.
 | `kz status` | Live CPU, memory, disk, network and top-process dashboard |
 | `kz purge [paths...]` | Build artifacts: `node_modules`, `target`, `bin/obj`, `.venv`, `__pycache__`, ... |
 | `kz history` | Log of everything kazma removed |
+| `kz upgrade` | Update installed programs through winget (pick from a checklist, silent install) |
+| `kz drivers` | Driver updates from Windows Update; `--installed` lists third-party drivers by age |
 | `kz remove` | Uninstall kazma |
 
 Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`) to skip the selection screen.
@@ -67,6 +69,9 @@ Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`)
 - Symlinks and junctions are never followed; locked files are skipped, not forced.
 - System locations (Windows Update cache, `C:\Windows\Temp`, ...) are only offered when run as administrator.
 - Without a terminal (scripts, pipes) nothing is deleted unless `--yes` is passed.
+- `drivers` only installs drivers offered by **Windows Update** (Microsoft-signed, matched to your exact
+  hardware IDs), never from third-party download sites, and creates a **system restore point** first.
+- `upgrade` uses **winget**, the official Windows package manager, so installers come from each vendor's own source.
 - Every deletion is appended to `%LOCALAPPDATA%\kazma\operations.log`. Set `KAZMA_NO_OPLOG=1` to disable.
 
 ## Build
@@ -99,6 +104,9 @@ src/
   ui.rs       ASCII theme, banner, checklist widget
   oplog.rs    operation log
   remove.rs   self-uninstall
+  upgrade.rs  winget program updates
+  drivers.rs  Windows Update driver updates
+  ps.rs       PowerShell helpers
 ```
 
 ## License

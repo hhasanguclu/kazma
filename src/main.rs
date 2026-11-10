@@ -2,13 +2,16 @@
 
 mod analyze;
 mod clean;
+mod drivers;
 mod fsutil;
 mod oplog;
+mod ps;
 mod purge;
 mod remove;
 mod status;
 mod sys;
 mod ui;
+mod upgrade;
 
 use clap::{Parser, Subcommand};
 use crossterm::event::{self, KeyCode};
@@ -50,6 +53,28 @@ enum Cmd {
         #[arg(long, short)]
         yes: bool,
     },
+    /// Update installed programs with winget
+    Upgrade {
+        /// List available updates without installing
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        /// Upgrade everything without the selection screen
+        #[arg(long, short)]
+        yes: bool,
+    },
+    /// Find and install driver updates from Windows Update
+    Drivers {
+        /// List installed third-party drivers by age instead
+        #[arg(long)]
+        installed: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        #[arg(long, short)]
+        yes: bool,
+        /// Do not create a system restore point before installing
+        #[arg(long)]
+        no_restore_point: bool,
+    },
     /// Uninstall kazma from this computer (exe, PATH entry, log)
     Remove {
         #[arg(long, short = 'n')]
@@ -64,11 +89,13 @@ enum Cmd {
     },
 }
 
-const MENU: [(&str, &str); 6] = [
+const MENU: [(&str, &str); 8] = [
     ("clean", "free up space: caches, temp files, logs, recycle bin"),
     ("analyze", "explore what is using your disk"),
     ("status", "live cpu / memory / disk / network monitor"),
     ("purge", "delete project build artifacts (node_modules, target...)"),
+    ("upgrade", "update installed programs (winget)"),
+    ("drivers", "driver updates from windows update"),
     ("history", "show past operations"),
     ("quit", "exit kazma"),
 ];
@@ -111,7 +138,7 @@ fn menu() -> anyhow::Result<Option<usize>> {
                     .highlight_symbol(">");
                 f.render_stateful_widget(l, list, &mut state);
                 f.render_widget(
-                    Paragraph::new(Span::styled(" [up/down] move  [enter] select  [1-6] jump  [q] quit", Style::new().fg(ui::DIM))),
+                    Paragraph::new(Span::styled(" [up/down] move  [enter] select  [1-8] jump  [q] quit", Style::new().fg(ui::DIM))),
                     foot,
                 );
             })?;
@@ -121,7 +148,7 @@ fn menu() -> anyhow::Result<Option<usize>> {
                 KeyCode::Up | KeyCode::Char('k') => state.select(Some(sel.saturating_sub(1))),
                 KeyCode::Down | KeyCode::Char('j') => state.select(Some((sel + 1).min(MENU.len() - 1))),
                 KeyCode::Enter => return Ok(Some(sel)),
-                KeyCode::Char(c @ '1'..='6') => return Ok(Some(c as usize - '1' as usize)),
+                KeyCode::Char(c @ '1'..='8') => return Ok(Some(c as usize - '1' as usize)),
                 KeyCode::Char('q') | KeyCode::Esc => return Ok(None),
                 _ => {}
             }
@@ -145,6 +172,8 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Analyze { path }) => analyze::run(path),
         Some(Cmd::Status) => status::run(),
         Some(Cmd::Purge { paths, dry_run, yes }) => purge::run(paths, dry_run, yes),
+        Some(Cmd::Upgrade { dry_run, yes }) => upgrade::run(dry_run, yes),
+        Some(Cmd::Drivers { installed, dry_run, yes, no_restore_point }) => drivers::run(installed, dry_run, yes, no_restore_point),
         Some(Cmd::Remove { dry_run, yes }) => remove::run(dry_run, yes),
         Some(Cmd::History { limit }) => {
             oplog::show_history(limit);
@@ -156,7 +185,9 @@ fn main() -> anyhow::Result<()> {
                 Some(1) => analyze::run(None)?,
                 Some(2) => status::run()?,
                 Some(3) => { purge::run(vec![], false, false)?; pause(); }
-                Some(4) => { oplog::show_history(50); pause(); }
+                Some(4) => { upgrade::run(false, false)?; pause(); }
+                Some(5) => { drivers::run(false, false, false, false)?; pause(); }
+                Some(6) => { oplog::show_history(50); pause(); }
                 _ => return Ok(()),
             }
         },
