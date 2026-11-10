@@ -109,7 +109,7 @@ try {
 try {
   $mp = Get-MpComputerStatus -ErrorAction Stop
   $st = if ($mp.RealTimeProtectionEnabled) { 'ok' } else { 'bad' }
-  Add $X (T 'Defender real-time protection' 'Defender gerçek zamanlı koruma') ([string]$mp.RealTimeProtectionEnabled) $st
+  Add $X (T 'Defender real-time protection' 'Defender gerçek zamanlı koruma') $(if ($mp.RealTimeProtectionEnabled) { T 'on' 'açık' } else { T 'off (or another antivirus is active)' 'kapalı (ya da başka antivirüs etkin)' }) $st
   $age = $mp.AntivirusSignatureAge
   $st = if ($age -gt 7) { 'warn' } else { 'ok' }
   Add $X (T 'Virus definitions age' 'Virüs tanımlarının yaşı') ("{0} {1}" -f $age, (T 'days' 'gün')) $st
@@ -158,7 +158,7 @@ pub fn run() -> anyhow::Result<()> {
             section = c.section.clone();
             ui::section(&section);
         }
-        let line = format!("{:<34} {}", ui::truncate(&c.item, 34), c.value);
+        let line = format!("{:<44} {}", ui::truncate(&c.item, 44), c.value);
         match c.status.as_str() {
             "ok" => ui::ok(&line),
             "warn" => ui::warn(&line),

@@ -258,7 +258,7 @@ pub fn checklist_opts(
                     } else {
                         String::new()
                     };
-                    let label_w = w.saturating_sub(20).min(40);
+                    let label_w = w.saturating_sub(24).min(52);
                     let label = truncate(&i.label, label_w);
                     let detail_w = w.saturating_sub(label_w + 20);
                     ListItem::new(Line::from(vec![

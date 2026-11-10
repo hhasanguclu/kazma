@@ -18,8 +18,9 @@ Register-ScheduledTask -TaskPath '\kazma\' -TaskName 'kazma clean' -Action $a -T
 "#;
 
 const STATUS: &str = r#"
-$t = Get-ScheduledTask -TaskPath '\kazma\' -TaskName 'kazma clean' -ErrorAction SilentlyContinue
-if (-not $t) { return }
+$t = $null
+try { $t = Get-ScheduledTask -TaskPath '\kazma\' -TaskName 'kazma clean' -ErrorAction Stop } catch {}
+if ($t) {
 $i = $t | Get-ScheduledTaskInfo
 [pscustomobject]@{
   State = [string]$t.State
@@ -27,10 +28,11 @@ $i = $t | Get-ScheduledTaskInfo
   Last  = $(if ($i.LastRunTime -and $i.LastRunTime.Year -gt 2000) { $i.LastRunTime.ToString('yyyy-MM-dd HH:mm') } else { '' })
   Exe   = [string]$t.Actions[0].Execute
 } | ConvertTo-Json -Compress
+}
 "#;
 
 const REMOVE: &str = r#"
-Unregister-ScheduledTask -TaskPath '\kazma\' -TaskName 'kazma clean' -Confirm:$false -ErrorAction SilentlyContinue
+try { Unregister-ScheduledTask -TaskPath '\kazma\' -TaskName 'kazma clean' -Confirm:$false -ErrorAction Stop } catch {}
 "#;
 
 #[derive(Debug, serde::Deserialize)]

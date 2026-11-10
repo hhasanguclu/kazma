@@ -229,6 +229,16 @@ fn run_target(t: &Target, dry: bool) -> Stats {
     }
 }
 
+fn group_name(group: &str) -> &'static str {
+    match group {
+        "User" => ui::t("User", "Kullanıcı"),
+        "Browser" => ui::t("Browser", "Tarayıcı"),
+        "Apps" => ui::t("Apps", "Uygulamalar"),
+        "Dev" => ui::t("Dev", "Geliştirici"),
+        _ => ui::t("System", "Sistem"),
+    }
+}
+
 pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     let admin = sys::is_admin();
     ui::print_banner(if dry {
@@ -297,7 +307,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         let items = measured
             .iter()
             .map(|(t, s)| ui::CheckItem {
-                label: format!("{:<8}{}", t.group, t.name),
+                label: format!("{:<12}{}", group_name(t.group), t.name),
                 detail: tr!("{} files", "{} dosya", s.files),
                 size: s.bytes,
                 checked: t.default_on,
@@ -323,13 +333,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     for ((t, s), on) in measured.iter().zip(selection) {
         if t.group != group {
             group = t.group;
-            ui::section(match group {
-                "User" => ui::t("User", "Kullanıcı"),
-                "Browser" => ui::t("Browser", "Tarayıcı"),
-                "Apps" => ui::t("Apps", "Uygulamalar"),
-                "Dev" => ui::t("Dev", "Geliştirici"),
-                _ => ui::t("System", "Sistem"),
-            });
+            ui::section(group_name(group));
         }
         if !on {
             ui::skip(&tr!(

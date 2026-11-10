@@ -5,9 +5,13 @@ use std::process::{Command, Output};
 /// Run a PowerShell script (stdout forced to UTF-8). `env` values are passed as
 /// environment variables so no user data ever needs to be quoted into the script.
 pub fn powershell(script: &str, env: &[(&str, &str)]) -> anyhow::Result<Output> {
+    // A silenced non-terminating error (-ErrorAction SilentlyContinue) still makes
+    // powershell.exe exit with 1 when it was the last command, so finish with an
+    // explicit `exit 0`. Real errors are terminating ($ErrorActionPreference =
+    // 'Stop') and never reach it, so they still exit with 1.
     let full = format!(
         "$ProgressPreference='SilentlyContinue';$ErrorActionPreference='Stop';\
-         [Console]::OutputEncoding=[Text.Encoding]::UTF8;{script}"
+         [Console]::OutputEncoding=[Text.Encoding]::UTF8;{script}\nexit 0"
     );
     let mut cmd = Command::new("powershell");
     cmd.args([

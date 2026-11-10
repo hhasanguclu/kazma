@@ -210,14 +210,15 @@ pub fn run(paths: Vec<PathBuf>, dry: bool, yes: bool) -> anyhow::Result<()> {
         let items = found
             .iter()
             .map(|f| ui::CheckItem {
-                label: format!("{:<7}{}", f.kind, f.path.display()),
+                label: f.path.display().to_string(),
                 detail: if f.recent {
                     tr!(
-                        "touched < {RECENT_DAYS}d ago",
-                        "< {RECENT_DAYS} gün önce değişti"
+                        "{}  touched < {RECENT_DAYS}d ago",
+                        "{}  < {RECENT_DAYS} gün önce değişti",
+                        f.kind
                     )
                 } else {
-                    String::new()
+                    f.kind.to_string()
                 },
                 size: f.size,
                 checked: !f.recent,
