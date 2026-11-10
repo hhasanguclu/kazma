@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 description = "Oldschool ASCII system cleaner & disk explorer for Windows"
 license = "MIT"
+repository = "https://github.com/hhasanguclu/kazma"
 
 [dependencies]
 anyhow = "1.0.104"
@@ -25,3 +26,6 @@ path = "src/main.rs"
 lto = true
 codegen-units = 1
 strip = true
+
+[build-dependencies]
+winresource = "0.1.34"

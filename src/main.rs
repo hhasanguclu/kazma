@@ -5,6 +5,7 @@ mod clean;
 mod fsutil;
 mod oplog;
 mod purge;
+mod remove;
 mod status;
 mod sys;
 mod ui;
@@ -44,6 +45,13 @@ enum Cmd {
     Purge {
         /// Folders to scan (default: common project folders in your profile)
         paths: Vec<PathBuf>,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        #[arg(long, short)]
+        yes: bool,
+    },
+    /// Uninstall kazma from this computer (exe, PATH entry, log)
+    Remove {
         #[arg(long, short = 'n')]
         dry_run: bool,
         #[arg(long, short)]
@@ -137,6 +145,7 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Analyze { path }) => analyze::run(path),
         Some(Cmd::Status) => status::run(),
         Some(Cmd::Purge { paths, dry_run, yes }) => purge::run(paths, dry_run, yes),
+        Some(Cmd::Remove { dry_run, yes }) => remove::run(dry_run, yes),
         Some(Cmd::History { limit }) => {
             oplog::show_history(limit);
             Ok(())

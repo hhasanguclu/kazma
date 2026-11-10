@@ -21,6 +21,29 @@ One small native binary (`kz.exe`), no installer, no telemetry.
 +------------------------------------------------------------------------+
 ```
 
+## Install
+
+Windows 10/11 x64. No admin rights needed.
+
+**PowerShell one-liner**: installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH:
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 | iex
+```
+
+**Manual**: grab `kz.exe` from the [latest release](https://github.com/hhasanguclu/kazma/releases/latest) and run it from a terminal.
+
+> The exe is not code-signed yet, so SmartScreen may warn: **More info -> Run anyway**.
+
+## Uninstall
+
+```powershell
+kz remove
+```
+
+or `iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/uninstall.ps1 | iex`.
+This removes the exe, its PATH entry and the log folder `%LOCALAPPDATA%\kazma`.
+
 ## Commands
 
 | Command | What it does |
@@ -31,6 +54,7 @@ One small native binary (`kz.exe`), no installer, no telemetry.
 | `kz status` | Live CPU, memory, disk, network and top-process dashboard |
 | `kz purge [paths...]` | Build artifacts: `node_modules`, `target`, `bin/obj`, `.venv`, `__pycache__`, ... |
 | `kz history` | Log of everything kazma removed |
+| `kz remove` | Uninstall kazma |
 
 Every deleting command supports `--dry-run` (`-n`) to preview and `--yes` (`-y`) to skip the selection screen.
 
@@ -74,6 +98,7 @@ src/
   sys.rs      Windows API layer (Recycle Bin, admin check)
   ui.rs       ASCII theme, banner, checklist widget
   oplog.rs    operation log
+  remove.rs   self-uninstall
 ```
 
 ## License

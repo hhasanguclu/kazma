@@ -199,10 +199,16 @@ mod tests {
 
     #[test]
     fn guard_rejects_roots() {
-        assert!(!is_safe_target(Path::new("/")));
-        assert!(!is_safe_target(Path::new("/tmp")));
+        // Build paths from the temp dir's root so the test works on C:\ as well as /.
+        let tmp = std::env::temp_dir();
+        let root: PathBuf = tmp.ancestors().last().unwrap().to_path_buf();
+        assert!(!is_safe_target(&root));
+        assert!(!is_safe_target(&root.join("top")));
         assert!(!is_safe_target(Path::new("relative/path")));
-        assert!(is_safe_target(Path::new("/tmp/some/cache")));
+        assert!(is_safe_target(&root.join("some").join("cache")));
+        if let Some(h) = home() {
+            assert!(!is_safe_target(&h));
+        }
     }
 
     #[test]
