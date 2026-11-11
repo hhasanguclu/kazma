@@ -9,7 +9,21 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64).
 One ~2.7 MB exe. No installer required, no telemetry.
 
-## What's new in v0.5.0
+## What's new in v0.6.0
+
+A clearer, richer ASCII interface that stays minimal:
+
+- **Main menu in two columns**: all commands on one screen, dimmed descriptions, group headings,
+  a detail bar for the selected command, left/right moves between columns
+- **Calmer look**: soft ASCII corners (`.---.` / `'---'`), quieter frames, a one-color selection bar,
+  a gradient banner in every theme
+- **Bars** show the filled part in color and the rest in the quiet line color, everywhere
+- **Key hints** with keys in the accent color; **compact three-line header** for every command
+- **Checklists**: unchecked rows step back, a clear "n of m selected" summary
+- **analyze**: name first, then size, percent and bar
+- **status**: no more noise in the network graph when idle
+
+## v0.5.0
 
 - **Instant drive scans**: run as administrator on NTFS and `kz analyze` / `kz types` read the Master File Table
   directly (the trick behind WizTree). Verified byte-for-byte against a normal scan in CI.

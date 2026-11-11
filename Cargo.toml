@@ -1,6 +1,6 @@
 [package]
 name = "kazma"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2024"
 description = "Oldschool ASCII system cleaner & disk explorer for Windows"
 license = "MIT"
