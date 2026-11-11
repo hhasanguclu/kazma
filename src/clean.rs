@@ -760,7 +760,11 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         } else {
             String::new()
         };
-        ui::ok(&format!("{:<34} {:>10}{note}", t.name, ui::human(r.bytes)));
+        ui::ok(&format!(
+            "{} {:>10}{note}",
+            ui::pad(&t.name, 34),
+            ui::human(r.bytes)
+        ));
         total.bytes += r.bytes;
         total.files += r.files;
         total.failed += r.failed;

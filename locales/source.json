@@ -174,9 +174,57 @@
   "file": "analyze.rs"
  },
  {
+  "en": "kazma backup\r\n\r\napps.json      programs that winget can reinstall\r\nprograms.txt   every installed program (install the ones not in winget by hand)\r\ndrivers\\       third-party drivers\r\nkazma\\         kazma settings\r\n\r\nTo restore on the new PC (an elevated terminal is recommended):\r\n    kz backup restore \"this folder\"\r\n",
+  "tr": "kazma yedeği\r\n\r\napps.json      winget ile kurulabilen programlar\r\nprograms.txt   tüm yüklü programlar (winget'te olmayanları elle kurun)\r\ndrivers\\       üçüncü taraf sürücüler\r\nkazma\\         kazma ayarları\r\n\r\nGeri yüklemek için yeni bilgisayarda (yönetici terminali önerilir):\r\n    kz backup restore \"bu klasör\"\r\n",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "backup :: move-to-a-new-PC kit",
+  "tr": "backup :: yeni bilgisayara taşıma paketi",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "kz backup works on Windows only.",
+  "tr": "kz backup yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
   "en": "  folder: {}",
   "tr": "  klasör: {}",
   "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "apps.json      winget app list",
+  "tr": "apps.json      winget program listesi",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "programs.txt   all installed programs",
+  "tr": "programs.txt   tüm yüklü programlar",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "drivers\\       third-party drivers",
+  "tr": "drivers\\       üçüncü taraf sürücüler",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "drivers\\       (needs administrator)",
+  "tr": "drivers\\       (yönetici gerekli)",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "kazma\\         kazma settings",
+  "tr": "kazma\\         kazma ayarları",
+  "kind": "plain",
   "file": "backup.rs"
  },
  {
@@ -210,9 +258,21 @@
   "file": "backup.rs"
  },
  {
+  "en": "exporting drivers (1-3 min)...",
+  "tr": "sürücüler dışa aktarılıyor (1-3 dk)...",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
   "en": "drivers\\  ({n} packages)          ",
   "tr": "drivers\\  ({n} paket)          ",
   "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "drivers skipped: run from an elevated terminal to include them",
+  "tr": "sürücüler atlandı: eklemek için yönetici terminalinde çalıştırın",
+  "kind": "plain",
   "file": "backup.rs"
  },
  {
@@ -224,6 +284,12 @@
  {
   "en": "done. on the new PC run:",
   "tr": "bitti. yeni bilgisayarda şunu çalıştırın:",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "backup restore :: reinstall apps and drivers",
+  "tr": "backup restore :: programları ve sürücüleri geri kur",
   "kind": "plain",
   "file": "backup.rs"
  },
@@ -240,6 +306,30 @@
   "file": "backup.rs"
  },
  {
+  "en": "reinstall programs with winget import",
+  "tr": "programları winget import ile kur",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "install drivers with pnputil",
+  "tr": "sürücüleri pnputil ile kur",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "drivers: needs administrator",
+  "tr": "sürücüler: yönetici gerekli",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "restore kazma settings (existing ones are kept)",
+  "tr": "kazma ayarlarını geri yükle (var olanlar korunur)",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
   "en": "Start?",
   "tr": "Başlansın mı?",
   "kind": "plain",
@@ -252,14 +342,38 @@
   "file": "backup.rs"
  },
  {
+  "en": "Programs (this can take a while)",
+  "tr": "Programlar (uzun sürebilir)",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
   "en": "programs installed",
   "tr": "programlar kuruldu",
   "kind": "plain",
   "file": "backup.rs"
  },
  {
+  "en": "some programs could not be installed, see above",
+  "tr": "bazı programlar kurulamadı, yukarıya bakın",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
   "en": "drivers added",
   "tr": "sürücüler eklendi",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "pnputil reported problems, see above",
+  "tr": "pnputil sorun bildirdi, yukarıya bakın",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "kazma settings restored",
+  "tr": "kazma ayarları geri yüklendi",
   "kind": "plain",
   "file": "backup.rs"
  },
@@ -326,6 +440,12 @@
  {
   "en": "Result",
   "tr": "Sonuç",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "this filesystem refused unbuffered I/O; the OS cache may inflate the numbers",
+  "tr": "bu dosya sistemi önbelleksiz G/Ç'yi reddetti; işletim sistemi önbelleği sonuçları şişirebilir",
   "kind": "plain",
   "file": "bench.rs"
  },
@@ -810,6 +930,12 @@
   "file": "catalog.rs"
  },
  {
+  "en": "rules :: your own clean rules",
+  "tr": "rules :: kendi temizlik kuralların",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
   "en": "  file: {}",
   "tr": "  dosya: {}",
   "kind": "fmt",
@@ -837,6 +963,12 @@
   "en": "{line}  (protected, ignored)",
   "tr": "{line}  (korumalı, yok sayıldı)",
   "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "User temp files (>24h)",
+  "tr": "Kullanıcı geçici dosyaları (>24s)",
+  "kind": "plain",
   "file": "clean.rs"
  },
  {
@@ -1002,6 +1134,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "Delivery Optimization cache",
+  "tr": "Teslim İyileştirme önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
   "en": "System error reports (WER)",
   "tr": "Sistem hata raporları (WER)",
   "kind": "plain",
@@ -1068,6 +1206,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "clean :: dry run, nothing will be deleted",
+  "tr": "clean :: deneme, hiçbir şey silinmeyecek",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
   "en": "clean :: reclaim disk space",
   "tr": "clean :: disk alanı kazan",
   "kind": "plain",
@@ -1086,8 +1230,26 @@
   "file": "clean.rs"
  },
  {
+  "en": "no (system items skipped)",
+  "tr": "hayır (sistem öğeleri atlandı)",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
   "en": "scanning...",
   "tr": "taranıyor...",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Nothing to clean. Already spotless.",
+  "tr": "Temizlenecek bir şey yok. Tertemiz.",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "not an interactive terminal: re-run with --yes to delete, or --dry-run to preview",
+  "tr": "etkileşimli terminal değil: silmek için --yes, önizlemek için --dry-run ile çalıştırın",
   "kind": "plain",
   "file": "clean.rs"
  },
@@ -1095,6 +1257,12 @@
   "en": "{} files",
   "tr": "{} dosya",
   "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "kazma clean :: select what to remove",
+  "tr": "kazma clean :: silinecekleri seç",
+  "kind": "plain",
   "file": "clean.rs"
  },
  {
@@ -1140,6 +1308,18 @@
   "file": "clean.rs"
  },
  {
+  "en": "context :: Explorer right-click menu",
+  "tr": "context :: Gezgin sağ tık menüsü",
+  "kind": "plain",
+  "file": "context.rs"
+ },
+ {
+  "en": "kz context works on Windows only.",
+  "tr": "kz context yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "context.rs"
+ },
+ {
   "en": "kz.exe is in a temporary place ({}); the menu entry breaks if it moves.",
   "tr": "kz.exe geçici bir yerde ({}); taşınırsa menü girdisi bozulur.",
   "kind": "fmt",
@@ -1164,9 +1344,21 @@
   "file": "context.rs"
  },
  {
+  "en": "right-click entry removed",
+  "tr": "sağ tık girdisi kaldırıldı",
+  "kind": "plain",
+  "file": "context.rs"
+ },
+ {
   "en": "installed ({n}/3 menus).  remove: kz context uninstall",
   "tr": "kurulu ({n}/3 menü).  kaldır: kz context uninstall",
   "kind": "fmt",
+  "file": "context.rs"
+ },
+ {
+  "en": "not installed.  add: kz context install",
+  "tr": "kurulu değil.  ekle: kz context install",
+  "kind": "plain",
   "file": "context.rs"
  },
  {
@@ -1314,8 +1506,62 @@
   "file": "debloat.rs"
  },
  {
+  "en": "Previous Windows installation (Windows.old)",
+  "tr": "Önceki Windows kurulumu (Windows.old)",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "you can no longer roll back to it",
+  "tr": "artık ona geri dönülemez",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Windows upgrade setup files",
+  "tr": "Windows yükseltme kurulum dosyaları",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Windows ESD installation files",
+  "tr": "Windows ESD kurulum dosyaları",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "needed only for 'Reset this PC' without download",
+  "tr": "yalnızca indirmesiz 'Bu bilgisayarı sıfırla' için gerekir",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
   "en": "System memory dumps",
   "tr": "Sistem bellek dökümleri",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "only needed to debug old crashes",
+  "tr": "yalnızca eski çökmeleri incelemek için gerekir",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Shrink the hibernation file",
+  "tr": "Hazırda bekletme dosyasını küçült",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Fast Startup keeps working; full hibernate is turned off",
+  "tr": "Hızlı Başlangıç çalışmaya devam eder; tam hazırda bekletme kapanır",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Older restore points (newest is kept)",
+  "tr": "Eski geri yükleme noktaları (en yenisi kalır)",
   "kind": "plain",
   "file": "deepclean.rs"
  },
@@ -1338,6 +1584,30 @@
   "file": "deepclean.rs"
  },
  {
+  "en": "deepclean :: the big space hogs",
+  "tr": "deepclean :: büyük yer kaplayanlar",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "kz deepclean works on Windows only.",
+  "tr": "kz deepclean yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "measuring (Windows.old can take a minute)...",
+  "tr": "ölçülüyor (Windows.old bir dakika sürebilir)...",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Nothing big to clean. Nice.",
+  "tr": "Temizlenecek büyük bir şey yok. Güzel.",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
   "en": "Found",
   "tr": "Bulunanlar",
   "kind": "plain",
@@ -1347,6 +1617,24 @@
   "en": "up to {} can be freed",
   "tr": "en fazla {} kazanılabilir",
   "kind": "fmt",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "cleaning these needs an elevated terminal: kz deepclean",
+  "tr": "temizlemek için yönetici terminali gerekir: kz deepclean",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "kazma deepclean :: select what to remove",
+  "tr": "kazma deepclean :: kaldırılacakları seç",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Cleaning (Disk Cleanup may open a progress window)",
+  "tr": "Temizleniyor (Disk Temizleme ilerleme penceresi açabilir)",
+  "kind": "plain",
   "file": "deepclean.rs"
  },
  {
@@ -1386,6 +1674,30 @@
   "file": "drivers.rs"
  },
  {
+  "en": "NVIDIA GPU: newest game-ready drivers come from the NVIDIA App (nvidia.com).",
+  "tr": "NVIDIA GPU: en yeni oyun sürücüleri NVIDIA App'ten gelir (nvidia.com).",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "AMD GPU: newest drivers come from AMD Software: Adrenalin Edition (amd.com).",
+  "tr": "AMD GPU: en yeni sürücüler AMD Software: Adrenalin Edition'dan gelir (amd.com).",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "Intel GPU: newest drivers come from Intel Driver & Support Assistant (intel.com).",
+  "tr": "Intel GPU: en yeni sürücüler Intel Driver & Support Assistant'tan gelir (intel.com).",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "reading installed drivers...",
+  "tr": "yüklü sürücüler okunuyor...",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
   "en": "Installed third-party drivers ({}), oldest first",
   "tr": "Yüklü üçüncü taraf sürücüler ({}), en eskiden yeniye",
   "kind": "fmt",
@@ -1404,6 +1716,36 @@
   "file": "drivers.rs"
  },
  {
+  "en": "drivers :: dry run, nothing will be installed",
+  "tr": "drivers :: deneme, hiçbir şey kurulmayacak",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "drivers :: driver updates from Windows Update",
+  "tr": "drivers :: Windows Update'ten sürücü güncellemeleri",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "kz drivers works on Windows only.",
+  "tr": "kz drivers yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "searching Windows Update for driver updates (can take up to a minute)...",
+  "tr": "Windows Update'te sürücü güncellemesi aranıyor (bir dakika sürebilir)...",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "No driver updates available. Your drivers match the latest Windows Update offers.",
+  "tr": "Sürücü güncellemesi yok. Sürücüleriniz Windows Update'teki en son sürümlerle aynı.",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
   "en": "(see what is installed with: kz drivers --installed)",
   "tr": "(yüklü olanları görmek için: kz drivers --installed)",
   "kind": "plain",
@@ -1416,8 +1758,26 @@
   "file": "drivers.rs"
  },
  {
+  "en": "Installing drivers needs administrator rights.",
+  "tr": "Sürücü kurmak için yönetici yetkisi gerekir.",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
   "en": "Open Terminal as administrator and run: kz drivers",
   "tr": "Terminali yönetici olarak açıp şunu çalıştırın: kz drivers",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "not an interactive terminal: re-run with --yes to install, or --dry-run to preview",
+  "tr": "etkileşimli terminal değil: kurmak için --yes, önizlemek için --dry-run kullanın",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "kazma drivers :: select drivers to install",
+  "tr": "kazma drivers :: kurulacak sürücüleri seç",
   "kind": "plain",
   "file": "drivers.rs"
  },
@@ -1428,8 +1788,32 @@
   "file": "drivers.rs"
  },
  {
+  "en": "creating a system restore point...",
+  "tr": "sistem geri yükleme noktası oluşturuluyor...",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "restore point created                        ",
+  "tr": "geri yükleme noktası oluşturuldu            ",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "could not create a restore point (System Restore may be off,          ",
+  "tr": "geri yükleme noktası oluşturulamadı (Sistem Geri Yükleme kapalı olabilir  ",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
   "en": "       or one was already made in the last 24h).",
   "tr": "       ya da son 24 saatte zaten bir tane oluşturuldu).",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "Continue without a new restore point?",
+  "tr": "Yeni geri yükleme noktası olmadan devam edilsin mi?",
   "kind": "plain",
   "file": "drivers.rs"
  },
@@ -1548,6 +1932,12 @@
   "file": "empty.rs"
  },
  {
+  "en": "empty :: empty folders, broken shortcuts, 0-byte files",
+  "tr": "empty :: boş klasörler, bozuk kısayollar, 0 baytlık dosyalar",
+  "kind": "plain",
+  "file": "empty.rs"
+ },
+ {
   "en": "  scanning {}",
   "tr": "  taranıyor {}",
   "kind": "fmt",
@@ -1560,10 +1950,178 @@
   "file": "empty.rs"
  },
  {
+  "en": "kazma empty :: [x] = send to Recycle Bin",
+  "tr": "kazma empty :: [x] = Geri Dönüşüm Kutusu'na gönder",
+  "kind": "plain",
+  "file": "empty.rs"
+ },
+ {
   "en": "{n} items removed",
   "tr": "{n} öğe kaldırıldı",
   "kind": "fmt",
   "file": "empty.rs"
+ },
+ {
+  "en": "Hibernation file. Shrink it: kz power hibernate reduced. Remove it: kz power hibernate off.",
+  "tr": "Hazırda bekletme dosyası. Küçült: kz power hibernate reduced. Kaldır: kz power hibernate off.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Virtual memory (page file). Windows manages its size; do not delete it.",
+  "tr": "Sanal bellek (disk belleği). Boyutunu Windows yönetir; silmeyin.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Swap file for Store apps. Managed by Windows.",
+  "tr": "Store uygulamaları için takas dosyası. Windows yönetir.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Crash dump from a blue screen. Safe to remove: kz deepclean.",
+  "tr": "Mavi ekran çökme dökümü. Silinebilir: kz deepclean.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Previous Windows installation, kept for rollback. Remove it with kz deepclean (no rollback afterwards).",
+  "tr": "Önceki Windows kurulumu (geri dönüş için). kz deepclean ile kaldırın (sonra geri dönülemez).",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Windows upgrade files. Remove them with kz deepclean.",
+  "tr": "Windows yükseltme dosyaları. kz deepclean ile kaldırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "The Recycle Bin. Empty it with kz clean.",
+  "tr": "Geri Dönüşüm Kutusu. kz clean ile boşaltın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Restore points and shadow copies. Older ones can go: kz deepclean.",
+  "tr": "Geri yükleme noktaları ve gölge kopyalar. Eskileri silinebilir: kz deepclean.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Windows component store. Looks bigger than it is (shared hard links). Shrink: kz optimize (DISM cleanup).",
+  "tr": "Windows bileşen deposu. Göründüğünden küçüktür (paylaşılan bağlantılar). Küçült: kz optimize (DISM).",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Windows Installer cache. Needed to repair and uninstall programs; do not delete it.",
+  "tr": "Windows Installer önbelleği. Programları onarmak ve kaldırmak için gerekir; silmeyin.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Windows Update downloads. kz clean (as administrator) empties the download cache.",
+  "tr": "Windows Update indirmeleri. kz clean (yönetici) indirme önbelleğini temizler.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Docker Desktop's Linux disk. Free space with 'docker system prune', then compact the disk.",
+  "tr": "Docker Desktop'ın Linux diski. 'docker system prune' ile yer açın, sonra diski sıkıştırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "WSL Linux disk. It does not shrink by itself: run 'wsl --shutdown', then compact it (Optimize-VHD or diskpart).",
+  "tr": "WSL Linux diski. Kendiliğinden küçülmez: 'wsl --shutdown' çalıştırıp diski sıkıştırın (Optimize-VHD ya da diskpart).",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Docker Desktop data disk. Free space with 'docker system prune -a'.",
+  "tr": "Docker Desktop veri diski. 'docker system prune -a' ile yer açın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "iPhone / iPad backups made by iTunes or Apple Devices. Delete old ones from that app.",
+  "tr": "iTunes ya da Apple Devices'ın iPhone / iPad yedekleri. Eskileri o uygulamadan silin.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "iPhone / iPad backups live in Backup\\ inside.",
+  "tr": "iPhone / iPad yedekleri içindeki Backup\\ klasöründe.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "JavaScript dependencies. kz purge removes them; npm install brings them back.",
+  "tr": "JavaScript bağımlılıkları. kz purge kaldırır; npm install geri getirir.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Rust build output. kz purge removes it; cargo build recreates it.",
+  "tr": "Rust derleme çıktısı. kz purge kaldırır; cargo build yeniden oluşturur.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "AI models downloaded by Ollama. Remove one with 'ollama rm <model>'.",
+  "tr": "Ollama'nın indirdiği yapay zekâ modelleri. 'ollama rm <model>' ile kaldırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Installed Steam games. Uninstall games from Steam to free space.",
+  "tr": "Kurulu Steam oyunları. Yer açmak için oyunları Steam'den kaldırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "OneDrive folder. Online-only files take no space; 'Free up space' in OneDrive makes more of them.",
+  "tr": "OneDrive klasörü. Yalnızca çevrimiçi dosyalar yer kaplamaz; OneDrive'da 'Alanı boşalt' ile artırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "App settings and caches. kz clean handles the caches safely.",
+  "tr": "Uygulama ayarları ve önbellekleri. kz clean önbellekleri güvenle temizler.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Installed programs. Remove them with kz uninstall.",
+  "tr": "Kurulu programlar. kz uninstall ile kaldırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Downloads. kz installer finds old setup files, kz dupes finds copies.",
+  "tr": "İndirilenler. kz installer eski kurulum dosyalarını, kz dupes kopyaları bulur.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Git history of a project. Do not delete it unless you mean to.",
+  "tr": "Bir projenin Git geçmişi. Bilerek değilse silmeyin.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Virtual disk image (Hyper-V, WSL or Docker). Compact it from its owner app.",
+  "tr": "Sanal disk kalıbı (Hyper-V, WSL ya da Docker). Sahibi olan uygulamadan sıkıştırın.",
+  "kind": "plain",
+  "file": "explain.rs"
+ },
+ {
+  "en": "Disk image, usually an installer. Usually safe to delete after use.",
+  "tr": "Disk kalıbı, genelde bir kurulum. Kullandıktan sonra genelde silinebilir.",
+  "kind": "plain",
+  "file": "explain.rs"
  },
  {
   "en": "health :: system health report",
@@ -1800,9 +2358,45 @@
   "file": "health.rs"
  },
  {
+  "en": "installer :: dry run, nothing will be deleted",
+  "tr": "installer :: deneme, hiçbir şey silinmeyecek",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
+  "en": "installer :: remove leftover installer files",
+  "tr": "installer :: eski kurulum dosyalarını temizle",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
+  "en": "cannot find your user folder",
+  "tr": "kullanıcı klasörü bulunamadı",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
+  "en": "No installer files found.",
+  "tr": "Kurulum dosyası bulunamadı.",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
   "en": "{}d old  {}",
   "tr": "{} gün önce  {}",
   "kind": "fmt",
+  "file": "installer.rs"
+ },
+ {
+  "en": "kazma installer :: select files to send to the Recycle Bin",
+  "tr": "kazma installer :: Geri Dönüşüm Kutusu'na gidecekleri seç",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
+  "en": "Would move to Recycle Bin",
+  "tr": "Geri Dönüşüm Kutusu'na taşınacaklar",
+  "kind": "plain",
   "file": "installer.rs"
  },
  {
@@ -1814,6 +2408,12 @@
  {
   "en": "not selected",
   "tr": "seçilmedi",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
+  "en": "freed (after emptying the Recycle Bin)",
+  "tr": "kazanılan (Geri Dönüşüm Kutusu boşaltılınca)",
   "kind": "plain",
   "file": "installer.rs"
  },
@@ -1833,6 +2433,18 @@
   "en": "in use by {}{more}",
   "tr": "kullanan: {}{more}",
   "kind": "fmt",
+  "file": "locks.rs"
+ },
+ {
+  "en": "lock :: which program has this open",
+  "tr": "lock :: bunu hangi program açık tutuyor",
+  "kind": "plain",
+  "file": "locks.rs"
+ },
+ {
+  "en": "kz lock works on Windows only.",
+  "tr": "kz lock yalnızca Windows'ta çalışır.",
+  "kind": "plain",
   "file": "locks.rs"
  },
  {
@@ -2172,6 +2784,18 @@
   "file": "main.rs"
  },
  {
+  "en": "kz net works on Windows only.",
+  "tr": "kz net yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "reading network adapters...",
+  "tr": "ağ bağdaştırıcıları okunuyor...",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
   "en": "gateway",
   "tr": "ağ geçidi",
   "kind": "plain",
@@ -2180,6 +2804,12 @@
  {
   "en": "link speed",
   "tr": "bağlantı",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "no connected network adapter",
+  "tr": "bağlı ağ bağdaştırıcısı yok",
   "kind": "plain",
   "file": "net.rs"
  },
@@ -2214,6 +2844,18 @@
   "file": "net.rs"
  },
  {
+  "en": "testing DNS servers (8 lookups each)...",
+  "tr": "DNS sunucuları deneniyor (her biri 8 sorgu)...",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "DNS response time (lower is better)",
+  "tr": "DNS yanıt süresi (düşük olan iyi)",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
   "en": "  {} failed",
   "tr": "  {} başarısız",
   "kind": "fmt",
@@ -2241,6 +2883,12 @@
   "en": "{}: DNS = {servers}",
   "tr": "{}: DNS = {servers}",
   "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "measuring speed with speed.cloudflare.com (about 10 s)...",
+  "tr": "speed.cloudflare.com ile hız ölçülüyor (yaklaşık 10 sn)...",
+  "kind": "plain",
   "file": "net.rs"
  },
  {
@@ -2310,8 +2958,32 @@
   "file": "oplog.rs"
  },
  {
+  "en": "Remove broken startup entries",
+  "tr": "Bozuk başlangıç kayıtlarını kaldır",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "programs that no longer exist; backed up first",
+  "tr": "artık var olmayan programlar; önce yedeklenir",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
   "en": "none found",
   "tr": "bulunamadı",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Restart Start menu and Search",
+  "tr": "Başlat menüsünü ve Aramayı yeniden başlat",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Start or search not opening or stuck",
+  "tr": "Başlat ya da arama açılmıyor veya takılıyor",
   "kind": "plain",
   "file": "optimize.rs"
  },
@@ -2322,8 +2994,32 @@
   "file": "optimize.rs"
  },
  {
+  "en": "fixes stale or wrong website addresses",
+  "tr": "eski ya da hatalı site adreslerini düzeltir",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
   "en": "Refresh icon cache",
   "tr": "İkon önbelleğini yenile",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "fixes blank or wrong icons",
+  "tr": "boş ya da yanlış ikonları düzeltir",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Restart Windows Explorer",
+  "tr": "Windows Gezgini'ni yeniden başlat",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "taskbar / desktop glitches; windows will flicker",
+  "tr": "görev çubuğu / masaüstü hataları; ekran titrer",
   "kind": "plain",
   "file": "optimize.rs"
  },
@@ -2336,6 +3032,30 @@
  {
   "en": "keeps SSD write speed up",
   "tr": "SSD yazma hızını korur",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Clean up component store (DISM)",
+  "tr": "Bileşen deposunu temizle (DISM)",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "removes superseded Windows updates, 5-15 min",
+  "tr": "eski Windows güncellemelerini siler, 5-15 dk",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Check system files (SFC)",
+  "tr": "Sistem dosyalarını denetle (SFC)",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "repairs corrupted Windows files, 10-20 min",
+  "tr": "bozuk Windows dosyalarını onarır, 10-20 dk",
   "kind": "plain",
   "file": "optimize.rs"
  },
@@ -2354,6 +3074,36 @@
  {
   "en": "never run by kazma",
   "tr": "kazma ile hiç çalışmadı",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "optimize :: dry run, nothing will be changed",
+  "tr": "optimize :: deneme, hiçbir şey değişmeyecek",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "optimize :: windows maintenance",
+  "tr": "optimize :: windows bakımı",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "kz optimize works on Windows only.",
+  "tr": "kz optimize yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "not an interactive terminal: re-run with --yes to run the default tasks, or --dry-run to preview",
+  "tr": "etkileşimli terminal değil: varsayılan görevler için --yes, önizleme için --dry-run kullanın",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "kazma optimize :: select maintenance tasks",
+  "tr": "kazma optimize :: bakım görevlerini seç",
   "kind": "plain",
   "file": "optimize.rs"
  },
@@ -2392,6 +3142,18 @@
   "tr": "{:<34} (kz'yi yönetici terminalinde çalıştırın)",
   "kind": "fmt",
   "file": "optimize.rs"
+ },
+ {
+  "en": "ports :: who is listening on which port",
+  "tr": "ports :: hangi port hangi programda",
+  "kind": "plain",
+  "file": "ports.rs"
+ },
+ {
+  "en": "kz ports works on Windows only.",
+  "tr": "kz ports yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "ports.rs"
  },
  {
   "en": "reading connections...",
@@ -2508,6 +3270,18 @@
   "file": "power.rs"
  },
  {
+  "en": "hibernation off: hiberfil.sys removed (Fast Startup is off too)",
+  "tr": "hazırda bekletme kapalı: hiberfil.sys silindi (Hızlı Başlangıç da kapandı)",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "hibernation file reduced; Fast Startup still works",
+  "tr": "hazırda bekletme dosyası küçültüldü; Hızlı Başlangıç çalışıyor",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
   "en": "hibernation on",
   "tr": "hazırda bekletme açık",
   "kind": "plain",
@@ -2534,6 +3308,24 @@
  {
   "en": "Wake timers",
   "tr": "Uyandırma zamanlayıcıları",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "Devices allowed to wake the PC",
+  "tr": "Bilgisayarı uyandırabilen aygıtlar",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "power :: plans, battery, wake",
+  "tr": "power :: güç planı, pil, uyanma",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "kz power works on Windows only.",
+  "tr": "kz power yalnızca Windows'ta çalışır.",
   "kind": "plain",
   "file": "power.rs"
  },
@@ -2706,8 +3498,68 @@
   "file": "procinfo.rs"
  },
  {
+  "en": "Windows registry in memory.",
+  "tr": "Bellekteki Windows kayıt defteri.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Core Windows process. Do not end it.",
+  "tr": "Windows'un temel süreci. Sonlandırmayın.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows sign-in and security. Do not end it.",
+  "tr": "Windows oturum ve güvenlik süreci. Sonlandırmayın.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Host for Windows services; see the service name below.",
+  "tr": "Windows servislerinin taşıyıcısı; servis adı aşağıda.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Desktop Window Manager: draws windows and effects.",
+  "tr": "Masaüstü Pencere Yöneticisi: pencereleri ve efektleri çizer.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows Explorer: taskbar, desktop and folders.",
+  "tr": "Windows Gezgini: görev çubuğu, masaüstü ve klasörler.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Part of the Windows shell (Start, notifications).",
+  "tr": "Windows kabuğunun parçası (Başlat, bildirimler).",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
   "en": "Windows Search and its index.",
   "tr": "Windows Arama ve dizini.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Checks permissions for Store apps.",
+  "tr": "Store uygulamalarının izinlerini denetler.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Keyboard, language bar and input methods.",
+  "tr": "Klavye, dil çubuğu ve giriş yöntemleri.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Touch keyboard, emoji panel and input.",
+  "tr": "Dokunmatik klavye, emoji paneli ve giriş.",
   "kind": "plain",
   "file": "procinfo.rs"
  },
@@ -2730,8 +3582,44 @@
   "file": "procinfo.rs"
  },
  {
+  "en": "Console window host for a terminal program.",
+  "tr": "Bir terminal programının konsol penceresi.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Runs Windows background tasks.",
+  "tr": "Windows arka plan görevlerini çalıştırır.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Runs a COM component (e.g. thumbnails).",
+  "tr": "Bir COM bileşenini çalıştırır (ör. küçük resimler).",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "WMI provider: answers system information queries.",
+  "tr": "WMI sağlayıcısı: sistem bilgisi sorgularını yanıtlar.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Microsoft Defender antivirus engine.",
+  "tr": "Microsoft Defender antivirüs motoru.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
   "en": "Windows Security status.",
   "tr": "Windows Güvenliği durumu.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Web view used inside an app (Teams, Widgets, Outlook...).",
+  "tr": "Bir uygulamanın içindeki web görünümü (Teams, Widget'lar, Outlook...).",
   "kind": "plain",
   "file": "procinfo.rs"
  },
@@ -2750,6 +3638,48 @@
  {
   "en": "Windows Widgets.",
   "tr": "Windows Widget'ları.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Compressed memory: keeps more in RAM. Normal.",
+  "tr": "Sıkıştırılmış bellek: RAM'de daha fazlasını tutar. Normaldir.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows Update / component servicing. Busy after updates.",
+  "tr": "Windows Update / bileşen bakımı. Güncellemelerden sonra yoğundur.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows compatibility telemetry.",
+  "tr": "Windows uyumluluk telemetrisi.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "You started it (desktop, Start menu or a shortcut).",
+  "tr": "Siz başlattınız (masaüstü, Başlat menüsü ya da kısayol).",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Started by Windows as a service.",
+  "tr": "Windows tarafından servis olarak başlatıldı.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Started by a Windows service (often a scheduled task).",
+  "tr": "Bir Windows servisi başlattı (çoğu zaman zamanlanmış görev).",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Started by Windows itself at boot or sign-in.",
+  "tr": "Windows açılışta ya da oturum açılırken başlattı.",
   "kind": "plain",
   "file": "procinfo.rs"
  },
@@ -2808,6 +3738,12 @@
   "file": "procinfo.rs"
  },
  {
+  "en": "Started by another program (see parent).",
+  "tr": "Başka bir program başlattı (üst sürece bakın).",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
   "en": "why",
   "tr": "neden",
   "kind": "plain",
@@ -2844,9 +3780,39 @@
   "file": "procinfo.rs"
  },
  {
+  "en": "purge :: dry run, nothing will be deleted",
+  "tr": "purge :: deneme, hiçbir şey silinmeyecek",
+  "kind": "plain",
+  "file": "purge.rs"
+ },
+ {
+  "en": "purge :: clean project build artifacts",
+  "tr": "purge :: proje derleme çıktılarını temizle",
+  "kind": "plain",
+  "file": "purge.rs"
+ },
+ {
+  "en": "No project folders found. Pass one explicitly: kz purge D:\\code",
+  "tr": "Proje klasörü bulunamadı. Klasörü belirtin: kz purge D:\\code",
+  "kind": "plain",
+  "file": "purge.rs"
+ },
+ {
+  "en": "No build artifacts found.",
+  "tr": "Derleme çıktısı bulunamadı.",
+  "kind": "plain",
+  "file": "purge.rs"
+ },
+ {
   "en": "{}  touched < {RECENT_DAYS}d ago",
   "tr": "{}  < {RECENT_DAYS} gün önce değişti",
   "kind": "fmt",
+  "file": "purge.rs"
+ },
+ {
+  "en": "kazma purge :: select artifacts to delete",
+  "tr": "kazma purge :: silinecek çıktıları seç",
+  "kind": "plain",
   "file": "purge.rs"
  },
  {
@@ -2876,6 +3842,12 @@
  {
   "en": "remove :: dry run",
   "tr": "remove :: deneme",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "remove :: uninstall kazma from this computer",
+  "tr": "remove :: kazma'yı bu bilgisayardan kaldır",
   "kind": "plain",
   "file": "remove.rs"
  },
@@ -2910,6 +3882,18 @@
   "file": "remove.rs"
  },
  {
+  "en": "dry run, nothing removed.",
+  "tr": "deneme, hiçbir şey kaldırılmadı.",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "not an interactive terminal: re-run with --yes to uninstall",
+  "tr": "etkileşimli terminal değil: kaldırmak için --yes ile çalıştırın",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
   "en": "Uninstall kazma?",
   "tr": "kazma kaldırılsın mı?",
   "kind": "plain",
@@ -2930,6 +3914,18 @@
  {
   "en": "data & log removed",
   "tr": "veri ve log kaldırıldı",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "could not remove data folder",
+  "tr": "veri klasörü kaldırılamadı",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "program removed (finishes when this window returns)",
+  "tr": "program kaldırıldı (bu pencere dönünce tamamlanır)",
   "kind": "plain",
   "file": "remove.rs"
  },
@@ -3012,9 +4008,27 @@
   "file": "repair.rs"
  },
  {
+  "en": "repair :: fixes for common Windows problems",
+  "tr": "repair :: yaygın Windows sorunlarına çözümler",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "kz repair works on Windows only.",
+  "tr": "kz repair yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
   "en": "unknown fix: {k}. use network | update | store | dism | time | printer",
   "tr": "bilinmeyen: {k}. network | update | store | dism | time | printer kullanın",
   "kind": "fmt",
+  "file": "repair.rs"
+ },
+ {
+  "en": "kazma repair :: select what to fix",
+  "tr": "kazma repair :: düzeltilecekleri seç",
+  "kind": "plain",
   "file": "repair.rs"
  },
  {
@@ -3042,6 +4056,24 @@
   "file": "repair.rs"
  },
  {
+  "en": "creating a restore point...",
+  "tr": "geri yükleme noktası oluşturuluyor...",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "restore point created                ",
+  "tr": "geri yükleme noktası oluşturuldu       ",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "no new restore point (off, or one was made in the last 24 h)",
+  "tr": "yeni geri yükleme noktası yok (kapalı ya da son 24 saatte oluşturulmuş)",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
   "en": "Repairing",
   "tr": "Onarılıyor",
   "kind": "plain",
@@ -3054,6 +4086,18 @@
   "file": "repair.rs"
  },
  {
+  "en": "report :: system report as HTML",
+  "tr": "report :: HTML sistem raporu",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "kz report works on Windows only.",
+  "tr": "kz report yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
   "en": "hardware...",
   "tr": "donanım...",
   "kind": "plain",
@@ -3062,6 +4106,12 @@
  {
   "en": "Hardware",
   "tr": "Donanım",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "health checks (10-30 s)...",
+  "tr": "sağlık kontrolleri (10-30 sn)...",
   "kind": "plain",
   "file": "report.rs"
  },
@@ -3174,6 +4224,24 @@
   "file": "restore.rs"
  },
  {
+  "en": "restore :: System Restore points",
+  "tr": "restore :: sistem geri yükleme noktaları",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "kz restore works on Windows only.",
+  "tr": "kz restore yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "no restore points (System Restore may be off: kz restore enable)",
+  "tr": "geri yükleme noktası yok (kapalı olabilir: kz restore enable)",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
   "en": "{} restore points",
   "tr": "{} geri yükleme noktası",
   "kind": "fmt",
@@ -3192,15 +4260,33 @@
   "file": "restore.rs"
  },
  {
+  "en": "creating restore point (up to a minute)...",
+  "tr": "geri yükleme noktası oluşturuluyor (bir dakikaya kadar)...",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
   "en": "restore point created: {desc}",
   "tr": "geri yükleme noktası oluşturuldu: {desc}",
   "kind": "fmt",
   "file": "restore.rs"
  },
  {
+  "en": "Windows skipped it: only one restore point per 24 hours is allowed by default.",
+  "tr": "Windows atladı: varsayılan olarak 24 saatte yalnızca bir geri yükleme noktası oluşturulur.",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
   "en": "System Restore enabled on {drive}",
   "tr": "{drive} için Sistem Geri Yükleme açıldı",
   "kind": "fmt",
+  "file": "restore.rs"
+ },
+ {
+  "en": "System Restore wizard opened",
+  "tr": "Sistem Geri Yükleme sihirbazı açıldı",
+  "kind": "plain",
   "file": "restore.rs"
  },
  {
@@ -3270,6 +4356,18 @@
   "file": "schedule.rs"
  },
  {
+  "en": "awake :: keep the screen on",
+  "tr": "awake :: ekranı açık tut",
+  "kind": "plain",
+  "file": "screen.rs"
+ },
+ {
+  "en": "kz awake works on Windows only.",
+  "tr": "kz awake yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "screen.rs"
+ },
+ {
   "en": "turns off in {}",
   "tr": "{} sonra kapanır",
   "kind": "fmt",
@@ -3279,6 +4377,12 @@
   "en": "on for {}",
   "tr": "{} süredir açık",
   "kind": "fmt",
+  "file": "screen.rs"
+ },
+ {
+  "en": "  screen and PC stay awake",
+  "tr": "  ekran ve bilgisayar uyanık kalıyor",
+  "kind": "plain",
   "file": "screen.rs"
  },
  {
@@ -3534,6 +4638,12 @@
   "file": "status.rs"
  },
  {
+  "en": "why is this running?",
+  "tr": "bu neden çalışıyor?",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
   "en": "ended {name}",
   "tr": "{name} sonlandırıldı",
   "kind": "fmt",
@@ -3582,8 +4692,20 @@
   "file": "types.rs"
  },
  {
+  "en": "types :: what kind of files take the space",
+  "tr": "types :: hangi tür dosyalar yer kaplıyor",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
   "en": "MFT scan not possible here (admin + NTFS needed)",
   "tr": "MFT taraması burada yapılamıyor (yönetici + NTFS gerekli)",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "MFT and walk agree",
+  "tr": "MFT ve normal tarama aynı sonucu verdi",
   "kind": "plain",
   "file": "types.rs"
  },
@@ -3690,9 +4812,75 @@
   "file": "uninstall.rs"
  },
  {
+  "en": "uninstall :: leftovers of removed programs",
+  "tr": "uninstall :: kaldırılmış programların kalıntıları",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "kz uninstall works on Windows only.",
+  "tr": "kz uninstall yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "comparing folders with installed programs...",
+  "tr": "klasörler yüklü programlarla karşılaştırılıyor...",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "No leftovers of removed programs found.",
+  "tr": "Kaldırılmış programlardan kalıntı bulunamadı.",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "no installed program owns it; untouched for 90+ days",
+  "tr": "hiçbir yüklü programa ait değil; 90+ gündür dokunulmadı",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "kazma uninstall :: check before removing -> Recycle Bin",
+  "tr": "kazma uninstall :: silmeden önce kontrol edin -> Geri Dönüşüm Kutusu",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "uninstall :: dry run, nothing will be removed",
+  "tr": "uninstall :: deneme, hiçbir şey kaldırılmayacak",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "uninstall :: remove programs and their leftovers",
+  "tr": "uninstall :: programları ve kalıntılarını kaldır",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "kz uninstall needs an interactive terminal (or use --dry-run to list programs).",
+  "tr": "kz uninstall etkileşimli terminal ister (listelemek için --dry-run kullanın).",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "reading installed programs...",
+  "tr": "yüklü programlar okunuyor...",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
   "en": "{} installed programs",
   "tr": "{} yüklü program",
   "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "kazma uninstall :: select programs to remove",
+  "tr": "kazma uninstall :: kaldırılacak programları seç",
+  "kind": "plain",
   "file": "uninstall.rs"
  },
  {
@@ -3714,6 +4902,18 @@
   "file": "uninstall.rs"
  },
  {
+  "en": "if the uninstaller window is still open, finish it, then press Enter...",
+  "tr": "kaldırma penceresi hâlâ açıksa bitirin, sonra Enter'a basın...",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "still installed (uninstall cancelled or failed), leftovers not touched",
+  "tr": "hâlâ yüklü (kaldırma iptal edildi ya da başarısız), kalıntılara dokunulmadı",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
   "en": "uninstalled",
   "tr": "kaldırıldı",
   "kind": "plain",
@@ -3728,6 +4928,18 @@
  {
   "en": "folder -> Recycle Bin",
   "tr": "klasör -> Geri Dönüşüm Kutusu",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "registry key, backed up first",
+  "tr": "kayıt defteri anahtarı, önce yedeklenir",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "kazma uninstall :: leftovers",
+  "tr": "kazma uninstall :: kalıntılar",
   "kind": "plain",
   "file": "uninstall.rs"
  },
@@ -3834,8 +5046,38 @@
   "file": "update.rs"
  },
  {
+  "en": "upgrade :: dry run, nothing will be installed",
+  "tr": "upgrade :: deneme, hiçbir şey kurulmayacak",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "upgrade :: update installed programs (winget)",
+  "tr": "upgrade :: yüklü programları güncelle (winget)",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "kz upgrade works on Windows only.",
+  "tr": "kz upgrade yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
   "en": "Everything is up to date.",
   "tr": "Her şey güncel.",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "not an interactive terminal: re-run with --yes to upgrade, or --dry-run to preview",
+  "tr": "etkileşimli terminal değil: güncellemek için --yes, önizlemek için --dry-run kullanın",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "kazma upgrade :: select programs to update",
+  "tr": "kazma upgrade :: güncellenecek programları seç",
   "kind": "plain",
   "file": "upgrade.rs"
  },
@@ -3885,6 +5127,12 @@
   "en": "removed {} entries",
   "tr": "{} kayıt kaldırıldı",
   "kind": "fmt",
+  "file": "whitelist.rs"
+ },
+ {
+  "en": "whitelist :: paths kazma will never delete",
+  "tr": "whitelist :: kazma'nın asla silmeyeceği yollar",
+  "kind": "plain",
   "file": "whitelist.rs"
  },
  {

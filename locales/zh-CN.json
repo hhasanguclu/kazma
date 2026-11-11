@@ -299,7 +299,6 @@
  "days": "天",
  "not available (third-party antivirus?)": "不可用（第三方杀毒软件？）",
  "off for: {0}": "已关闭：{0}",
- "english": "英语",
  "{}d old  {}": "{} 天前  {}",
  "newer than {RECENT_DAYS}d, kept": "不到 {RECENT_DAYS} 天，已保留",
  "not selected": "未选择",

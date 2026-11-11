@@ -125,12 +125,12 @@ fn rewrite_spec(spec: &str, named: &[(Ident, Expr)]) -> Result<String, String> {
     Ok(out)
 }
 
+/// A hole: (key as written in the source, local binding, spec).
+type HoleInfo = (String, String, String);
+
 /// The format string with every hole pointing at a named local, plus the holes
 /// as (key as written in the source, local, spec) for runtime translation.
-fn rewrite(
-    s: &str,
-    named: &[(Ident, Expr)],
-) -> Result<(String, Vec<(String, String, String)>), String> {
+fn rewrite(s: &str, named: &[(Ident, Expr)]) -> Result<(String, Vec<HoleInfo>), String> {
     let mut out = String::new();
     let mut list = vec![];
     let mut next = 0;

@@ -102,7 +102,7 @@ Das installiert nach `%LOCALAPPDATA%\Programs\kazma` und fügt `kz` zum PATH hin
 | `kz cleanscreen [seconds]` | Schwarzer Bildschirm, der Eingaben ignoriert, zum Abwischen des Displays |
 | `kz whitelist` | Pfade, die kazma nie löschen darf (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Eigene Bereinigungsregeln für `kz clean` (`--edit` öffnet den Editor) |
-| `kz context install` | „Analyze with kazma“ im Rechtsklickmenü des Explorers (`uninstall` entfernt es) |
+| `kz context install` | „Mit kazma analysieren“ im Rechtsklickmenü des Explorers (`uninstall` entfernt es) |
 | `kz config` | `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | kazma selbst von GitHub aktualisieren (Prüfsumme verifiziert) |
 | `kz history` | Protokoll aller Aktionen von kazma |

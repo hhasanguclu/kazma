@@ -12,8 +12,6 @@ mod imp {
         unsafe { IsUserAnAdmin() != 0 }
     }
 
-    /// Windows display language is Turkish (primary language id 0x1F).
-
     pub fn recycle_bin_size() -> Option<(u64, u64)> {
         let mut info = SHQUERYRBINFO {
             cbSize: std::mem::size_of::<SHQUERYRBINFO>() as u32,

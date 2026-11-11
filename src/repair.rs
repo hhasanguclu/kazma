@@ -244,7 +244,7 @@ pub fn run(only: Option<String>, dry: bool, no_restore_point: bool) -> anyhow::R
         match run_fix(f) {
             Ok(()) => {
                 restart |= f.restart;
-                ui::ok(&format!("{:<50}", name(f)));
+                ui::ok(&ui::pad(name(f), 50));
                 oplog::record("repair", f.key);
             }
             Err(e) => {

@@ -181,7 +181,11 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             "program kaldırıldı (bu pencere dönünce tamamlanır)",
         ));
     } else {
-        ui::warn(&format!("delete {} manually", exe.display()));
+        ui::warn(&tr!(
+            "delete {} manually",
+            "{} dosyasını elle silin",
+            exe.display()
+        ));
     }
     println!(
         "\n  {}\n",

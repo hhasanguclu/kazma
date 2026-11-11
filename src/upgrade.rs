@@ -171,7 +171,10 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         );
         return Ok(());
     }
-    ps::working("asking winget for updates (this can take a few seconds)...");
+    ps::working(ui::t(
+        "asking winget for updates (this can take a few seconds)...",
+        "winget'e güncellemeler soruluyor (birkaç saniye sürebilir)...",
+    ));
     let pkgs = list_upgrades()?;
     println!("{:60}", "");
     if pkgs.is_empty() {

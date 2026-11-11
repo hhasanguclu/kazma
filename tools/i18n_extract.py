@@ -96,7 +96,8 @@ def call_args(toks, k):
         if t[0] == "p" and t[1] in ")]}":
             depth -= 1
             if depth == 0:
-                args.append(cur)
+                if cur:  # no empty argument after a trailing comma
+                    args.append(cur)
                 return args
         if depth == 1 and t == ("p", ","):
             args.append(cur)

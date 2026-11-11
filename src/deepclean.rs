@@ -352,10 +352,10 @@ pub fn run(dry: bool) -> anyhow::Result<()> {
         ps::working(&tr!("{} ...", "{} ...", i.name));
         match apply(&i.action) {
             Ok(r) => {
-                ui::ok(&format!("{:<46} {r}          ", i.name));
+                ui::ok(&format!("{} {r}          ", ui::pad(&i.name, 46)));
                 oplog::record("deepclean", &format!("{} ({r})", i.name));
             }
-            Err(e) => ui::warn(&format!("{:<46} {e}", i.name)),
+            Err(e) => ui::warn(&format!("{} {e}", ui::pad(&i.name, 46))),
         }
     }
     println!();

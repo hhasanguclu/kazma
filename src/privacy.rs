@@ -395,10 +395,10 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
                 } else {
                     String::new()
                 };
-                ui::ok(&format!("{:<44}{note}", i.name));
+                ui::ok(&format!("{}{note}", ui::pad(&i.name, 44)));
                 oplog::record("privacy", &i.name);
             }
-            Err(e) => ui::warn(&format!("{:<44} {e}", i.name)),
+            Err(e) => ui::warn(&format!("{} {e}", ui::pad(&i.name, 44))),
         }
     }
     println!();
