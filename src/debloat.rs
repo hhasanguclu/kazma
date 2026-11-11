@@ -275,7 +275,7 @@ fn write_tweak_script(t: &Tweak, restore: bool) -> String {
 }
 
 fn tweak_name(t: &Tweak) -> &'static str {
-    if ui::is_tr() { t.tr } else { t.en }
+    ui::t(t.en, t.tr)
 }
 
 pub fn run(dry: bool, restore: bool) -> anyhow::Result<()> {

@@ -1,0 +1,3920 @@
+[
+ {
+  "en": "refused: {} is protected (system folder or whitelist)",
+  "tr": "reddedildi: {} korumalı (sistem klasörü ya da whitelist)",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "moved to Recycle Bin: {} ({})",
+  "tr": "Geri Dönüşüm Kutusu'na taşındı: {} ({})",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "delete failed: {err}",
+  "tr": "silinemedi: {err}",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "delete failed, {}",
+  "tr": "silinemedi, {}",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "delete cancelled",
+  "tr": "silme iptal edildi",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "  finding the largest files...",
+  "tr": "  en büyük dosyalar aranıyor...",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "  largest {} files",
+  "tr": "  en büyük {} dosya",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "  scanning {pending}...",
+  "tr": "  taranıyor {pending}...",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "size",
+  "tr": "boyut",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "name",
+  "tr": "ad",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "date",
+  "tr": "tarih",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "sort",
+  "tr": "sıra",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "reading MFT...",
+  "tr": "MFT okunuyor...",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": " total {}",
+  "tr": " toplam {}",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "{} items",
+  "tr": "{} öğe",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "{} of {} items",
+  "tr": "{} / {} öğe",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "treemap",
+  "tr": "ağaç haritası",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": " move '{name}' to Recycle Bin? [y/N]",
+  "tr": " '{name}' Geri Dönüşüm Kutusu'na taşınsın mı? [y/N]",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "show in explorer",
+  "tr": "gezginde göster",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "back",
+  "tr": "geri",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "search",
+  "tr": "ara",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "delete",
+  "tr": "sil",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "rescan",
+  "tr": "yeniden tara",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "quit",
+  "tr": "çık",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "open",
+  "tr": "aç",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "up",
+  "tr": "üst",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "largest",
+  "tr": "en büyükler",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "who uses it",
+  "tr": "kim kullanıyor",
+  "kind": "plain",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "keys",
+  "tr": "tuşlar",
+  "kind": "fmt",
+  "file": "analyze.rs"
+ },
+ {
+  "en": "  folder: {}",
+  "tr": "  klasör: {}",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "Programs",
+  "tr": "Programlar",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "apps.json  (winget)",
+  "tr": "apps.json  (winget)",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "winget export failed: {}",
+  "tr": "winget dışa aktarma başarısız: {}",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "programs.txt  ({} programs)",
+  "tr": "programs.txt  ({} program)",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "Drivers",
+  "tr": "Sürücüler",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "drivers\\  ({n} packages)          ",
+  "tr": "drivers\\  ({n} paket)          ",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "{n} settings files",
+  "tr": "{n} ayar dosyası",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "done. on the new PC run:",
+  "tr": "bitti. yeni bilgisayarda şunu çalıştırın:",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "not a kazma backup folder: {}",
+  "tr": "kazma yedek klasörü değil: {}",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
+  "en": "Plan",
+  "tr": "Plan",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "Start?",
+  "tr": "Başlansın mı?",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "cancelled.",
+  "tr": "iptal edildi.",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "programs installed",
+  "tr": "programlar kuruldu",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "drivers added",
+  "tr": "sürücüler eklendi",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "see programs.txt for programs winget could not install.",
+  "tr": "winget'in kuramadığı programlar için programs.txt'ye bakın.",
+  "kind": "plain",
+  "file": "backup.rs"
+ },
+ {
+  "en": "seq write",
+  "tr": "sıralı yazma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "seq read",
+  "tr": "sıralı okuma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "4K random read",
+  "tr": "4K rastgele okuma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "4K random write",
+  "tr": "4K rastgele yazma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "bench :: disk speed test",
+  "tr": "bench :: disk hız testi",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "not enough free space on {} for a {size_mb} MB test",
+  "tr": "{} üzerinde {size_mb} MB test için yeterli boş alan yok",
+  "kind": "fmt",
+  "file": "bench.rs"
+ },
+ {
+  "en": "  file: {}  ({size_mb} MB, deleted afterwards)",
+  "tr": "  dosya: {}  ({size_mb} MB, sonra silinir)",
+  "kind": "fmt",
+  "file": "bench.rs"
+ },
+ {
+  "en": "sequential read",
+  "tr": "sıralı okuma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "sequential write",
+  "tr": "sıralı yazma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "Result",
+  "tr": "Sonuç",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "Claude desktop cache",
+  "tr": "Claude masaüstü önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "ChatGPT desktop cache",
+  "tr": "ChatGPT masaüstü önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Cursor editor cache",
+  "tr": "Cursor düzenleyici önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windsurf editor cache",
+  "tr": "Windsurf düzenleyici önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "LM Studio app cache",
+  "tr": "LM Studio uygulama önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Hugging Face model cache",
+  "tr": "Hugging Face model önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "PyTorch hub cache",
+  "tr": "PyTorch hub önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Ollama models",
+  "tr": "Ollama modelleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "LM Studio models",
+  "tr": "LM Studio modelleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Whisper models",
+  "tr": "Whisper modelleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Chromium cache",
+  "tr": "Chromium önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Yandex Browser cache",
+  "tr": "Yandex Browser önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Opera GX cache",
+  "tr": "Opera GX önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Internet cache (legacy)",
+  "tr": "İnternet önbelleği (eski)",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "WebView2 caches of apps",
+  "tr": "Uygulamaların WebView2 önbellekleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Microsoft Teams (classic) cache",
+  "tr": "Microsoft Teams (klasik) önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Zoom logs and cache",
+  "tr": "Zoom logları ve önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "WhatsApp cache",
+  "tr": "WhatsApp önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Telegram media cache",
+  "tr": "Telegram medya önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Notion cache",
+  "tr": "Notion önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Obsidian cache",
+  "tr": "Obsidian önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Figma cache",
+  "tr": "Figma önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Postman cache",
+  "tr": "Postman önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "GitHub Desktop cache",
+  "tr": "GitHub Desktop önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Signal cache",
+  "tr": "Signal önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Microsoft Edge WebView logs",
+  "tr": "Microsoft Edge WebView logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "OneDrive logs",
+  "tr": "OneDrive logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Office telemetry and logs",
+  "tr": "Office telemetri ve logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Adobe media cache",
+  "tr": "Adobe medya önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Spotify cache (Store version)",
+  "tr": "Spotify önbelleği (Store sürümü)",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "VLC art cache",
+  "tr": "VLC kapak önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windows Store app caches",
+  "tr": "Windows Store uygulama önbellekleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Epic Games Launcher web cache",
+  "tr": "Epic Games Launcher web önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Steam web and log cache",
+  "tr": "Steam web ve log önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Steam shader cache",
+  "tr": "Steam gölgelendirici önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "EA app cache",
+  "tr": "EA uygulaması önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Battle.net cache",
+  "tr": "Battle.net önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Ubisoft Connect cache",
+  "tr": "Ubisoft Connect önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Riot Client logs",
+  "tr": "Riot Client logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "GOG Galaxy web cache",
+  "tr": "GOG Galaxy web önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Xbox app cache",
+  "tr": "Xbox uygulaması önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Unity cache",
+  "tr": "Unity önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "NVIDIA driver downloads",
+  "tr": "NVIDIA sürücü indirmeleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "NVIDIA installer logs",
+  "tr": "NVIDIA kurulum logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "NVIDIA shader cache",
+  "tr": "NVIDIA gölgelendirici önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "AMD driver installer files",
+  "tr": "AMD sürücü kurulum dosyaları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "AMD shader cache",
+  "tr": "AMD gölgelendirici önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Intel shader cache",
+  "tr": "Intel gölgelendirici önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "VS Code Insiders cache",
+  "tr": "VS Code Insiders önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "VS Code extension downloads",
+  "tr": "VS Code eklenti indirmeleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "JetBrains IDE caches and logs",
+  "tr": "JetBrains IDE önbellek ve logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Visual Studio component cache",
+  "tr": "Visual Studio bileşen önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "npx cache",
+  "tr": "npx önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "node-gyp headers",
+  "tr": "node-gyp başlık dosyaları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Electron downloads",
+  "tr": "Electron indirmeleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Bun cache",
+  "tr": "Bun önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Deno cache",
+  "tr": "Deno önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Yarn Berry cache",
+  "tr": "Yarn Berry önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Poetry cache",
+  "tr": "Poetry önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "uv cache",
+  "tr": "uv önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "pre-commit cache",
+  "tr": "pre-commit önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Composer cache",
+  "tr": "Composer önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Cargo git checkouts",
+  "tr": "Cargo git kopyaları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "rustup downloads",
+  "tr": "rustup indirmeleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Android build cache",
+  "tr": "Android derleme önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Cypress binaries",
+  "tr": "Cypress dosyaları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Playwright browsers",
+  "tr": "Playwright tarayıcıları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Maven repository",
+  "tr": "Maven deposu",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Go module cache",
+  "tr": "Go modül önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "conda package cache",
+  "tr": "conda paket önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Flutter / Dart pub cache",
+  "tr": "Flutter / Dart pub önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Docker Desktop logs",
+  "tr": "Docker Desktop logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "WSL crash dumps",
+  "tr": "WSL çökme dökümleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windows web cache (Search, widgets)",
+  "tr": "Windows web önbelleği (Arama, widget'lar)",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windows Store downloads cache",
+  "tr": "Windows Store indirme önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windows Update logs",
+  "tr": "Windows Update logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windows Defender scan history (cleared items)",
+  "tr": "Windows Defender tarama geçmişi (temizlenenler)",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Windows setup and panther logs",
+  "tr": "Windows kurulum ve panther logları",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Old Windows performance traces",
+  "tr": "Eski Windows performans izleri",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "Font cache",
+  "tr": "Yazı tipi önbelleği",
+  "kind": "plain",
+  "file": "catalog.rs"
+ },
+ {
+  "en": "  file: {}",
+  "tr": "  dosya: {}",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "no rules yet. add some with: kz rules --edit",
+  "tr": "henüz kural yok. eklemek için: kz rules --edit",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "  older than {h} h",
+  "tr": "  {h} saatten eski",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "{line}  (folder not found)",
+  "tr": "{line}  (klasör yok)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "{line}  (protected, ignored)",
+  "tr": "{line}  (korumalı, yok sayıldı)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Crash dumps",
+  "tr": "Çökme dökümleri",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Error reports (WER)",
+  "tr": "Hata raporları (WER)",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Thumbnail & icon cache",
+  "tr": "Küçük resim ve ikon önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Recycle Bin",
+  "tr": "Geri Dönüşüm Kutusu",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Google Chrome cache",
+  "tr": "Google Chrome önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Microsoft Edge cache",
+  "tr": "Microsoft Edge önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Brave cache",
+  "tr": "Brave önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Vivaldi cache",
+  "tr": "Vivaldi önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Opera cache",
+  "tr": "Opera önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Firefox cache",
+  "tr": "Firefox önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Discord cache",
+  "tr": "Discord önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Slack cache",
+  "tr": "Slack önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "VS Code cache",
+  "tr": "VS Code önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Microsoft Teams cache",
+  "tr": "Microsoft Teams önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Spotify cache",
+  "tr": "Spotify önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Steam html cache",
+  "tr": "Steam html önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "DirectX shader cache",
+  "tr": "DirectX gölgelendirici önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "npm cache",
+  "tr": "npm önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Yarn cache",
+  "tr": "Yarn önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "pnpm store",
+  "tr": "pnpm deposu",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "pip cache",
+  "tr": "pip önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "NuGet HTTP cache",
+  "tr": "NuGet HTTP önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Cargo registry cache",
+  "tr": "Cargo kayıt önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Go build cache",
+  "tr": "Go derleme önbelleği",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Gradle caches",
+  "tr": "Gradle önbellekleri",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Windows temp (>24h)",
+  "tr": "Windows geçici dosyaları (>24s)",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Windows Update downloads",
+  "tr": "Windows Update indirmeleri",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "System error reports (WER)",
+  "tr": "Sistem hata raporları (WER)",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Old CBS / DISM logs",
+  "tr": "Eski CBS / DISM logları",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "User",
+  "tr": "Kullanıcı",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Browser",
+  "tr": "Tarayıcı",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Apps",
+  "tr": "Uygulamalar",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Dev",
+  "tr": "Geliştirici",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Custom",
+  "tr": "Özel",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "AI tools",
+  "tr": "Yapay zekâ araçları",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Games",
+  "tr": "Oyunlar",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Graphics drivers",
+  "tr": "Ekran kartı sürücüleri",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "System",
+  "tr": "Sistem",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "clean :: reclaim disk space",
+  "tr": "clean :: disk alanı kazan",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "  free on system drive: {}   admin: {}",
+  "tr": "  sistem diskinde boş: {}   yönetici: {}",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "yes",
+  "tr": "evet",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "scanning...",
+  "tr": "taranıyor...",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "{} files",
+  "tr": "{} dosya",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "{:<34} {:>10}  (skipped)",
+  "tr": "{:<34} {:>10}  (atlandı)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "  ({} in use, left alone)",
+  "tr": "  ({} kullanımda, dokunulmadı)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "Needs administrator",
+  "tr": "Yönetici gerekli",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "{}  (run kz from an elevated terminal)",
+  "tr": "{}  (kz'yi yönetici terminalinde çalıştırın)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
+  "en": "would free",
+  "tr": "kazanılacak",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "freed",
+  "tr": "kazanılan",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "files",
+  "tr": "dosya",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "kz.exe is in a temporary place ({}); the menu entry breaks if it moves.",
+  "tr": "kz.exe geçici bir yerde ({}); taşınırsa menü girdisi bozulur.",
+  "kind": "fmt",
+  "file": "context.rs"
+ },
+ {
+  "en": "Analyze with kazma",
+  "tr": "kazma ile analiz et",
+  "kind": "plain",
+  "file": "context.rs"
+ },
+ {
+  "en": "added \"{label}\" to folder, drive and background menus",
+  "tr": "\"{label}\" klasör, sürücü ve arka plan menülerine eklendi",
+  "kind": "fmt",
+  "file": "context.rs"
+ },
+ {
+  "en": "Windows 11: right-click -> Show more options",
+  "tr": "Windows 11: sağ tık -> Diğer seçenekleri göster",
+  "kind": "plain",
+  "file": "context.rs"
+ },
+ {
+  "en": "installed ({n}/3 menus).  remove: kz context uninstall",
+  "tr": "kurulu ({n}/3 menü).  kaldır: kz context uninstall",
+  "kind": "fmt",
+  "file": "context.rs"
+ },
+ {
+  "en": "unknown: {other}. use install | uninstall | status",
+  "tr": "bilinmeyen: {other}. install | uninstall | status kullanın",
+  "kind": "fmt",
+  "file": "context.rs"
+ },
+ {
+  "en": "Start menu suggestions & ads",
+  "tr": "Başlat menüsü önerileri ve reklamları",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Silent install of promoted apps",
+  "tr": "Önerilen uygulamaların sessiz kurulumu",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Tips, tricks & suggestions notifications",
+  "tr": "İpucu ve öneri bildirimleri",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Lock screen fun facts & ads",
+  "tr": "Kilit ekranı bilgi ve reklamları",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Suggested content in Settings",
+  "tr": "Ayarlar'daki önerilen içerik",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "OneDrive / Microsoft 365 ads in Explorer",
+  "tr": "Gezgin'deki OneDrive / Microsoft 365 reklamları",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Advertising ID for apps",
+  "tr": "Uygulamalar için reklam kimliği",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Tailored ads from diagnostic data",
+  "tr": "Tanılama verisine göre kişisel reklam",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Bing web results in Start search",
+  "tr": "Başlat aramasında Bing web sonuçları",
+  "kind": "plain",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "debloat :: remove promo apps, turn off ads",
+  "tr": "debloat :: tanıtım uygulamalarını kaldır, reklamları kapat",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "kz debloat works on Windows only.",
+  "tr": "kz debloat yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Restoring Windows defaults",
+  "tr": "Windows varsayılanları geri yükleniyor",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "removed apps can be reinstalled from the Microsoft Store.",
+  "tr": "kaldırılan uygulamalar Microsoft Store'dan yeniden kurulabilir.",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "reading installed apps and settings...",
+  "tr": "yüklü uygulamalar ve ayarlar okunuyor...",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "[off]",
+  "tr": "[kapat]",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "setting",
+  "tr": "ayar",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "[app]",
+  "tr": "[uyg]",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Nothing to remove, ads already off.",
+  "tr": "Kaldırılacak bir şey yok, reklamlar zaten kapalı.",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Would change",
+  "tr": "Değiştirilecekler",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "kazma debloat :: select what to remove / turn off",
+  "tr": "kazma debloat :: kaldırılacak / kapatılacakları seç",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "Applying",
+  "tr": "Uygulanıyor",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "undo the settings any time with: kz debloat --restore",
+  "tr": "ayarları geri almak için: kz debloat --restore",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "sign out and back in for Start menu changes to show.",
+  "tr": "Başlat menüsü değişiklikleri için oturumu kapatıp açın.",
+  "kind": "fmt",
+  "file": "debloat.rs"
+ },
+ {
+  "en": "System memory dumps",
+  "tr": "Sistem bellek dökümleri",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "{} older points",
+  "tr": "{} eski nokta",
+  "kind": "fmt",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "reduced",
+  "tr": "küçültüldü",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "{} removed",
+  "tr": "{} kaldırıldı",
+  "kind": "fmt",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "Found",
+  "tr": "Bulunanlar",
+  "kind": "plain",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "up to {} can be freed",
+  "tr": "en fazla {} kazanılabilir",
+  "kind": "fmt",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "{} ...",
+  "tr": "{} ...",
+  "kind": "fmt",
+  "file": "deepclean.rs"
+ },
+ {
+  "en": "installed",
+  "tr": "kuruldu",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "installed with errors",
+  "tr": "hatalarla kuruldu",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "failed",
+  "tr": "başarısız",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "aborted",
+  "tr": "iptal edildi",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "unknown result",
+  "tr": "bilinmeyen sonuç",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "Installed third-party drivers ({}), oldest first",
+  "tr": "Yüklü üçüncü taraf sürücüler ({}), en eskiden yeniye",
+  "kind": "fmt",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "[!!] = 4+ years old. An old date is not always a problem: many devices simply\n  never get newer drivers. Run `kz drivers` to check Windows Update for newer ones.",
+  "tr": "[!!] = 4+ yaşında. Eski tarih her zaman sorun değildir: birçok cihaza hiç yeni\n  sürücü çıkmaz. Windows Update'te daha yenisi var mı diye bakmak için: kz drivers",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "tip:",
+  "tr": "ipucu:",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "(see what is installed with: kz drivers --installed)",
+  "tr": "(yüklü olanları görmek için: kz drivers --installed)",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "{} driver update(s) available",
+  "tr": "{} sürücü güncellemesi var",
+  "kind": "fmt",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "Open Terminal as administrator and run: kz drivers",
+  "tr": "Terminali yönetici olarak açıp şunu çalıştırın: kz drivers",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "nothing selected.",
+  "tr": "hiçbir şey seçilmedi.",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "       or one was already made in the last 24h).",
+  "tr": "       ya da son 24 saatte zaten bir tane oluşturuldu).",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "downloading and installing {} driver(s), please wait...",
+  "tr": "{} sürücü indirilip kuruluyor, lütfen bekleyin...",
+  "kind": "fmt",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "{}  (no longer offered)",
+  "tr": "{}  (artık sunulmuyor)",
+  "kind": "fmt",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "restart Windows to finish installing the drivers",
+  "tr": "sürücü kurulumunu bitirmek için Windows'u yeniden başlatın",
+  "kind": "plain",
+  "file": "drivers.rs"
+ },
+ {
+  "en": "dupes :: find duplicate files",
+  "tr": "dupes :: yinelenen dosyaları bul",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "scanning",
+  "tr": "taranıyor",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "done in {:.1}s",
+  "tr": "{:.1} sn'de bitti",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "No duplicates of {min_mb} MB or more.",
+  "tr": "{min_mb} MB ve üstü yinelenen dosya yok.",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "#{} {} x {}",
+  "tr": "#{} {} x {}",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "keep",
+  "tr": "tut ",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "dup ",
+  "tr": "kopya",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "{} groups, {} reclaimable",
+  "tr": "{} grup, {} kazanılabilir",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "#{} keep (oldest)",
+  "tr": "#{} tut (en eski)",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "kazma dupes :: [x] = send to Recycle Bin",
+  "tr": "kazma dupes :: [x] = Geri Dönüşüm Kutusu'na gönder",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "Moving to Recycle Bin",
+  "tr": "Geri Dönüşüm Kutusu'na taşınıyor",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "group #{}: all copies selected, keeping {}",
+  "tr": "grup #{}: hepsi seçili, {} tutuluyor",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "freed {} (after emptying the Recycle Bin)",
+  "tr": "{} boşaltıldı (Geri Dönüşüm Kutusu boşaltılınca)",
+  "kind": "fmt",
+  "file": "dupes.rs"
+ },
+ {
+  "en": "empty folder",
+  "tr": "boş klasör",
+  "kind": "plain",
+  "file": "empty.rs"
+ },
+ {
+  "en": "broken shortcut",
+  "tr": "bozuk kısayol",
+  "kind": "plain",
+  "file": "empty.rs"
+ },
+ {
+  "en": "0-byte file",
+  "tr": "0 baytlık dosya",
+  "kind": "plain",
+  "file": "empty.rs"
+ },
+ {
+  "en": "  scanning {}",
+  "tr": "  taranıyor {}",
+  "kind": "fmt",
+  "file": "empty.rs"
+ },
+ {
+  "en": "Nothing found.",
+  "tr": "Bir şey bulunamadı.",
+  "kind": "plain",
+  "file": "empty.rs"
+ },
+ {
+  "en": "{n} items removed",
+  "tr": "{n} öğe kaldırıldı",
+  "kind": "fmt",
+  "file": "empty.rs"
+ },
+ {
+  "en": "health :: system health report",
+  "tr": "health :: sistem sağlık raporu",
+  "kind": "fmt",
+  "file": "health.rs"
+ },
+ {
+  "en": "kz health works on Windows only.",
+  "tr": "kz health yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "health.rs"
+ },
+ {
+  "en": "checking (10-30 s)...",
+  "tr": "kontrol ediliyor (10-30 sn)...",
+  "kind": "fmt",
+  "file": "health.rs"
+ },
+ {
+  "en": "all good",
+  "tr": "her şey yolunda",
+  "kind": "fmt",
+  "file": "health.rs"
+ },
+ {
+  "en": "{w} thing(s) to look at",
+  "tr": "{w} konuya göz atın",
+  "kind": "fmt",
+  "file": "health.rs"
+ },
+ {
+  "en": "{b} problem(s), {w} warning(s)",
+  "tr": "{b} sorun, {w} uyarı",
+  "kind": "fmt",
+  "file": "health.rs"
+ },
+ {
+  "en": "Disks",
+  "tr": "Diskler",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Power",
+  "tr": "Güç",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Stability",
+  "tr": "Kararlılık",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Security",
+  "tr": "Güvenlik",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Uptime",
+  "tr": "Açık kalma süresi",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Memory free",
+  "tr": "Boş bellek",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Activation",
+  "tr": "Etkinleştirme",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "activated",
+  "tr": "etkin",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "not activated",
+  "tr": "etkin değil",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Pending restart",
+  "tr": "Bekleyen yeniden başlatma",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "yes, restart to finish updates",
+  "tr": "evet, güncellemeler için yeniden başlatın",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "no",
+  "tr": "yok",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Last update",
+  "tr": "Son güncelleme",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "days ago",
+  "tr": "gün önce",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": ", wear {0}%",
+  "tr": ", aşınma %{0}",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": ", {0} h on",
+  "tr": ", {0} saat açık",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": ", {0} read errors",
+  "tr": ", {0} okuma hatası",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "free",
+  "tr": "boş",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Battery charge",
+  "tr": "Pil şarjı",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Battery health",
+  "tr": "Pil sağlığı",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "{0}% of original capacity",
+  "tr": "orijinal kapasitenin %{0}'i",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Battery",
+  "tr": "Pil",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "none (desktop)",
+  "tr": "yok (masaüstü)",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Blue screens (30 days)",
+  "tr": "Mavi ekran (30 gün)",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Unexpected shutdowns (30 days)",
+  "tr": "Beklenmedik kapanma (30 gün)",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "System errors (7 days)",
+  "tr": "Sistem hataları (7 gün)",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Defender real-time protection",
+  "tr": "Defender gerçek zamanlı koruma",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "on",
+  "tr": "açık",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "off (or another antivirus is active)",
+  "tr": "kapalı (ya da başka antivirüs etkin)",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "Virus definitions age",
+  "tr": "Virüs tanımlarının yaşı",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "days",
+  "tr": "gün",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "not available (third-party antivirus?)",
+  "tr": "erişilemedi (başka antivirüs?)",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "off for: {0}",
+  "tr": "kapalı: {0}",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "english",
+  "tr": "turkish",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
+  "en": "{}d old  {}",
+  "tr": "{} gün önce  {}",
+  "kind": "fmt",
+  "file": "installer.rs"
+ },
+ {
+  "en": "newer than {RECENT_DAYS}d, kept",
+  "tr": "{RECENT_DAYS} günden yeni, tutuldu",
+  "kind": "fmt",
+  "file": "installer.rs"
+ },
+ {
+  "en": "not selected",
+  "tr": "seçilmedi",
+  "kind": "plain",
+  "file": "installer.rs"
+ },
+ {
+  "en": "not in use by any program",
+  "tr": "hiçbir program kullanmıyor",
+  "kind": "plain",
+  "file": "locks.rs"
+ },
+ {
+  "en": " and {} more",
+  "tr": " ve {} tane daha",
+  "kind": "fmt",
+  "file": "locks.rs"
+ },
+ {
+  "en": "in use by {}{more}",
+  "tr": "kullanan: {}{more}",
+  "kind": "fmt",
+  "file": "locks.rs"
+ },
+ {
+  "en": "not found: {}",
+  "tr": "bulunamadı: {}",
+  "kind": "fmt",
+  "file": "locks.rs"
+ },
+ {
+  "en": "  {}",
+  "tr": "  {}",
+  "kind": "fmt",
+  "file": "locks.rs"
+ },
+ {
+  "en": "Programs using it",
+  "tr": "Kullanan programlar",
+  "kind": "plain",
+  "file": "locks.rs"
+ },
+ {
+  "en": "  service: {}",
+  "tr": "  servis: {}",
+  "kind": "fmt",
+  "file": "locks.rs"
+ },
+ {
+  "en": "close them, or end them in kz status (x).",
+  "tr": "bunları kapatın ya da kz status içinde (x) sonlandırın.",
+  "kind": "plain",
+  "file": "locks.rs"
+ },
+ {
+  "en": "oldschool system toolkit for windows",
+  "tr": "windows için oldschool sistem araç kutusu",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "    {tag} is out - press u",
+  "tr": "    {tag} çıktı - u'ya basın",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "main menu",
+  "tr": "ana menü",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "arrows",
+  "tr": "oklar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "move",
+  "tr": "gez",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "letter",
+  "tr": "harf",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "jump",
+  "tr": "doğrudan aç",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "mouse",
+  "tr": "fare",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "click",
+  "tr": "tıkla",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "selected",
+  "tr": "seçili",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "press enter to return to the menu...",
+  "tr": "menüye dönmek için enter'a basın...",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "clean up",
+  "tr": "temizlik",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "caches, temp files, logs, recycle bin",
+  "tr": "önbellek, geçici dosya, log, geri dönüşüm kutusu",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "Windows.old, upgrade files, dumps, hibernation",
+  "tr": "Windows.old, yükseltme dosyaları, dökümler, hazırda bekletme",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "explore what is using your disk",
+  "tr": "diski ne kaplıyor, gez ve gör",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "what kind of files take the space",
+  "tr": "hangi tür dosyalar yer kaplıyor",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "project build artifacts (node_modules, target...)",
+  "tr": "proje derleme çıktıları (node_modules, target...)",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "old setup files in Downloads / Desktop",
+  "tr": "İndirilenler / Masaüstü'ndeki eski kurulum dosyaları",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "find duplicate files",
+  "tr": "yinelenen dosyaları bul",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "empty folders, broken shortcuts, 0-byte files",
+  "tr": "boş klasör, bozuk kısayol, 0 baytlık dosya",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "recent files, run history, browser traces",
+  "tr": "son dosyalar, çalıştır geçmişi, tarayıcı izleri",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "programs & drivers",
+  "tr": "programlar ve sürücüler",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "remove programs and their leftovers",
+  "tr": "program kaldır, kalıntılarını temizle",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "update installed programs (winget)",
+  "tr": "yüklü programları güncelle (winget)",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "driver updates from windows update",
+  "tr": "windows update'ten sürücü güncellemeleri",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "programs that start with windows",
+  "tr": "windows ile başlayan programlar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "remove promo apps, turn off ads",
+  "tr": "tanıtım uygulamalarını kaldır, reklamları kapat",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "move-to-a-new-PC kit: apps, drivers, settings",
+  "tr": "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "system",
+  "tr": "sistem",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "health report: disks, battery, crashes",
+  "tr": "sağlık raporu: disk, pil, çökmeler",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "live monitor and process manager",
+  "tr": "canlı izleme ve süreç yöneticisi",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "fix network, Windows Update, Store, system files",
+  "tr": "ağ, Windows Update, Store, sistem dosyası onarımı",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "dns flush, icon cache, ssd trim, dism, sfc",
+  "tr": "dns, ikon önbelleği, ssd trim, dism, sfc",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "power plans, battery report, wake sources",
+  "tr": "güç planı, pil raporu, uyandırma nedenleri",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "system restore points",
+  "tr": "sistem geri yükleme noktaları",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "system report as an HTML file",
+  "tr": "HTML sistem raporu",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "disk speed test",
+  "tr": "disk hız testi",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "keep the screen on",
+  "tr": "ekranı açık tut",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "black screen for wiping the display",
+  "tr": "ekranı silmek için siyah ekran",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "automatic weekly cleaning",
+  "tr": "otomatik haftalık temizlik",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "network",
+  "tr": "ağ",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "ip, latency, dns, speed test, wifi",
+  "tr": "ip, gecikme, dns, hız testi, wifi",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "which program uses which port",
+  "tr": "hangi port hangi programda",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "kazma",
+  "tr": "kazma",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "paths kazma must never delete",
+  "tr": "kazma'nın asla silmeyeceği yollar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "your own clean rules",
+  "tr": "kendi temizlik kuralların",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "right-click menu in Explorer",
+  "tr": "Gezgin sağ tık menüsü",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "language and color theme",
+  "tr": "dil ve renk teması",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "show past operations",
+  "tr": "geçmiş işlemler",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "update kazma itself",
+  "tr": "kazma'yı güncelle",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "exit",
+  "tr": "çıkış",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "gateway",
+  "tr": "ağ geçidi",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "link speed",
+  "tr": "bağlantı",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "Internet",
+  "tr": "İnternet",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "public IP",
+  "tr": "genel IP",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "{name}: unreachable",
+  "tr": "{name}: ulaşılamıyor",
+  "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "more: kz net dns | kz net speed | kz net wifi",
+  "tr": "daha fazlası: kz net dns | kz net speed | kz net wifi",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "current",
+  "tr": "şu anki",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "  {} failed",
+  "tr": "  {} başarısız",
+  "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "switch (needs administrator):",
+  "tr": "değiştir (yönetici gerekli):",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "unknown DNS: {name}",
+  "tr": "bilinmeyen DNS: {name}",
+  "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "changing DNS needs an elevated terminal",
+  "tr": "DNS değiştirmek için yönetici terminali gerekir",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "{}: DNS = {servers}",
+  "tr": "{}: DNS = {servers}",
+  "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "Speed",
+  "tr": "Hız",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "ping",
+  "tr": "gecikme",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "download",
+  "tr": "indirme",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "upload",
+  "tr": "yükleme",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "upload test failed",
+  "tr": "yükleme testi başarısız",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "no saved Wi-Fi networks ({})",
+  "tr": "kayıtlı Wi-Fi ağı yok ({})",
+  "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "{} saved Wi-Fi networks",
+  "tr": "{} kayıtlı Wi-Fi ağı",
+  "kind": "fmt",
+  "file": "net.rs"
+ },
+ {
+  "en": "show passwords: kz net wifi --show",
+  "tr": "şifreleri göster: kz net wifi --show",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "net :: network tools",
+  "tr": "net :: ağ araçları",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "usage: kz net [info | dns | dns set NAME | speed | wifi [--show]]",
+  "tr": "kullanım: kz net [info | dns | dns set AD | speed | wifi [--show]]",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
+  "en": "No history yet ({})",
+  "tr": "Henüz geçmiş yok ({})",
+  "kind": "fmt",
+  "file": "oplog.rs"
+ },
+ {
+  "en": "none found",
+  "tr": "bulunamadı",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Flush DNS cache",
+  "tr": "DNS önbelleğini temizle",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Refresh icon cache",
+  "tr": "İkon önbelleğini yenile",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "TRIM SSD drives",
+  "tr": "SSD'lere TRIM uygula",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "keeps SSD write speed up",
+  "tr": "SSD yazma hızını korur",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "ran today",
+  "tr": "bugün çalıştı",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "last run {d} days ago",
+  "tr": "son çalışma {d} gün önce",
+  "kind": "fmt",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "never run by kazma",
+  "tr": "kazma ile hiç çalışmadı",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Would run",
+  "tr": "Çalıştırılacaklar",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "Running",
+  "tr": "Çalıştırılıyor",
+  "kind": "plain",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "{:<34} (skipped)",
+  "tr": "{:<34} (atlandı)",
+  "kind": "fmt",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "{:<34} running...",
+  "tr": "{:<34} çalışıyor...",
+  "kind": "fmt",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "{:<34} done      ",
+  "tr": "{:<34} tamam     ",
+  "kind": "fmt",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "{:<34} (run kz from an elevated terminal)",
+  "tr": "{:<34} (kz'yi yönetici terminalinde çalıştırın)",
+  "kind": "fmt",
+  "file": "optimize.rs"
+ },
+ {
+  "en": "reading connections...",
+  "tr": "bağlantılar okunuyor...",
+  "kind": "plain",
+  "file": "ports.rs"
+ },
+ {
+  "en": "nothing is listening on port {port}",
+  "tr": "{port} portunu dinleyen yok",
+  "kind": "fmt",
+  "file": "ports.rs"
+ },
+ {
+  "en": "Close {} (pid {}) that uses port {port}?",
+  "tr": "{port} portunu kullanan {} (pid {}) kapatılsın mı?",
+  "kind": "fmt",
+  "file": "ports.rs"
+ },
+ {
+  "en": "closed {} (pid {})",
+  "tr": "{} kapatıldı (pid {})",
+  "kind": "fmt",
+  "file": "ports.rs"
+ },
+ {
+  "en": "could not close {} (try an elevated terminal)",
+  "tr": "{} kapatılamadı (yönetici terminalini deneyin)",
+  "kind": "fmt",
+  "file": "ports.rs"
+ },
+ {
+  "en": "PROTO",
+  "tr": "PROTO",
+  "kind": "plain",
+  "file": "ports.rs"
+ },
+ {
+  "en": "ADDRESS",
+  "tr": "ADRES",
+  "kind": "plain",
+  "file": "ports.rs"
+ },
+ {
+  "en": "PROGRAM",
+  "tr": "PROGRAM",
+  "kind": "plain",
+  "file": "ports.rs"
+ },
+ {
+  "en": "{} listeners. dim rows only accept local connections.",
+  "tr": "{} dinleyici. soluk satırlar yalnızca yerel bağlantı kabul eder.",
+  "kind": "fmt",
+  "file": "ports.rs"
+ },
+ {
+  "en": "close the program on a port: kz ports --kill 8080",
+  "tr": "bir porttaki programı kapat: kz ports --kill 8080",
+  "kind": "plain",
+  "file": "ports.rs"
+ },
+ {
+  "en": "Power plans",
+  "tr": "Güç planları",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "active",
+  "tr": "etkin",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "switch:  kz power set saver | balanced | high | ultimate",
+  "tr": "değiştir:  kz power set saver | balanced | high | ultimate",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "more:    kz power battery | kz power wake | kz power hibernate off|reduced|full",
+  "tr": "diğer:    kz power battery | kz power wake | kz power hibernate off|reduced|full",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "unknown plan: {key}",
+  "tr": "bilinmeyen plan: {key}",
+  "kind": "fmt",
+  "file": "power.rs"
+ },
+ {
+  "en": "{name} is not available on this PC",
+  "tr": "{name} bu bilgisayarda kullanılamıyor",
+  "kind": "fmt",
+  "file": "power.rs"
+ },
+ {
+  "en": "power plan: {name}",
+  "tr": "güç planı: {name}",
+  "kind": "fmt",
+  "file": "power.rs"
+ },
+ {
+  "en": "use: kz power hibernate off | reduced | full | on",
+  "tr": "kullanım: kz power hibernate off | reduced | full | on",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "this needs an elevated terminal",
+  "tr": "bunun için yönetici terminali gerekir",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "hibernation on",
+  "tr": "hazırda bekletme açık",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "no battery report ({})",
+  "tr": "pil raporu yok ({})",
+  "kind": "fmt",
+  "file": "power.rs"
+ },
+ {
+  "en": "battery report: {}",
+  "tr": "pil raporu: {}",
+  "kind": "fmt",
+  "file": "power.rs"
+ },
+ {
+  "en": "Last wake source",
+  "tr": "Son uyanma nedeni",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "Wake timers",
+  "tr": "Uyandırma zamanlayıcıları",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "usage: kz power [set PLAN | battery | wake | hibernate MODE]",
+  "tr": "kullanım: kz power [set PLAN | battery | wake | hibernate MOD]",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "Power saver",
+  "tr": "Güç tasarrufu",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "Balanced",
+  "tr": "Dengeli",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "High performance",
+  "tr": "Yüksek performans",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "Ultimate performance",
+  "tr": "Nihai performans",
+  "kind": "plain",
+  "file": "power.rs"
+ },
+ {
+  "en": "Recent files list & jump lists",
+  "tr": "Son kullanılan dosyalar ve atlama listeleri",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "shortcuts only, your files stay",
+  "tr": "yalnızca kısayollar, dosyalarınız kalır",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Run dialog history (Win+R)",
+  "tr": "Çalıştır geçmişi (Win+R)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Explorer address bar history",
+  "tr": "Gezgin adres çubuğu geçmişi",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Explorer search history",
+  "tr": "Gezgin arama geçmişi",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Clipboard",
+  "tr": "Pano",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Recent files shortcuts",
+  "tr": "Son dosyalar kısayolları",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "{name} history",
+  "tr": "{name} geçmişi",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "bookmarks and passwords stay",
+  "tr": "yer imleri ve şifreler kalır",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "{name} cookies",
+  "tr": "{name} çerezleri",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "signs you out of websites",
+  "tr": "sitelerden çıkış yaparsınız",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Firefox form & session history",
+  "tr": "Firefox form ve oturum geçmişi",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Firefox cookies",
+  "tr": "Firefox çerezleri",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "privacy :: clear usage traces",
+  "tr": "privacy :: kullanım izlerini temizle",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Nothing to clear.",
+  "tr": "Temizlenecek bir şey yok.",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "not an interactive terminal: re-run with --yes, or --dry-run to preview",
+  "tr": "etkileşimli terminal değil: --yes ile çalıştırın ya da --dry-run ile önizleyin",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "kazma privacy :: select traces to clear",
+  "tr": "kazma privacy :: temizlenecek izleri seç",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Would clear",
+  "tr": "Temizlenecekler",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Clearing",
+  "tr": "Temizleniyor",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "(skipped)",
+  "tr": "(atlandı)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "({p} is running, close it first)",
+  "tr": "({p} açık, önce kapatın)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "  ({} in use)",
+  "tr": "  ({} kullanımda)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "Windows kernel.",
+  "tr": "Windows çekirdeği.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows Search and its index.",
+  "tr": "Windows Arama ve dizini.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows audio engine.",
+  "tr": "Windows ses motoru.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Print spooler (printing).",
+  "tr": "Yazdırma biriktiricisi.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Font driver host.",
+  "tr": "Yazı tipi sürücüsü.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows Security status.",
+  "tr": "Windows Güvenliği durumu.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "OneDrive sync.",
+  "tr": "OneDrive eşitleme.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Phone Link.",
+  "tr": "Telefon Bağlantısı.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows Widgets.",
+  "tr": "Windows Widget'ları.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Started at sign-in.",
+  "tr": "Oturum açılırken başlatıldı.",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "{}d {}h",
+  "tr": "{} gün {} sa",
+  "kind": "fmt",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "{}h {}m",
+  "tr": "{} sa {} dk",
+  "kind": "fmt",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "{}m",
+  "tr": "{} dk",
+  "kind": "fmt",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "process",
+  "tr": "süreç",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "has exited",
+  "tr": "kapanmış",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "what",
+  "tr": "nedir",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Windows service: {}",
+  "tr": "Windows servisi: {}",
+  "kind": "fmt",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "Starts with Windows ({}: {}). Turn it off in kz startup.",
+  "tr": "Windows ile başlıyor ({}: {}). kz startup ile kapatabilirsiniz.",
+  "kind": "fmt",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "why",
+  "tr": "neden",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "parent",
+  "tr": "üst süreç",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "path",
+  "tr": "yol",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "command",
+  "tr": "komut",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "running for",
+  "tr": "çalışma süresi",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "memory",
+  "tr": "bellek",
+  "kind": "plain",
+  "file": "procinfo.rs"
+ },
+ {
+  "en": "{}  touched < {RECENT_DAYS}d ago",
+  "tr": "{}  < {RECENT_DAYS} gün önce değişti",
+  "kind": "fmt",
+  "file": "purge.rs"
+ },
+ {
+  "en": "Would delete",
+  "tr": "Silinecekler",
+  "kind": "plain",
+  "file": "purge.rs"
+ },
+ {
+  "en": "Deleting",
+  "tr": "Siliniyor",
+  "kind": "plain",
+  "file": "purge.rs"
+ },
+ {
+  "en": "recent (< {RECENT_DAYS}d), kept",
+  "tr": "yeni (< {RECENT_DAYS} gün), tutuldu",
+  "kind": "fmt",
+  "file": "purge.rs"
+ },
+ {
+  "en": "  ({} locked)",
+  "tr": "  ({} kilitli)",
+  "kind": "fmt",
+  "file": "purge.rs"
+ },
+ {
+  "en": "remove :: dry run",
+  "tr": "remove :: deneme",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "Will remove",
+  "tr": "Kaldırılacaklar",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "  program     {}",
+  "tr": "  program     {}",
+  "kind": "fmt",
+  "file": "remove.rs"
+ },
+ {
+  "en": "  folder      {}",
+  "tr": "  klasör      {}",
+  "kind": "fmt",
+  "file": "remove.rs"
+ },
+ {
+  "en": "  PATH entry  {}",
+  "tr": "  PATH kaydı  {}",
+  "kind": "fmt",
+  "file": "remove.rs"
+ },
+ {
+  "en": "  data & log  {}",
+  "tr": "  veri ve log {}",
+  "kind": "fmt",
+  "file": "remove.rs"
+ },
+ {
+  "en": "Uninstall kazma?",
+  "tr": "kazma kaldırılsın mı?",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "PATH entry removed",
+  "tr": "PATH kaydı kaldırıldı",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "could not update PATH",
+  "tr": "PATH güncellenemedi",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "data & log removed",
+  "tr": "veri ve log kaldırıldı",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "bye. thanks for using kazma.",
+  "tr": "hoşça kal. kazma'yı kullandığın için teşekkürler.",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
+  "en": "Reset network (Winsock, TCP/IP, DNS cache)",
+  "tr": "Ağı sıfırla (Winsock, TCP/IP, DNS önbelleği)",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "no internet, 'limited connection', broken DNS",
+  "tr": "internet yok, 'sınırlı bağlantı', DNS bozuk",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Reset Windows Update components",
+  "tr": "Windows Update bileşenlerini sıfırla",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "updates stuck or failing; old folders are renamed, not deleted",
+  "tr": "güncellemeler takılıyor; eski klasörler silinmez, yeniden adlandırılır",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Reset Microsoft Store cache",
+  "tr": "Microsoft Store önbelleğini sıfırla",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Store won't open or download",
+  "tr": "Store açılmıyor ya da indirmiyor",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Repair Windows image (DISM + SFC)",
+  "tr": "Windows görüntüsünü onar (DISM + SFC)",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "corrupted system files; 15-40 min",
+  "tr": "bozuk sistem dosyaları; 15-40 dk",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Sync the clock with the internet",
+  "tr": "Saati internetle eşitle",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "wrong time, certificate / login errors",
+  "tr": "yanlış saat, sertifika / oturum hataları",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Clear stuck print queue",
+  "tr": "Takılan yazdırma kuyruğunu temizle",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "documents stuck in the printer queue",
+  "tr": "yazıcı kuyruğunda takılı belgeler",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "unknown fix: {k}. use network | update | store | dism | time | printer",
+  "tr": "bilinmeyen: {k}. network | update | store | dism | time | printer kullanın",
+  "kind": "fmt",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Available fixes",
+  "tr": "Kullanılabilir düzeltmeler",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "run one: kz repair network",
+  "tr": "birini çalıştır: kz repair network",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "repairs need an elevated terminal (Run as administrator)",
+  "tr": "onarımlar için yönetici terminali gerekir (Yönetici olarak çalıştır)",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Run \"{}\"?",
+  "tr": "\"{}\" çalıştırılsın mı?",
+  "kind": "fmt",
+  "file": "repair.rs"
+ },
+ {
+  "en": "Repairing",
+  "tr": "Onarılıyor",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "restart Windows to finish the repair",
+  "tr": "onarımı tamamlamak için Windows'u yeniden başlatın",
+  "kind": "plain",
+  "file": "repair.rs"
+ },
+ {
+  "en": "hardware...",
+  "tr": "donanım...",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "Hardware",
+  "tr": "Donanım",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "Health",
+  "tr": "Sağlık",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "startup programs...",
+  "tr": "başlangıç programları...",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "Startup ({})",
+  "tr": "Başlangıç ({})",
+  "kind": "fmt",
+  "file": "report.rs"
+ },
+ {
+  "en": "installed programs...",
+  "tr": "yüklü programlar...",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "Programs ({})",
+  "tr": "Programlar ({})",
+  "kind": "fmt",
+  "file": "report.rs"
+ },
+ {
+  "en": "drivers...",
+  "tr": "sürücüler...",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "Third-party drivers ({})",
+  "tr": "Üçüncü taraf sürücüler ({})",
+  "kind": "fmt",
+  "file": "report.rs"
+ },
+ {
+  "en": "System report, {}",
+  "tr": "Sistem raporu, {}",
+  "kind": "fmt",
+  "file": "report.rs"
+ },
+ {
+  "en": "report saved: {}",
+  "tr": "rapor kaydedildi: {}",
+  "kind": "fmt",
+  "file": "report.rs"
+ },
+ {
+  "en": "it stays on this PC; share it only with people you trust.",
+  "tr": "bu bilgisayarda kalır; yalnızca güvendiğiniz kişilerle paylaşın.",
+  "kind": "plain",
+  "file": "report.rs"
+ },
+ {
+  "en": "app install",
+  "tr": "uygulama kurulumu",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "app removal",
+  "tr": "uygulama kaldırma",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "driver install",
+  "tr": "sürücü kurulumu",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "settings",
+  "tr": "ayarlar",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "cancelled",
+  "tr": "iptal",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "other",
+  "tr": "diğer",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "System Restore is not available on this edition of Windows (e.g. Windows Server)",
+  "tr": "Sistem Geri Yükleme bu Windows sürümünde yok (örneğin Windows Server)",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "System Restore needs an elevated terminal",
+  "tr": "Sistem Geri Yükleme için yönetici terminali gerekir",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "{} restore points",
+  "tr": "{} geri yükleme noktası",
+  "kind": "fmt",
+  "file": "restore.rs"
+ },
+ {
+  "en": "create: kz restore create \"before update\"",
+  "tr": "oluştur: kz restore create \"güncelleme öncesi\"",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "roll back: kz restore open  (Windows' own wizard)",
+  "tr": "geri dön: kz restore open  (Windows'un kendi sihirbazı)",
+  "kind": "plain",
+  "file": "restore.rs"
+ },
+ {
+  "en": "restore point created: {desc}",
+  "tr": "geri yükleme noktası oluşturuldu: {desc}",
+  "kind": "fmt",
+  "file": "restore.rs"
+ },
+ {
+  "en": "System Restore enabled on {drive}",
+  "tr": "{drive} için Sistem Geri Yükleme açıldı",
+  "kind": "fmt",
+  "file": "restore.rs"
+ },
+ {
+  "en": "unknown: {other}. use list | create | enable | open",
+  "tr": "bilinmeyen: {other}. list | create | enable | open kullanın",
+  "kind": "fmt",
+  "file": "restore.rs"
+ },
+ {
+  "en": "scheduled cleaning is ON ({})",
+  "tr": "zamanlanmış temizlik AÇIK ({})",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "next run",
+  "tr": "sonraki",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "last run",
+  "tr": "son",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "scheduled cleaning is off.  turn on: kz schedule weekly",
+  "tr": "zamanlanmış temizlik kapalı.  açmak için: kz schedule weekly",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "schedule :: automatic cleaning",
+  "tr": "schedule :: otomatik temizlik",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "kz schedule works on Windows only.",
+  "tr": "kz schedule yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "scheduled cleaning turned off.",
+  "tr": "zamanlanmış temizlik kapatıldı.",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "--time must look like 11:00",
+  "tr": "--time 11:00 biçiminde olmalı",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "kz.exe is in a temporary place ({}). Install it first so the task keeps working:",
+  "tr": "kz.exe geçici bir yerde ({}). Görevin çalışmaya devam etmesi için önce kurun:",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "unknown: {other}. use daily | weekly | monthly | off | status",
+  "tr": "bilinmeyen: {other}. daily | weekly | monthly | off | status kullanın",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
+  "en": "turns off in {}",
+  "tr": "{} sonra kapanır",
+  "kind": "fmt",
+  "file": "screen.rs"
+ },
+ {
+  "en": "on for {}",
+  "tr": "{} süredir açık",
+  "kind": "fmt",
+  "file": "screen.rs"
+ },
+ {
+  "en": "stop",
+  "tr": "durdur",
+  "kind": "plain",
+  "file": "screen.rs"
+ },
+ {
+  "en": " {left}s  -  esc x3 to stop ",
+  "tr": " {left} sn  -  durdurmak için 3 kez esc ",
+  "kind": "fmt",
+  "file": "screen.rs"
+ },
+ {
+  "en": "invalid value. {k}: {hint}",
+  "tr": "geçersiz değer. {k}: {hint}",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "{k} = {v}  (saved to {})",
+  "tr": "{k} = {v}  ({} dosyasına kaydedildi)",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "config :: settings",
+  "tr": "config :: ayarlar",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "change:  kz config lang tr    kz config theme amber",
+  "tr": "değiştir:  kz config lang en    kz config theme amber",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "Startup folder",
+  "tr": "Başlangıç klasörü",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "Task",
+  "tr": "Görev",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "needs administrator",
+  "tr": "yönetici gerekli",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "startup :: programs that start with Windows",
+  "tr": "startup :: Windows ile başlayan programlar",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "kz startup works on Windows only.",
+  "tr": "kz startup yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "reading startup entries...",
+  "tr": "başlangıç kayıtları okunuyor...",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "Nothing starts with Windows.",
+  "tr": "Windows ile başlayan program yok.",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "{} startup entries",
+  "tr": "{} başlangıç kaydı",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "on ",
+  "tr": "açık",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "off",
+  "tr": "kapalı",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "  (broken: program is gone)",
+  "tr": "  (bozuk: program silinmiş)",
+  "kind": "plain",
+  "file": "startup.rs"
+ },
+ {
+  "en": "kazma startup :: [x] = starts with Windows",
+  "tr": "kazma startup :: [x] = Windows ile başlar",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "no changes.",
+  "tr": "değişiklik yok.",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "enabled ",
+  "tr": "açıldı  ",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "disabled",
+  "tr": "kapatıldı",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": "takes effect at next sign-in.",
+  "tr": "bir sonraki oturum açışta geçerli olur.",
+  "kind": "fmt",
+  "file": "startup.rs"
+ },
+ {
+  "en": " up {}",
+  "tr": " açık {}",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "   battery {pct}% (charging)",
+  "tr": "   pil %{pct} (şarjda)",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "   battery {pct}%",
+  "tr": "   pil %{pct}",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "{} cores",
+  "tr": "{} çekirdek",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "down {:>10}/s ",
+  "tr": "indir {:>10}/s ",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "up   {:>10}/s ",
+  "tr": "yükle {:>10}/s ",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "{} free of {}",
+  "tr": "{} boş / {}",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "disks",
+  "tr": "diskler",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "MEM",
+  "tr": "BELLEK",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "NAME",
+  "tr": "AD",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "processes",
+  "tr": "süreçler",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "by memory",
+  "tr": "belleğe göre",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "by cpu",
+  "tr": "cpu'ya göre",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": " end {name} (pid {pid})? [y/N]",
+  "tr": " {name} (pid {pid}) sonlandırılsın mı? [y/N]",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "up/down",
+  "tr": "yukarı/aşağı",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "select",
+  "tr": "seç",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "why is it running?",
+  "tr": "neden çalışıyor?",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "end process",
+  "tr": "sonlandır",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "cpu / memory",
+  "tr": "cpu / bellek",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "close",
+  "tr": "kapat",
+  "kind": "plain",
+  "file": "status.rs"
+ },
+ {
+  "en": "ended {name}",
+  "tr": "{name} sonlandırıldı",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "could not end {name} (try an elevated terminal)",
+  "tr": "{name} sonlandırılamadı (yönetici terminalini deneyin)",
+  "kind": "fmt",
+  "file": "status.rs"
+ },
+ {
+  "en": "Other",
+  "tr": "Diğer",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "  {} in {} files  ({method}, {:.1}s)",
+  "tr": "  {1} dosyada {0}  ({method}, {2:.1} sn)",
+  "kind": "fmt",
+  "file": "types.rs"
+ },
+ {
+  "en": "By type",
+  "tr": "Türe göre",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "{c} files",
+  "tr": "{c} dosya",
+  "kind": "fmt",
+  "file": "types.rs"
+ },
+ {
+  "en": "Top extensions",
+  "tr": "En çok yer kaplayan uzantılar",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "(none)",
+  "tr": "(yok)",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "MFT scan not possible here (admin + NTFS needed)",
+  "tr": "MFT taraması burada yapılamıyor (yönetici + NTFS gerekli)",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Video",
+  "tr": "Video",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Images",
+  "tr": "Resimler",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Audio",
+  "tr": "Ses",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Archives & disk images",
+  "tr": "Arşivler ve disk kalıpları",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Documents",
+  "tr": "Belgeler",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Programs & libraries",
+  "tr": "Programlar ve kütüphaneler",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Code & build output",
+  "tr": "Kod ve derleme çıktısı",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": "Data, caches & logs",
+  "tr": "Veri, önbellek ve loglar",
+  "kind": "plain",
+  "file": "types.rs"
+ },
+ {
+  "en": " filter: {}  [esc] clear",
+  "tr": " filtre: {}  [esc] temizle",
+  "kind": "fmt",
+  "file": "ui.rs"
+ },
+ {
+  "en": "{count} of {} selected",
+  "tr": "{} öğeden {count} seçili",
+  "kind": "fmt",
+  "file": "ui.rs"
+ },
+ {
+  "en": "space",
+  "tr": "boşluk",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "toggle",
+  "tr": "seç",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "all",
+  "tr": "hepsi",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "none",
+  "tr": "hiçbiri",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "go",
+  "tr": "uygula",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "cancel",
+  "tr": "iptal",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "  running: {}",
+  "tr": "  çalıştırılıyor: {}",
+  "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "{} installed programs",
+  "tr": "{} yüklü program",
+  "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "Will uninstall",
+  "tr": "Kaldırılacaklar",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "Uninstall {} program(s)?",
+  "tr": "{} program kaldırılsın mı?",
+  "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "could not start the uninstaller: {e}",
+  "tr": "kaldırma programı başlatılamadı: {e}",
+  "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "uninstalled",
+  "tr": "kaldırıldı",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "no leftovers found.",
+  "tr": "kalıntı bulunamadı.",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "folder -> Recycle Bin",
+  "tr": "klasör -> Geri Dönüşüm Kutusu",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "leftovers kept.",
+  "tr": "kalıntılar tutuldu.",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "Leftovers",
+  "tr": "Kalıntılar",
+  "kind": "plain",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "{} (kept)",
+  "tr": "{} (tutuldu)",
+  "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "{k}  (backup: {})",
+  "tr": "{k}  (yedek: {})",
+  "kind": "fmt",
+  "file": "uninstall.rs"
+ },
+ {
+  "en": "update :: update kazma itself",
+  "tr": "update :: kazma'yı güncelle",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "kz update works on Windows only. Current version: {current}",
+  "tr": "kz update yalnızca Windows'ta çalışır. Sürüm: {current}",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "checking GitHub for the latest release...",
+  "tr": "GitHub'da son sürüm kontrol ediliyor...",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "no release found",
+  "tr": "release bulunamadı",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "latest",
+  "tr": "en son",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "kazma is up to date.",
+  "tr": "kazma güncel.",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "a new version is available: kz update",
+  "tr": "yeni sürüm var: kz update",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "release has no kz.exe / SHA256SUMS.txt",
+  "tr": "release'te kz.exe / SHA256SUMS.txt yok",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "downloading {} and verifying checksum...",
+  "tr": "{} indiriliyor, sağlama toplamı doğrulanıyor...",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "download failed",
+  "tr": "indirme başarısız",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "downloaded and verified (SHA-256)",
+  "tr": "indirildi ve doğrulandı (SHA-256)",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "could not replace kz.exe",
+  "tr": "kz.exe değiştirilemedi",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "updated to {}. Restart kz to use it.",
+  "tr": "{} sürümüne güncellendi. Kullanmak için kz'yi yeniden başlatın.",
+  "kind": "fmt",
+  "file": "update.rs"
+ },
+ {
+  "en": "Everything is up to date.",
+  "tr": "Her şey güncel.",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "Available updates",
+  "tr": "Mevcut güncellemeler",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "Upgrading",
+  "tr": "Güncelleniyor",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "{line}  (skipped)",
+  "tr": "{line}  (atlandı)",
+  "kind": "fmt",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "{line}  installing...",
+  "tr": "{line}  kuruluyor...",
+  "kind": "fmt",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "upgraded {ok}, failed {fail}",
+  "tr": "güncellenen {ok}, başarısız {fail}",
+  "kind": "fmt",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "tip: some installers need an elevated terminal, or the program to be closed first.",
+  "tr": "ipucu: bazı kurulumlar yönetici terminali ya da programın kapalı olmasını ister.",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "protected: {}",
+  "tr": "korunuyor: {}",
+  "kind": "fmt",
+  "file": "whitelist.rs"
+ },
+ {
+  "en": "removed {} entries",
+  "tr": "{} kayıt kaldırıldı",
+  "kind": "fmt",
+  "file": "whitelist.rs"
+ },
+ {
+  "en": "(no data folder)",
+  "tr": "(veri klasörü yok)",
+  "kind": "plain",
+  "file": "whitelist.rs"
+ },
+ {
+  "en": "no protected paths yet.",
+  "tr": "henüz korunan yol yok.",
+  "kind": "plain",
+  "file": "whitelist.rs"
+ },
+ {
+  "en": "add one:",
+  "tr": "ekle:   ",
+  "kind": "plain",
+  "file": "whitelist.rs"
+ },
+ {
+  "en": "or edit:",
+  "tr": "düzenle:",
+  "kind": "plain",
+  "file": "whitelist.rs"
+ }
+]

@@ -103,8 +103,8 @@ pub fn run(check_only: bool) -> anyhow::Result<()> {
     let Some(l) = latest.into_iter().next() else {
         anyhow::bail!("{}", tr!("no release found", "release bulunamadı"));
     };
-    println!("  {:<12} v{current}", tr!("installed", "yüklü"));
-    println!("  {:<12} {}\n", tr!("latest", "en son"), l.tag);
+    println!("  {} v{current}", ui::pad(&tr!("installed", "yüklü"), 12));
+    println!("  {} {}\n", ui::pad(&tr!("latest", "en son"), 12), l.tag);
     if !is_newer(&l.tag, current) {
         ui::ok(&tr!("kazma is up to date.", "kazma güncel."));
         return Ok(());

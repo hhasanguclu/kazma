@@ -92,13 +92,7 @@ pub fn category_of(ext: &str) -> usize {
 
 fn category_name(i: usize) -> &'static str {
     match CATEGORIES.get(i) {
-        Some((_, en, trn, _)) => {
-            if ui::is_tr() {
-                trn
-            } else {
-                en
-            }
-        }
+        Some((_, en, trn, _)) => ui::t(en, trn),
         None => ui::t("Other", "Diğer"),
     }
 }

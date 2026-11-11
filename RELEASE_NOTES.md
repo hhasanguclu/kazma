@@ -9,7 +9,13 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~2.7 MB exe. No installer required, no telemetry.
 
-## Next release (Mole parity)
+## What's new in v1.0.0
+
+**11 languages.** English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski, Українська, Русский.
+kazma starts in your Windows display language; change it with `kz config lang de` (or `auto`).
+Translations live in `locales/*.json`, corrections are welcome. The README is available in every language.
+
+**Mole parity:**
 
 - **100+ cleanup rules**: AI tools (Claude, ChatGPT, Cursor, Windsurf, LM Studio; model caches opt-in),
   game launchers (Steam, Epic, EA, Battle.net, Ubisoft, Riot, GOG, Xbox), GPU driver leftovers
@@ -26,7 +32,7 @@ One ~2.7 MB exe. No installer required, no telemetry.
   TRIM / DISM / SFC pre-selected only when due
 - **ARM64 build** (`kz-arm64.exe`); installer, `kz update`, Scoop and winget pick the right one
 
-## What's new in v0.6.0
+## v0.6.0
 
 A clearer, richer ASCII interface that stays minimal:
 

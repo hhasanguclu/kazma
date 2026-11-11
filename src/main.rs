@@ -1,5 +1,7 @@
 //! kazma: an oldschool, all-ASCII system cleaner and disk explorer for Windows.
 
+pub(crate) use kazma_macros::tr;
+
 mod analyze;
 mod backup;
 mod bench;
@@ -15,6 +17,7 @@ mod explain;
 mod fsutil;
 mod gpu;
 mod health;
+mod i18n;
 mod installer;
 mod locks;
 mod mft;
@@ -530,7 +533,7 @@ fn menu_columns() -> (Vec<usize>, Vec<usize>) {
 
 fn menu_row(i: usize, width: usize, tr_mode: bool) -> ListItem<'static> {
     let (key, name, en, trd) = MENU[i];
-    let desc = if tr_mode { trd } else { en };
+    let desc = ui::t(en, trd);
     if key == ' ' {
         // Turkish casing: i -> İ, ı -> I (Rust's to_uppercase is locale-free)
         let title: String = if tr_mode {
@@ -687,10 +690,7 @@ fn menu(
                         Style::new().fg(ui::fg()).add_modifier(Modifier::BOLD),
                     ),
                     Span::styled(format!("  ({key})  "), Style::new().fg(ui::hi())),
-                    Span::styled(
-                        if ui::is_tr() { trd } else { en },
-                        Style::new().fg(ui::dim()),
-                    ),
+                    Span::styled(ui::t(en, trd), Style::new().fg(ui::dim())),
                 ]);
                 let keys = ui::keys(&[
                     (ui::t("arrows", "oklar"), ui::t("move", "gez")),

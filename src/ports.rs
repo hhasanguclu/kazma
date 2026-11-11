@@ -116,10 +116,10 @@ pub fn run(filter: Option<String>, kill_port: Option<u16>) -> anyhow::Result<()>
     let f = filter.unwrap_or_default();
     let shown: Vec<&Listener> = list.iter().filter(|l| matches(l, &f)).collect();
     println!(
-        "  {:<5} {:>6}  {:<22} {:>7}  {}",
-        ui::t("PROTO", "PROTO"),
+        "  {} {:>6}  {} {:>7}  {}",
+        ui::pad(ui::t("PROTO", "PROTO"), 5),
         "PORT",
-        ui::t("ADDRESS", "ADRES"),
+        ui::pad(ui::t("ADDRESS", "ADRES"), 22),
         "PID",
         ui::t("PROGRAM", "PROGRAM")
     );

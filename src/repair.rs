@@ -106,7 +106,7 @@ const FIXES: &[Fix] = &[
 ];
 
 fn name(f: &Fix) -> &'static str {
-    if ui::is_tr() { f.tr } else { f.en }
+    ui::t(f.en, f.tr)
 }
 
 fn run_fix(f: &Fix) -> Result<(), String> {
@@ -153,12 +153,7 @@ pub fn run(only: Option<String>, dry: bool, no_restore_point: bool) -> anyhow::R
                 .iter()
                 .map(|f| ui::CheckItem {
                     label: name(f).into(),
-                    detail: (if ui::is_tr() {
-                        f.detail_tr
-                    } else {
-                        f.detail_en
-                    })
-                    .into(),
+                    detail: ui::t(f.detail_en, f.detail_tr).into(),
                     size: 0,
                     checked: false,
                 })
@@ -190,11 +185,7 @@ pub fn run(only: Option<String>, dry: bool, no_restore_point: bool) -> anyhow::R
                 "  {:<9} {:<46} {}",
                 f.key,
                 name(f),
-                if ui::is_tr() {
-                    f.detail_tr
-                } else {
-                    f.detail_en
-                }
+                ui::t(f.detail_en, f.detail_tr)
             );
         }
         println!(

@@ -201,8 +201,8 @@ pub fn measure(file: &Path, size_mb: u64, show: bool) -> std::io::Result<Result4
     drop(f);
     if show {
         println!(
-            "  {:<16} {:>8.0} IOPS",
-            ui::t("4K random read", "4K rastgele okuma"),
+            "  {} {:>8.0} IOPS",
+            ui::pad(ui::t("4K random read", "4K rastgele okuma"), 16),
             rnd_read_iops
         );
     }
@@ -221,8 +221,8 @@ pub fn measure(file: &Path, size_mb: u64, show: bool) -> std::io::Result<Result4
     let rnd_write_iops = ops as f64 / t.elapsed().as_secs_f64();
     if show {
         println!(
-            "  {:<16} {:>8.0} IOPS",
-            ui::t("4K random write", "4K rastgele yazma"),
+            "  {} {:>8.0} IOPS",
+            ui::pad(ui::t("4K random write", "4K rastgele yazma"), 16),
             rnd_write_iops
         );
     }

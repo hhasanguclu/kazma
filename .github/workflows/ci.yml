@@ -23,6 +23,15 @@ jobs:
           components: clippy
       - uses: Swatinem/rust-cache@v2
       - run: cargo clippy --all-targets -- -D warnings
+      # UI text and translations stay in sync (placeholders, valid JSON)
+      - name: Translations
+        shell: pwsh
+        run: |
+          python tools/i18n_extract.py
+          git diff --exit-code locales/source.json
+          if ($LASTEXITCODE -ne 0) { throw "locales/source.json is out of date: run python tools/i18n_extract.py" }
+          python tools/i18n_check.py
+          if ($LASTEXITCODE -ne 0) { throw "translation check failed" }
       - run: cargo test
       - run: cargo build --release
       # ARM64 (Snapdragon) build; never blocks an x64 release
@@ -76,9 +85,14 @@ jobs:
             & $kz @args_
             if ($LASTEXITCODE -ne 0) { throw "kz $($args_ -join ' ') failed with $LASTEXITCODE" }
           }
-          $env:KAZMA_LANG = 'tr'
-          & $kz health
-          if ($LASTEXITCODE -ne 0) { throw "kz health (tr) failed" }
+          foreach ($l in 'tr', 'de', 'ja', 'zh-TW', 'ru') {
+            $env:KAZMA_LANG = $l
+            & $kz health
+            if ($LASTEXITCODE -ne 0) { throw "kz health ($l) failed" }
+            & $kz clean --dry-run
+            if ($LASTEXITCODE -ne 0) { throw "kz clean ($l) failed" }
+          }
+          Remove-Item Env:KAZMA_LANG
           if (-not (Test-Path "$env:RUNNER_TEMP\kazma-report.html")) { throw "report was not written" }
       # The raw MFT reader must agree byte-for-byte with a normal directory walk.
       - name: MFT self-test

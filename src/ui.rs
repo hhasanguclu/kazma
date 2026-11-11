@@ -71,7 +71,6 @@ pub fn theme_by_name(name: &str) -> Theme {
 }
 
 static THEME: OnceLock<Theme> = OnceLock::new();
-static TURKISH: OnceLock<bool> = OnceLock::new();
 
 fn theme() -> Theme {
     *THEME.get_or_init(|| theme_by_name("green"))
@@ -142,27 +141,17 @@ fn ct(c: Color) -> crossterm::style::Color {
 
 // ---- language ------------------------------------------------------------------
 
-/// Turkish if KAZMA_LANG / `kz config lang` say so, or (auto) the Windows display
-/// language / LANG is Turkish.
-fn detect_turkish() -> bool {
-    let pick = std::env::var("KAZMA_LANG")
-        .ok()
-        .map(|v| v.to_lowercase())
-        .or_else(|| crate::settings::get("lang"));
-    match pick.as_deref() {
-        Some("tr") => true,
-        Some("en") => false,
-        _ => crate::sys::ui_language_is_turkish(),
+/// Plain text in the current language.
+pub fn t(en: &'static str, tr: &'static str) -> &'static str {
+    match crate::i18n::lang() {
+        crate::i18n::Lang::En => en,
+        crate::i18n::Lang::Tr => tr,
+        _ => crate::i18n::get(en).unwrap_or(en),
     }
 }
 
-/// Plain text in the current language.
-pub fn t(en: &'static str, tr: &'static str) -> &'static str {
-    if is_tr() { tr } else { en }
-}
-
 pub fn is_tr() -> bool {
-    *TURKISH.get_or_init(detect_turkish)
+    crate::i18n::lang() == crate::i18n::Lang::Tr
 }
 
 /// Load theme and language once at startup.
@@ -172,16 +161,7 @@ pub fn init() {
         .or_else(|| crate::settings::get("theme"))
         .unwrap_or_default();
     let _ = THEME.set(theme_by_name(&name.to_lowercase()));
-    let _ = TURKISH.set(detect_turkish());
-}
-
-/// Pick the English or Turkish text. Both arms are `format!` strings and can use
-/// the same arguments: `tr!("{n} files", "{n} dosya")`.
-#[macro_export]
-macro_rules! tr {
-    ($en:literal, $tr:literal $(, $arg:expr)* $(,)?) => {
-        if $crate::ui::is_tr() { format!($tr $(, $arg)*) } else { format!($en $(, $arg)*) }
-    };
+    crate::i18n::lang();
 }
 
 pub const BANNER: &str = r"
@@ -260,10 +240,10 @@ pub fn print_banner(subtitle: &str) {
     const W: usize = 66;
     let (cmd, desc) = subtitle.split_once(" :: ").unwrap_or(("", subtitle));
     let ver = format!("v{}", env!("CARGO_PKG_VERSION"));
-    let used = "kazma".len() + 3 + cmd.chars().count() + 3 + ver.len();
+    let used = "kazma".len() + 3 + width(cmd) + 3 + ver.len();
     let room = W.saturating_sub(used + 2);
     let desc = truncate_end(desc, room);
-    let pad = room.saturating_sub(desc.chars().count());
+    let pad = room.saturating_sub(width(&desc));
     let l = ct(line_c());
     println!();
     println!("  {}", format!(".{}.", "-".repeat(W)).with(l));
@@ -284,7 +264,7 @@ pub fn print_banner(subtitle: &str) {
 
 /// Section heading:  Browser ----------------------------------
 pub fn section(title: &str) {
-    let rule = 62usize.saturating_sub(title.chars().count());
+    let rule = 62usize.saturating_sub(width(title));
     println!(
         "\n  {} {}",
         title.with(ct(hi())).bold(),
@@ -293,14 +273,45 @@ pub fn section(title: &str) {
 }
 
 /// Cut from the end ("long text...") for headers; `truncate` keeps the end for paths.
+/// Terminal columns a text takes (CJK characters take two).
+pub fn width(s: &str) -> usize {
+    unicode_width::UnicodeWidthStr::width(s)
+}
+
+fn cw(c: char) -> usize {
+    unicode_width::UnicodeWidthChar::width(c).unwrap_or(0)
+}
+
+/// Cut to at most `max` columns, keeping the start: "long name..."
 pub fn truncate_end(s: &str, max: usize) -> String {
-    if s.chars().count() <= max {
-        s.to_string()
-    } else if max <= 3 {
-        s.chars().take(max).collect()
-    } else {
-        format!("{}...", s.chars().take(max - 3).collect::<String>())
+    if width(s) <= max {
+        return s.to_string();
     }
+    let room = max.saturating_sub(if max > 3 { 3 } else { 0 });
+    let (mut out, mut w) = (String::new(), 0);
+    for c in s.chars() {
+        if w + cw(c) > room {
+            break;
+        }
+        w += cw(c);
+        out.push(c);
+    }
+    if max > 3 {
+        out.push_str("...");
+    }
+    out
+}
+
+/// Pad with spaces to at least `n` columns (like `{:<n}`, but CJK-aware).
+pub fn pad(s: &str, n: usize) -> String {
+    format!("{s}{}", " ".repeat(n.saturating_sub(width(s))))
+}
+
+/// Cut to `max` columns and pad with spaces to exactly `max` columns.
+pub fn fit(s: &str, max: usize) -> String {
+    let t = truncate_end(s, max);
+    let pad = max.saturating_sub(width(&t));
+    format!("{t}{}", " ".repeat(pad))
 }
 
 pub fn ok(msg: &str) {
@@ -613,17 +624,22 @@ pub fn checklist_opts(
     Ok(result)
 }
 
+/// Cut to at most `max` columns, keeping the end: "...\\long\\path"
 pub fn truncate(s: &str, max: usize) -> String {
-    let n = s.chars().count();
-    if n <= max {
-        s.to_string()
-    } else if max <= 3 {
-        s.chars().take(max).collect()
-    } else {
-        let keep = max - 3;
-        let tail: String = s.chars().skip(n - keep).collect();
-        format!("...{tail}")
+    if width(s) <= max {
+        return s.to_string();
     }
+    let room = max.saturating_sub(if max > 3 { 3 } else { 0 });
+    let (mut tail, mut w) = (Vec::new(), 0);
+    for c in s.chars().rev() {
+        if w + cw(c) > room {
+            break;
+        }
+        w += cw(c);
+        tail.push(c);
+    }
+    let tail: String = tail.into_iter().rev().collect();
+    if max > 3 { format!("...{tail}") } else { tail }
 }
 
 #[cfg(test)]

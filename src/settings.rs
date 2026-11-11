@@ -6,7 +6,10 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 pub const KEYS: [(&str, &str); 2] = [
-    ("lang", "auto | en | tr"),
+    (
+        "lang",
+        "auto | en | tr | zh-CN | zh-TW | ja | ko | de | fr | pl | uk | ru",
+    ),
     ("theme", "green | amber | white | blue"),
 ];
 
@@ -45,7 +48,7 @@ fn save(map: &BTreeMap<String, String>) -> anyhow::Result<PathBuf> {
 
 fn valid(key: &str, value: &str) -> bool {
     match key {
-        "lang" => matches!(value, "auto" | "en" | "tr"),
+        "lang" => value == "auto" || crate::i18n::parse(value).is_some(),
         "theme" => matches!(value, "green" | "amber" | "white" | "blue"),
         _ => false,
     }

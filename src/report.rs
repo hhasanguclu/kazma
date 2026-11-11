@@ -83,7 +83,7 @@ th,td{{padding:3px 12px 3px 0;vertical-align:top}} td{{color:#cccccc}} tr:hover 
 <div class="sub">kazma v{ver} &middot; https://github.com/hhasanguclu/kazma</div>
 </body></html>
 "#,
-        lang = if ui::is_tr() { "tr" } else { "en" },
+        lang = crate::i18n::code(),
         t = esc(title),
         banner = esc(ui::BANNER.trim_matches('\n')),
         body = sections.join("\n"),
@@ -112,7 +112,11 @@ pub fn run(output: Option<PathBuf>, open: bool) -> anyhow::Result<()> {
         ));
         return Ok(());
     }
-    let lang = [("KAZMA_TR", if ui::is_tr() { "1" } else { "0" })];
+    let tmap = health::ps_table();
+    let lang = [
+        ("KAZMA_TR", if ui::is_tr() { "1" } else { "0" }),
+        ("KAZMA_T", tmap.as_str()),
+    ];
     let mut sections = vec![];
 
     ps::working(ui::t("hardware...", "donanım..."));

@@ -158,9 +158,17 @@ fn info() -> anyhow::Result<()> {
     for a in &adapters {
         ui::section(&format!("{}  ({})", a.name, a.desc));
         println!("  {:<12} {}", "IP", a.ip);
-        println!("  {:<12} {}", ui::t("gateway", "ağ geçidi"), a.gateway);
+        println!(
+            "  {} {}",
+            ui::pad(ui::t("gateway", "ağ geçidi"), 12),
+            a.gateway
+        );
         println!("  {:<12} {}", "DNS", a.dns);
-        println!("  {:<12} {}", ui::t("link speed", "bağlantı"), a.speed);
+        println!(
+            "  {} {}",
+            ui::pad(ui::t("link speed", "bağlantı"), 12),
+            a.speed
+        );
     }
     if adapters.is_empty() {
         ui::warn(ui::t(
@@ -170,8 +178,8 @@ fn info() -> anyhow::Result<()> {
     }
     ui::section(ui::t("Internet", "İnternet"));
     println!(
-        "  {:<12} {}",
-        ui::t("public IP", "genel IP"),
+        "  {} {}",
+        ui::pad(ui::t("public IP", "genel IP"), 12),
         if public.trim().is_empty() {
             "?"
         } else {
@@ -318,18 +326,18 @@ fn speed() -> anyhow::Result<()> {
     let top = d.max(u).max(1.0);
     ui::section(ui::t("Speed", "Hız"));
     if let Some(ms) = latency {
-        println!("  {:<10} {:>8.1} ms", ui::t("ping", "gecikme"), ms);
+        println!("  {} {:>8.1} ms", ui::pad(ui::t("ping", "gecikme"), 10), ms);
     }
     println!(
-        "  {:<10} {:>8.1} Mbps  {}",
-        ui::t("download", "indirme"),
+        "  {} {:>8.1} Mbps  {}",
+        ui::pad(ui::t("download", "indirme"), 10),
         d,
         ui::cbar(d / top, 30)
     );
     if s.up_ok {
         println!(
-            "  {:<10} {:>8.1} Mbps  {}",
-            ui::t("upload", "yükleme"),
+            "  {} {:>8.1} Mbps  {}",
+            ui::pad(ui::t("upload", "yükleme"), 10),
             u,
             ui::cbar(u / top, 30)
         );

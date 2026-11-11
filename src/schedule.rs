@@ -64,13 +64,13 @@ fn show_status() -> anyhow::Result<()> {
                 s.state
             ));
             println!(
-                "  {:<10} {}",
-                tr!("next run", "sonraki"),
+                "  {} {}",
+                ui::pad(&tr!("next run", "sonraki"), 10),
                 if s.next.is_empty() { "-" } else { &s.next }
             );
             println!(
-                "  {:<10} {}",
-                tr!("last run", "son"),
+                "  {} {}",
+                ui::pad(&tr!("last run", "son"), 10),
                 if s.last.is_empty() { "-" } else { &s.last }
             );
             println!("  {:<10} {}", "exe", s.exe);

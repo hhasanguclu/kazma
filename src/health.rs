@@ -6,7 +6,9 @@ use serde::Deserialize;
 
 pub const CHECKS: &str = r#"
 $tr = $env:KAZMA_TR -eq '1'
-function T([string]$en, [string]$t) { if ($tr) { $t } else { $en } }
+$tmap = @{}
+if ($env:KAZMA_T) { ($env:KAZMA_T | ConvertFrom-Json).PSObject.Properties | ForEach-Object { $tmap[$_.Name] = $_.Value } }
+function T([string]$en, [string]$t) { if ($tmap.ContainsKey($en)) { $tmap[$en] } elseif ($tr) { $t } else { $en } }
 $out = New-Object System.Collections.ArrayList
 function Add([string]$sec, [string]$item, [string]$val, [string]$st) {
   [void]$out.Add([pscustomobject]@{ Section = $sec; Item = $item; Value = $val; Status = $st })
@@ -132,6 +134,12 @@ pub struct Check {
     pub status: String,
 }
 
+/// Translations of the script's `T 'english' 'turkish'` texts for the current language.
+pub fn ps_table() -> String {
+    let keys = crate::i18n::ps_keys(CHECKS);
+    crate::i18n::ps_table(&keys.iter().map(String::as_str).collect::<Vec<_>>())
+}
+
 pub fn run() -> anyhow::Result<()> {
     ui::print_banner(&tr!(
         "health :: system health report",
@@ -148,8 +156,13 @@ pub fn run() -> anyhow::Result<()> {
         "checking (10-30 s)...",
         "kontrol ediliyor (10-30 sn)..."
     ));
-    let checks: Vec<Check> =
-        ps::powershell_json(CHECKS, &[("KAZMA_TR", if ui::is_tr() { "1" } else { "0" })])?;
+    let checks: Vec<Check> = ps::powershell_json(
+        CHECKS,
+        &[
+            ("KAZMA_TR", if ui::is_tr() { "1" } else { "0" }),
+            ("KAZMA_T", &ps_table()),
+        ],
+    )?;
     println!("{:60}", "");
 
     let mut section = String::new();
@@ -158,7 +171,7 @@ pub fn run() -> anyhow::Result<()> {
             section = c.section.clone();
             ui::section(&section);
         }
-        let line = format!("{:<44} {}", ui::truncate(&c.item, 44), c.value);
+        let line = format!("{} {}", ui::fit(&c.item, 44), c.value);
         match c.status.as_str() {
             "ok" => ui::ok(&line),
             "warn" => ui::warn(&line),
@@ -174,7 +187,7 @@ pub fn run() -> anyhow::Result<()> {
         (0, w) => tr!("{w} thing(s) to look at", "{w} konuya göz atın"),
         (b, w) => tr!("{b} problem(s), {w} warning(s)", "{b} sorun, {w} uyarı"),
     };
-    println!("  | {:<42} |", verdict);
+    println!("  | {} |", ui::fit(&verdict, 42));
     println!("  '{}'\n", "-".repeat(44));
     Ok(())
 }

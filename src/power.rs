@@ -109,7 +109,7 @@ fn set(key: &str) -> anyhow::Result<()> {
     let (_, guid, en, trn) = PLANS.iter().find(|(k, _, _, _)| *k == key).ok_or_else(|| {
         anyhow::anyhow!("{}", tr!("unknown plan: {key}", "bilinmeyen plan: {key}"))
     })?;
-    let name = if ui::is_tr() { trn } else { en };
+    let name = ui::t(en, trn);
     // Plans hidden on this PC (e.g. Ultimate) must be copied from the template first.
     let mut target = guid.to_string();
     if !plans().iter().any(|p| p.guid == *guid) {

@@ -26,12 +26,11 @@ fn run_live(program: &str, args: &[&str]) -> bool {
         .unwrap_or(false)
 }
 
-fn readme(tr_mode: bool) -> &'static str {
-    if tr_mode {
-        "kazma yedeği\r\n\r\napps.json      winget ile kurulabilen programlar\r\nprograms.txt   tüm yüklü programlar (winget'te olmayanları elle kurun)\r\ndrivers\\       üçüncü taraf sürücüler\r\nkazma\\         kazma ayarları\r\n\r\nGeri yüklemek için yeni bilgisayarda (yönetici terminali önerilir):\r\n    kz backup restore \"bu klasör\"\r\n"
-    } else {
-        "kazma backup\r\n\r\napps.json      programs that winget can reinstall\r\nprograms.txt   every installed program (install the ones not in winget by hand)\r\ndrivers\\       third-party drivers\r\nkazma\\         kazma settings\r\n\r\nTo restore on the new PC (an elevated terminal is recommended):\r\n    kz backup restore \"this folder\"\r\n"
-    }
+fn readme() -> &'static str {
+    ui::t(
+        "kazma backup\r\n\r\napps.json      programs that winget can reinstall\r\nprograms.txt   every installed program (install the ones not in winget by hand)\r\ndrivers\\       third-party drivers\r\nkazma\\         kazma settings\r\n\r\nTo restore on the new PC (an elevated terminal is recommended):\r\n    kz backup restore \"this folder\"\r\n",
+        "kazma yedeği\r\n\r\napps.json      winget ile kurulabilen programlar\r\nprograms.txt   tüm yüklü programlar (winget'te olmayanları elle kurun)\r\ndrivers\\       üçüncü taraf sürücüler\r\nkazma\\         kazma ayarları\r\n\r\nGeri yüklemek için yeni bilgisayarda (yönetici terminali önerilir):\r\n    kz backup restore \"bu klasör\"\r\n",
+    )
 }
 
 pub fn create(dir: Option<PathBuf>, dry: bool) -> anyhow::Result<()> {
@@ -160,7 +159,7 @@ pub fn create(dir: Option<PathBuf>, dry: bool) -> anyhow::Result<()> {
         }
         ui::ok(&tr!("{n} settings files", "{n} ayar dosyası"));
     }
-    std::fs::write(dir.join("README.txt"), readme(ui::is_tr()))?;
+    std::fs::write(dir.join("README.txt"), readme())?;
     oplog::record("backup", &dir.display().to_string());
     println!(
         "\n  {}\n  kz backup restore \"{}\"\n",

@@ -779,20 +779,31 @@ dependencies = [
 
 [[package]]
 name = "kazma"
-version = "0.6.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "blake3",
  "clap",
  "crossterm",
+ "kazma-macros",
  "ratatui",
  "rayon",
  "serde",
  "serde_json",
  "sysinfo",
  "trash",
+ "unicode-width",
  "windows-sys",
  "winresource",
+]
+
+[[package]]
+name = "kazma-macros"
+version = "1.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]

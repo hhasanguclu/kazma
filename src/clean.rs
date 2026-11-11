@@ -796,7 +796,11 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         },
         ui::human(total.bytes)
     );
-    println!("  | {:<20}{:>22} |", ui::t("files", "dosya"), total.files);
+    println!(
+        "  | {}{:>22} |",
+        ui::pad(ui::t("files", "dosya"), 20),
+        total.files
+    );
     println!("  '{}'\n", "-".repeat(44));
     Ok(())
 }

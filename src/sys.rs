@@ -13,10 +13,6 @@ mod imp {
     }
 
     /// Windows display language is Turkish (primary language id 0x1F).
-    pub fn ui_language_is_turkish() -> bool {
-        let lang = unsafe { windows_sys::Win32::Globalization::GetUserDefaultUILanguage() };
-        lang & 0x3ff == 0x1f
-    }
 
     pub fn recycle_bin_size() -> Option<(u64, u64)> {
         let mut info = SHQUERYRBINFO {
@@ -43,11 +39,6 @@ mod imp {
     }
     pub fn recycle_bin_size() -> Option<(u64, u64)> {
         None
-    }
-    pub fn ui_language_is_turkish() -> bool {
-        std::env::var("LANG")
-            .map(|l| l.to_lowercase().starts_with("tr"))
-            .unwrap_or(false)
     }
     pub fn empty_recycle_bin() -> bool {
         false
