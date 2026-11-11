@@ -76,3 +76,49 @@ pub fn working(msg: &str) {
     print!("  .. {msg}\r");
     let _ = std::io::stdout().flush();
 }
+
+/// Run a PowerShell script and return its stdout, or the first stderr line as error.
+pub fn text(script: &str, env: &[(&str, &str)]) -> anyhow::Result<String> {
+    let out = powershell(script, env)?;
+    if !out.status.success() {
+        let err = String::from_utf8_lossy(&out.stderr);
+        anyhow::bail!(
+            "{}",
+            err.lines()
+                .find(|l| !l.trim().is_empty())
+                .unwrap_or("powershell failed")
+                .trim()
+        );
+    }
+    Ok(String::from_utf8_lossy(&out.stdout).into_owned())
+}
+
+/// Run a program, return (success, stdout + stderr) with Windows OEM/UTF-16 noise removed.
+pub fn exec(program: &str, args: &[&str]) -> (bool, String) {
+    let mut c = Command::new(program);
+    c.args(args);
+    hide_window(&mut c);
+    match c.output() {
+        Ok(o) => {
+            let text = format!(
+                "{}{}",
+                String::from_utf8_lossy(&o.stdout),
+                String::from_utf8_lossy(&o.stderr)
+            )
+            .chars()
+            .filter(|c| *c != '\0')
+            .collect();
+            (o.status.success(), text)
+        }
+        Err(e) => (false, e.to_string()),
+    }
+}
+
+/// Last non-empty line of a command's output, for short error messages.
+pub fn last_line(text: &str) -> String {
+    text.lines()
+        .map(str::trim)
+        .rfind(|l| !l.is_empty())
+        .unwrap_or("")
+        .to_string()
+}

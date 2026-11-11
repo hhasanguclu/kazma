@@ -1,11 +1,11 @@
 //! `kz status`: live system dashboard.
 
-use crate::ui;
+use crate::{oplog, ui};
 use crossterm::event::{self, KeyCode};
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Color, Style};
+use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
-use ratatui::widgets::Paragraph;
+use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 use std::collections::VecDeque;
 use std::time::{Duration, Instant};
 use sysinfo::{Disks, Networks, ProcessesToUpdate, System};
@@ -79,34 +79,78 @@ pub fn run() -> anyhow::Result<()> {
     let host = System::host_name().unwrap_or_default();
     let os = System::long_os_version().unwrap_or_default();
 
-    let mut terminal = ratatui::init();
+    let mut terminal = ui::tui_start();
+    // process panel state
+    let mut pstate = ListState::default();
+    let mut sel_pid: Option<u32> = None;
+    let mut search = ui::Search::default();
+    let mut by_mem = false;
+    let mut confirm: Option<(u32, String)> = None;
+    let mut msg = String::new();
+    let mut proc_area = Rect::default();
+    let (mut rx_s, mut tx_s) = (0.0f64, 0.0f64);
+    let mut first = true;
     let res = (|| -> anyhow::Result<()> {
         loop {
-            let dt = last.elapsed().as_secs_f64().max(0.001);
-            last = Instant::now();
-            sys.refresh_cpu_usage();
-            sys.refresh_memory();
-            sys.refresh_processes(ProcessesToUpdate::All, true);
-            nets.refresh(true);
-            if tick.is_multiple_of(5) {
-                disks.refresh(true);
-            }
-            tick += 1;
-
-            let (rx, tx) = nets.iter().fold((0u64, 0u64), |(r, t), (_, d)| {
-                (r + d.received(), t + d.transmitted())
-            });
-            let (rx_s, tx_s) = (rx as f64 / dt, tx as f64 / dt);
-            for (h, v) in [
-                (&mut cpu_hist, sys.global_cpu_usage() as f64),
-                (&mut rx_hist, rx_s),
-                (&mut tx_hist, tx_s),
-            ] {
-                if h.len() == HISTORY {
-                    h.pop_front();
+            if first || last.elapsed() >= Duration::from_secs(1) {
+                first = false;
+                let dt = last.elapsed().as_secs_f64().max(0.001);
+                last = Instant::now();
+                sys.refresh_cpu_usage();
+                sys.refresh_memory();
+                sys.refresh_processes(ProcessesToUpdate::All, true);
+                nets.refresh(true);
+                if tick.is_multiple_of(5) {
+                    disks.refresh(true);
                 }
-                h.push_back(v);
+                tick += 1;
+
+                let (rx, tx) = nets.iter().fold((0u64, 0u64), |(r, t), (_, d)| {
+                    (r + d.received(), t + d.transmitted())
+                });
+                (rx_s, tx_s) = (rx as f64 / dt, tx as f64 / dt);
+                for (h, v) in [
+                    (&mut cpu_hist, sys.global_cpu_usage() as f64),
+                    (&mut rx_hist, rx_s),
+                    (&mut tx_hist, tx_s),
+                ] {
+                    if h.len() == HISTORY {
+                        h.pop_front();
+                    }
+                    h.push_back(v);
+                }
             }
+
+            // processes: filter, sort, keep the selection on the same pid
+            let ncpu = sys.cpus().len().max(1) as f32;
+            let mut plist: Vec<(u32, String, f32, u64)> = sys
+                .processes()
+                .values()
+                .map(|p| {
+                    (
+                        p.pid().as_u32(),
+                        p.name().to_string_lossy().into_owned(),
+                        p.cpu_usage() / ncpu,
+                        p.memory(),
+                    )
+                })
+                .filter(|p| search.matches(&p.1))
+                .collect();
+            if by_mem {
+                plist.sort_by(|a, b| b.3.cmp(&a.3).then(b.2.total_cmp(&a.2)));
+            } else {
+                plist.sort_by(|a, b| b.2.total_cmp(&a.2).then(b.3.cmp(&a.3)));
+            }
+            let sel = sel_pid
+                .and_then(|pid| plist.iter().position(|p| p.0 == pid))
+                .unwrap_or(
+                    pstate
+                        .selected()
+                        .unwrap_or(0)
+                        .min(plist.len().saturating_sub(1)),
+                );
+            pstate.select((!plist.is_empty()).then_some(sel));
+            sel_pid = plist.get(sel).map(|p| p.0);
 
             terminal.draw(|f| {
                 let cpus = sys.cpus();
@@ -261,68 +305,125 @@ pub fn run() -> anyhow::Result<()> {
                 );
 
                 // Processes
-                let mut ps: Vec<_> = sys.processes().values().collect();
-                ps.sort_by(|a, b| {
-                    b.cpu_usage()
-                        .total_cmp(&a.cpu_usage())
-                        .then(b.memory().cmp(&a.memory()))
-                });
-                let rows = procs.height.saturating_sub(3) as usize;
-                let ncpu = cpus.len().max(1) as f32;
-                let mut pl = vec![Line::from(Span::styled(
-                    format!("{:>7}  {:>6}  {:>10}  {}", "PID", "CPU%", "MEM", "NAME"),
-                    Style::new().fg(ui::dim()),
-                ))];
-                pl.extend(ps.iter().take(rows).map(|p| {
-                    let c = p.cpu_usage() / ncpu;
-                    Line::from(vec![
-                        Span::styled(
-                            format!("{:>7}  ", p.pid().as_u32()),
-                            Style::new().fg(ui::dim()),
-                        ),
-                        Span::styled(
-                            format!("{c:>6.1}  "),
-                            Style::new().fg(level_color(c as f64)),
-                        ),
-                        Span::styled(
-                            format!("{:>10}  ", ui::human(p.memory())),
-                            Style::new().fg(ui::hi()),
-                        ),
-                        Span::styled(
-                            p.name().to_string_lossy().into_owned(),
-                            Style::new().fg(ui::fg()),
-                        ),
-                    ])
-                }));
-                f.render_widget(
-                    Paragraph::new(pl).block(ui::block(ui::t(
-                        "top processes",
-                        "en çok kaynak kullananlar",
-                    ))),
+                proc_area = procs;
+                let head = format!("  {:>7}  {:>6}  {:>10}  {}", "PID", "CPU%", ui::t("MEM", "BELLEK"), ui::t("NAME", "AD"));
+                let rows: Vec<ListItem> = std::iter::once(ListItem::new(Line::from(Span::styled(head, Style::new().fg(ui::dim())))))
+                    .chain(plist.iter().map(|(pid, name, c, mem)| {
+                        ListItem::new(Line::from(vec![
+                            Span::styled(format!("{pid:>7}  "), Style::new().fg(ui::dim())),
+                            Span::styled(format!("{c:>6.1}  "), Style::new().fg(level_color(*c as f64))),
+                            Span::styled(format!("{:>10}  ", ui::human(*mem)), Style::new().fg(ui::hi())),
+                            Span::styled(name.clone(), Style::new().fg(ui::fg())),
+                        ]))
+                    }))
+                    .collect();
+                let title = format!(
+                    "{} ({}, {})",
+                    ui::t("processes", "süreçler"),
+                    plist.len(),
+                    if by_mem { ui::t("by memory", "belleğe göre") } else { ui::t("by cpu", "cpu'ya göre") }
+                );
+                // row 0 is the header, so the list state is shifted by one
+                let mut shown = ListState::default().with_selected(pstate.selected().map(|i| i + 1));
+                *shown.offset_mut() = pstate.offset();
+                f.render_stateful_widget(
+                    List::new(rows)
+                        .block(ui::block(&title))
+                        .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
+                        .highlight_symbol(">"),
                     procs,
+                    &mut shown,
                 );
+                *pstate.offset_mut() = shown.offset();
 
-                f.render_widget(
-                    Paragraph::new(Span::styled(
-                        ui::t(" [q] quit   refresh 1s", " [q] çık   yenileme 1 sn"),
+                let footer = if let Some((pid, name)) = &confirm {
+                    Span::styled(
+                        crate::tr!(" end {name} (pid {pid})? [y/N]", " {name} (pid {pid}) sonlandırılsın mı? [y/N]"),
+                        Style::new().fg(ui::warn_c()).bold(),
+                    )
+                } else if let Some(st) = search.status() {
+                    Span::styled(st, Style::new().fg(ui::hi()).bold())
+                } else if !msg.is_empty() {
+                    Span::styled(format!(" {msg}"), Style::new().fg(ui::hi()))
+                } else {
+                    Span::styled(
+                        ui::t(
+                            " [up/down] select  [x] end process  [m] cpu/memory  [/] search  [q] quit",
+                            " [yukarı/aşağı] seç  [x] süreci sonlandır  [m] cpu/bellek  [/] ara  [q] çık",
+                        ),
                         Style::new().fg(ui::dim()),
-                    )),
-                    Rect { ..foot },
-                );
+                    )
+                };
+                f.render_widget(Paragraph::new(footer), Rect { ..foot });
             })?;
 
-            let deadline = Instant::now() + Duration::from_secs(1);
-            while let Some(left) = deadline.checked_duration_since(Instant::now()) {
-                if event::poll(left)? {
-                    if let Some(KeyCode::Char('q') | KeyCode::Esc) = ui::pressed(&event::read()?) {
-                        return Ok(());
-                    }
-                } else {
-                    break;
+            if !event::poll(Duration::from_millis(150))? {
+                continue;
+            }
+            let ev = event::read()?;
+            if let Some((pid, name)) = confirm.take() {
+                if let Some(KeyCode::Char('y' | 'Y')) = ui::pressed(&ev) {
+                    let done = sys
+                        .process(sysinfo::Pid::from_u32(pid))
+                        .is_some_and(|p| p.kill());
+                    msg = if done {
+                        oplog::record("status", &format!("ended {name} pid={pid}"));
+                        crate::tr!("ended {name}", "{name} sonlandırıldı")
+                    } else {
+                        crate::tr!(
+                            "could not end {name} (try an elevated terminal)",
+                            "{name} sonlandırılamadı (yönetici terminalini deneyin)"
+                        )
+                    };
                 }
+                continue;
+            }
+            let n = plist.len();
+            let cur = pstate.selected().unwrap_or(0);
+            let mut go = |i: usize| sel_pid = plist.get(i.min(n.saturating_sub(1))).map(|p| p.0);
+            // the panel's first row is the header
+            let area = Rect {
+                y: proc_area.y + 1,
+                height: proc_area.height.saturating_sub(1),
+                ..proc_area
+            };
+            if let Some(m) = ui::mouse(&ev, area, pstate.offset(), n) {
+                match m {
+                    ui::Mouse::ScrollUp => go(cur.saturating_sub(3)),
+                    ui::Mouse::ScrollDown => go(cur + 3),
+                    ui::Mouse::Click { index, .. } => go(index),
+                }
+                continue;
+            }
+            let Some(code) = ui::pressed(&ev) else {
+                continue;
+            };
+            msg.clear();
+            if search.key(code) {
+                sel_pid = None;
+                pstate.select(Some(0));
+                continue;
+            }
+            match code {
+                KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
+                KeyCode::Up | KeyCode::Char('k') => go(cur.saturating_sub(1)),
+                KeyCode::Down | KeyCode::Char('j') => go(cur + 1),
+                KeyCode::PageUp => go(cur.saturating_sub(10)),
+                KeyCode::PageDown => go(cur + 10),
+                KeyCode::Home => go(0),
+                KeyCode::End => go(n),
+                KeyCode::Char('m') => {
+                    by_mem = !by_mem;
+                    sel_pid = None;
+                    pstate.select(Some(0));
+                }
+                KeyCode::Char('x') | KeyCode::Delete => {
+                    confirm = plist.get(cur).map(|p| (p.0, p.1.clone()));
+                }
+                _ => {}
             }
         }
     })();
-    ratatui::restore();
+    ui::tui_end();
     res
 }

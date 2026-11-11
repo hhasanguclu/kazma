@@ -170,6 +170,42 @@ pub fn run(check_only: bool) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Newest release tag, checked at most once a day and cached in the data folder.
+/// Returns None when offline, on non-Windows, or when KAZMA_NO_UPDATE_CHECK is set.
+pub fn latest_cached() -> Option<String> {
+    if std::env::var_os("KAZMA_NO_UPDATE_CHECK").is_some() || !cfg!(windows) {
+        return None;
+    }
+    let today = oplog::now_utc()[..10].to_string();
+    let cache = oplog::data_dir()?.join("update-check.txt");
+    if let Ok(s) = std::fs::read_to_string(&cache)
+        && let Some((day, tag)) = s.trim().split_once(' ')
+        && day == today
+    {
+        return Some(tag.to_string());
+    }
+    let latest: Vec<Latest> = ps::powershell_json(LATEST, &[("KAZMA_REPO", REPO)]).ok()?;
+    let tag = latest.into_iter().next()?.tag;
+    if let Some(d) = cache.parent() {
+        let _ = std::fs::create_dir_all(d);
+    }
+    let _ = std::fs::write(&cache, format!("{today} {tag}"));
+    Some(tag)
+}
+
+/// Check in the background; the receiver gets a tag only if it is newer.
+pub fn spawn_check() -> std::sync::mpsc::Receiver<String> {
+    let (tx, rx) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        if let Some(tag) = latest_cached()
+            && is_newer(&tag, env!("CARGO_PKG_VERSION"))
+        {
+            let _ = tx.send(tag);
+        }
+    });
+    rx
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

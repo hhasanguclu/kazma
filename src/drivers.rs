@@ -56,7 +56,7 @@ const RESTORE_POINT: &str = r#"
 Checkpoint-Computer -Description 'kazma: before driver update' -RestorePointType DEVICE_DRIVER_INSTALL
 "#;
 
-const INSTALLED: &str = r#"
+pub const INSTALLED: &str = r#"
 @(Get-CimInstance Win32_PnPSignedDriver |
   Where-Object { $_.DeviceName -and $_.DriverProviderName -and $_.DriverProviderName -notmatch '^Microsoft' } |
   ForEach-Object {

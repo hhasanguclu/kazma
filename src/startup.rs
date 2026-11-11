@@ -5,7 +5,7 @@
 use crate::{oplog, ps, tr, ui};
 use serde::Deserialize;
 
-const LIST: &str = r#"
+pub const LIST: &str = r#"
 function Approved([string]$hive, [string]$sub, [string]$name) {
   $p = "${hive}:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\$sub"
   try {

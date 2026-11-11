@@ -4,20 +4,28 @@
 use crate::{fsutil, oplog, sys, tr, ui};
 use crossterm::event;
 use crossterm::event::KeyCode;
-use ratatui::layout::{Constraint, Layout};
+use ratatui::layout::{Constraint, Layout, Rect};
 use ratatui::style::{Modifier, Style};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{Receiver, Sender, channel};
-use std::time::Duration;
+use std::time::{Duration, SystemTime};
 
 struct Entry {
     name: String,
     path: PathBuf,
     is_dir: bool,
     size: Option<u64>,
+    modified: Option<SystemTime>,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum SortKey {
+    Size,
+    Name,
+    Date,
 }
 
 struct App {
@@ -35,6 +43,11 @@ struct App {
     /// "largest files" mode: a flat list of the biggest files under `cwd`.
     big: bool,
     big_rx: Option<Receiver<Vec<(PathBuf, u64)>>>,
+    /// Indices into `entries` that pass the search filter, in display order.
+    view: Vec<usize>,
+    search: ui::Search,
+    sort_key: SortKey,
+    list_area: Rect,
 }
 
 impl App {
@@ -53,6 +66,10 @@ impl App {
             pinned_top: true,
             big: false,
             big_rx: None,
+            view: vec![],
+            search: ui::Search::default(),
+            sort_key: SortKey::Size,
+            list_area: Rect::default(),
         };
         app.load(start, 0);
         app
@@ -61,6 +78,7 @@ impl App {
     fn load(&mut self, dir: PathBuf, select: usize) {
         self.big = false;
         self.big_rx = None;
+        self.search = ui::Search::default();
         self.cwd = dir;
         self.pinned_top = select == 0;
         self.entries = std::fs::read_dir(&self.cwd)
@@ -72,16 +90,18 @@ impl App {
                             return None;
                         }
                         let path = e.path();
+                        let meta = e.metadata().ok();
                         let size = if ft.is_dir() {
                             self.cache.get(&path).copied()
                         } else {
-                            e.metadata().ok().map(|m| m.len())
+                            meta.as_ref().map(|m| m.len())
                         };
                         Some(Entry {
                             name: e.file_name().to_string_lossy().into_owned(),
                             path,
                             is_dir: ft.is_dir(),
                             size,
+                            modified: meta.and_then(|m| m.modified().ok()),
                         })
                     })
                     .collect()
@@ -96,27 +116,40 @@ impl App {
         }
         self.sort();
         self.state.select(
-            (!self.entries.is_empty()).then_some(select.min(self.entries.len().saturating_sub(1))),
+            (!self.view.is_empty()).then_some(select.min(self.view.len().saturating_sub(1))),
         );
     }
 
+    fn refresh_view(&mut self) {
+        self.view = (0..self.entries.len())
+            .filter(|&i| self.search.matches(&self.entries[i].name))
+            .collect();
+        if self.state.selected().is_none_or(|s| s >= self.view.len()) {
+            self.state.select((!self.view.is_empty()).then_some(0));
+        }
+    }
+
     fn sort(&mut self) {
-        let sel = self
-            .state
-            .selected()
-            .and_then(|i| self.entries.get(i))
-            .map(|e| e.path.clone());
-        self.entries.sort_by(|a, b| {
-            b.size
-                .unwrap_or(0)
-                .cmp(&a.size.unwrap_or(0))
-                .then(a.name.cmp(&b.name))
-        });
-        if self.pinned_top && !self.entries.is_empty() {
+        let sel = self.selected().map(|e| e.path.clone());
+        match self.sort_key {
+            SortKey::Size => self.entries.sort_by(|a, b| {
+                b.size
+                    .unwrap_or(0)
+                    .cmp(&a.size.unwrap_or(0))
+                    .then(a.name.cmp(&b.name))
+            }),
+            SortKey::Name => self.entries.sort_by(|a, b| {
+                (!a.is_dir, a.name.to_lowercase()).cmp(&(!b.is_dir, b.name.to_lowercase()))
+            }),
+            SortKey::Date => self.entries.sort_by_key(|e| std::cmp::Reverse(e.modified)),
+        }
+        self.refresh_view();
+        if self.pinned_top && !self.view.is_empty() {
             self.state.select(Some(0));
         } else if let Some(p) = sel {
+            let pos = self.view.iter().position(|&i| self.entries[i].path == p);
             self.state
-                .select(self.entries.iter().position(|e| e.path == p));
+                .select(pos.or((!self.view.is_empty()).then_some(0)));
         }
     }
 
@@ -129,6 +162,8 @@ impl App {
         self.big = true;
         self.big_rx = Some(rx);
         self.entries.clear();
+        self.search = ui::Search::default();
+        self.view.clear();
         self.state.select(None);
     }
 
@@ -148,10 +183,12 @@ impl App {
                     path,
                     is_dir: false,
                     size: Some(size),
+                    modified: None,
                 })
                 .collect();
             self.big_rx = None;
-            self.state.select((!self.entries.is_empty()).then_some(0));
+            self.refresh_view();
+            self.state.select((!self.view.is_empty()).then_some(0));
         }
         let mut changed = false;
         while let Ok((p, s)) = self.rx.try_recv() {
@@ -167,7 +204,10 @@ impl App {
     }
 
     fn selected(&self) -> Option<&Entry> {
-        self.state.selected().and_then(|i| self.entries.get(i))
+        self.state
+            .selected()
+            .and_then(|i| self.view.get(i))
+            .and_then(|&i| self.entries.get(i))
     }
 
     fn enter(&mut self) {
@@ -196,8 +236,11 @@ impl App {
         } else if let Some(parent) = self.cwd.parent().map(Path::to_path_buf) {
             let child = self.cwd.clone();
             self.load(parent, 0);
-            self.state
-                .select(self.entries.iter().position(|e| e.path == child));
+            let pos = self
+                .view
+                .iter()
+                .position(|&i| self.entries[i].path == child);
+            self.state.select(pos);
         }
     }
 
@@ -227,10 +270,13 @@ impl App {
                 self.invalidate_ancestors(&path);
                 let sel = self.state.selected().unwrap_or(0);
                 if self.big {
-                    self.entries.remove(sel);
+                    if let Some(&i) = self.view.get(sel) {
+                        self.entries.remove(i);
+                    }
+                    self.refresh_view();
                     self.state.select(
-                        (!self.entries.is_empty())
-                            .then_some(sel.min(self.entries.len().saturating_sub(1))),
+                        (!self.view.is_empty())
+                            .then_some(sel.min(self.view.len().saturating_sub(1))),
                     );
                 } else {
                     let cwd = self.cwd.clone();
@@ -260,7 +306,7 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
         .unwrap_or_else(|| PathBuf::from("."));
     let start = std::fs::canonicalize(&start).unwrap_or(start);
     let mut app = App::new(start);
-    let mut terminal = ratatui::init();
+    let mut terminal = ui::tui_start();
     let res = (|| -> anyhow::Result<()> {
         loop {
             app.drain();
@@ -269,6 +315,20 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
                 continue;
             }
             let ev = event::read()?;
+            if !app.confirm_delete
+                && let Some(m) = ui::mouse(&ev, app.list_area, app.state.offset(), app.view.len())
+            {
+                app.pinned_top = false;
+                let sel = app.state.selected().unwrap_or(0);
+                let last = app.view.len().saturating_sub(1);
+                match m {
+                    ui::Mouse::ScrollUp => app.state.select(Some(sel.saturating_sub(3))),
+                    ui::Mouse::ScrollDown => app.state.select(Some((sel + 3).min(last))),
+                    ui::Mouse::Click { index, .. } if index == sel => app.enter(),
+                    ui::Mouse::Click { index, .. } => app.state.select(Some(index)),
+                }
+                continue;
+            }
             let Some(code) = ui::pressed(&ev) else {
                 continue;
             };
@@ -277,11 +337,17 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
                 if matches!(code, KeyCode::Char('y') | KeyCode::Char('Y')) {
                     app.delete_selected();
                 } else {
-                    app.message = "delete cancelled".into();
+                    app.message = ui::t("delete cancelled", "silme iptal edildi").into();
                 }
                 continue;
             }
             app.message.clear();
+            if app.search.key(code) {
+                app.pinned_top = false;
+                app.refresh_view();
+                app.state.select((!app.view.is_empty()).then_some(0));
+                continue;
+            }
             if matches!(
                 code,
                 KeyCode::Up
@@ -294,7 +360,7 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
             ) {
                 app.pinned_top = false;
             }
-            let n = app.entries.len();
+            let n = app.view.len();
             let sel = app.state.selected().unwrap_or(0);
             match code {
                 KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
@@ -325,6 +391,15 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
                         app.start_big();
                     }
                 }
+                KeyCode::Char('s') if !app.big => {
+                    app.sort_key = match app.sort_key {
+                        SortKey::Size => SortKey::Name,
+                        SortKey::Name => SortKey::Date,
+                        SortKey::Date => SortKey::Size,
+                    };
+                    app.pinned_top = true;
+                    app.sort();
+                }
                 KeyCode::Char('r') if app.big => app.start_big(),
                 KeyCode::Char('r') => {
                     let cwd = app.cwd.clone();
@@ -344,7 +419,7 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
             }
         }
     })();
-    ratatui::restore();
+    ui::tui_end();
     res
 }
 
@@ -374,6 +449,16 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
     } else {
         String::new()
     };
+    let sort = match app.sort_key {
+        SortKey::Size => ui::t("size", "boyut"),
+        SortKey::Name => ui::t("name", "ad"),
+        SortKey::Date => ui::t("date", "tarih"),
+    };
+    let status = if app.big {
+        status
+    } else {
+        format!("{status}  [{}: {sort}]", ui::t("sort", "sıra"))
+    };
     let header = Line::from(vec![
         Span::styled(
             format!(" {} ", app.cwd.display()),
@@ -400,9 +485,11 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
     let width = main.width.saturating_sub(4) as usize;
     let bar_w = 20usize;
     let name_w = width.saturating_sub(bar_w + 2 + 10 + 2 + 7 + 3);
+    app.list_area = main;
     let items: Vec<ListItem> = app
-        .entries
+        .view
         .iter()
+        .map(|&i| &app.entries[i])
         .map(|e| {
             let (size, bar, pct) = match e.size {
                 Some(s) => (
@@ -440,7 +527,16 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
             ]))
         })
         .collect();
-    let title = tr!("{} items", "{} öğe", app.entries.len());
+    let title = if app.view.len() == app.entries.len() {
+        tr!("{} items", "{} öğe", app.entries.len())
+    } else {
+        tr!(
+            "{} of {} items",
+            "{} / {} öğe",
+            app.view.len(),
+            app.entries.len()
+        )
+    };
     let list = List::new(items)
         .block(ui::block(&title))
         .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
@@ -456,6 +552,8 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
             ),
             Style::new().fg(ui::warn_c()).bold(),
         ))
+    } else if let Some(s) = app.search.status() {
+        Line::from(Span::styled(s, Style::new().fg(ui::hi()).bold()))
     } else if !app.message.is_empty() {
         Line::from(Span::styled(
             format!(" {}", app.message),
@@ -464,13 +562,13 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
     } else {
         let help = if app.big {
             tr!(
-                " [enter] show in explorer  [b/bksp] back to folders  [d] delete  [r] rescan  [q] quit",
-                " [enter] gezginde göster  [b/bksp] klasörlere dön  [d] sil  [r] yeniden tara  [q] çık"
+                " [enter] show in explorer  [b/bksp] back  [/] search  [d] delete  [r] rescan  [q] quit",
+                " [enter] gezginde göster  [b/bksp] geri  [/] ara  [d] sil  [r] yeniden tara  [q] çık"
             )
         } else {
             tr!(
-                " [enter] open  [bksp] up  [b] largest files  [d] delete  [o] explorer  [r] rescan  [q] quit",
-                " [enter] aç  [bksp] üst  [b] en büyük dosyalar  [d] sil  [o] gezgin  [r] yeniden tara  [q] çık"
+                " [enter] open  [bksp] up  [b] largest  [s] sort  [/] search  [d] delete  [o] explorer  [q] quit",
+                " [enter] aç  [bksp] üst  [b] en büyükler  [s] sırala  [/] ara  [d] sil  [o] gezgin  [q] çık"
             )
         };
         Line::from(Span::styled(help, Style::new().fg(ui::dim())))

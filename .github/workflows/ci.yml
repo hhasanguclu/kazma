@@ -50,7 +50,18 @@ jobs:
             @('privacy', '--dry-run'),
             @('schedule', 'status'),
             @('whitelist'),
-            @('config')
+            @('config'),
+            @('rules'),
+            @('empty', '--dry-run', $env:GITHUB_WORKSPACE),
+            @('ports'),
+            @('ports', '443'),
+            @('power'),
+            @('backup', '--dry-run'),
+            @('report', '--no-open', '--output', "$env:RUNNER_TEMP\kazma-report.html"),
+            @('context', 'install'),
+            @('context', 'status'),
+            @('context', 'uninstall'),
+            @('bench', $env:RUNNER_TEMP, '--size-mb', '64')
           )) {
             Write-Host "== kz $($args_ -join ' ')"
             & $kz @args_
@@ -59,11 +70,19 @@ jobs:
           $env:KAZMA_LANG = 'tr'
           & $kz health
           if ($LASTEXITCODE -ne 0) { throw "kz health (tr) failed" }
+          if (-not (Test-Path "$env:RUNNER_TEMP\kazma-report.html")) { throw "report was not written" }
       # Network-dependent checks: informative, never block a release.
       - name: Smoke test (Windows Update driver search)
         continue-on-error: true
         timeout-minutes: 10
         run: target/release/kz.exe drivers --dry-run
+      - name: Smoke test (network and System Restore)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: |
+          target/release/kz.exe net
+          target/release/kz.exe net dns
+          target/release/kz.exe restore list
       - name: Smoke test (self-update check)
         continue-on-error: true
         timeout-minutes: 3

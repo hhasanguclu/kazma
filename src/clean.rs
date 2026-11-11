@@ -72,6 +72,113 @@ fn electron(root: Option<PathBuf>) -> Vec<PathBuf> {
     existing(["Cache", "Code Cache", "GPUCache", "DawnCache", "logs"].map(|c| Some(r.join(c))))
 }
 
+// ---- custom rules ---------------------------------------------------------------
+
+const RULES_TEMPLATE: &str =
+    "# kazma custom clean rules: extra folders for `kz clean` (group \"Custom\").
+# One rule per line:   name | folder | minimum age in hours (optional)
+# The folder's contents are deleted, not the folder itself. %VARS% and ~ work.
+# The usual protections still apply (system folders, whitelist).
+# Examples:
+#   Old app logs   | D:\\MyApp\\logs          | 168
+#   Screenshots    | ~\\Pictures\\Screenshots   | 720
+";
+
+pub fn rules_file() -> Option<PathBuf> {
+    crate::oplog::data_dir().map(|d| d.join("clean-rules.txt"))
+}
+
+/// Parse `name | folder | hours` lines; bad lines are skipped.
+pub fn parse_rules(text: &str) -> Vec<(String, PathBuf, Option<u64>)> {
+    text.lines()
+        .map(|l| l.split('#').next().unwrap_or("").trim())
+        .filter(|l| !l.is_empty())
+        .filter_map(|l| {
+            let mut parts = l.split('|').map(str::trim);
+            let name = parts.next().filter(|n| !n.is_empty())?.to_string();
+            let path = crate::whitelist::expand(parts.next().filter(|p| !p.is_empty())?);
+            let hours = parts.next().and_then(|h| h.parse::<u64>().ok());
+            Some((name, path, hours))
+        })
+        .collect()
+}
+
+fn custom_targets() -> Vec<Target> {
+    let Some(text) = rules_file().and_then(|f| std::fs::read_to_string(f).ok()) else {
+        return vec![];
+    };
+    parse_rules(&text)
+        .into_iter()
+        .filter(|(_, p, _)| p.is_dir() && fsutil::is_safe_target(p))
+        .map(|(name, path, hours)| Target {
+            group: "Custom",
+            // targets live for the whole run; leaking a few short strings is fine
+            name: Box::leak(name.into_boxed_str()),
+            kind: Kind::Dirs(vec![path]),
+            min_age_h: hours,
+            admin: false,
+            default_on: true,
+        })
+        .collect()
+}
+
+/// `kz rules`: show the custom rules, or open them in Notepad with --edit.
+pub fn rules(edit: bool) -> anyhow::Result<()> {
+    let f = rules_file().ok_or_else(|| anyhow::anyhow!("no data folder"))?;
+    if !f.exists() {
+        if let Some(d) = f.parent() {
+            std::fs::create_dir_all(d)?;
+        }
+        std::fs::write(&f, RULES_TEMPLATE)?;
+    }
+    if edit {
+        let editor = if cfg!(windows) {
+            "notepad".to_string()
+        } else {
+            std::env::var("EDITOR").unwrap_or_else(|_| "vi".into())
+        };
+        std::process::Command::new(editor).arg(&f).status()?;
+        return Ok(());
+    }
+    ui::print_banner(ui::t(
+        "rules :: your own clean rules",
+        "rules :: kendi temizlik kuralların",
+    ));
+    println!(
+        "{}
+",
+        tr!("  file: {}", "  dosya: {}", f.display())
+    );
+    let list = parse_rules(&std::fs::read_to_string(&f)?);
+    if list.is_empty() {
+        println!(
+            "  {}",
+            ui::t(
+                "no rules yet. add some with: kz rules --edit",
+                "henüz kural yok. eklemek için: kz rules --edit"
+            )
+        );
+    }
+    for (name, path, hours) in list {
+        let age = hours
+            .map(|h| tr!("  older than {h} h", "  {h} saatten eski"))
+            .unwrap_or_default();
+        let line = format!("{name:<24} {}{age}", path.display());
+        if !path.is_dir() {
+            ui::warn(&tr!("{line}  (folder not found)", "{line}  (klasör yok)"));
+        } else if !fsutil::is_safe_target(&path) {
+            ui::warn(&tr!(
+                "{line}  (protected, ignored)",
+                "{line}  (korumalı, yok sayıldı)"
+            ));
+        } else {
+            ui::ok(&line);
+        }
+    }
+    println!();
+    Ok(())
+}
+
 fn targets() -> Vec<Target> {
     let local = env_path("LOCALAPPDATA");
     let roaming = env_path("APPDATA");
@@ -160,6 +267,7 @@ fn targets() -> Vec<Target> {
         t("System", ui::t("Old CBS / DISM logs", "Eski CBS / DISM logları"), Dirs(existing([w("Logs\\CBS"), w("Logs\\DISM")])), Some(24 * 7), true, false),
     ]
     .into_iter()
+    .chain(custom_targets())
     .filter(|t| match &t.kind {
         Dirs(v) | Files(v) => !v.is_empty(),
         RecycleBin => cfg!(windows),
@@ -235,6 +343,7 @@ fn group_name(group: &str) -> &'static str {
         "Browser" => ui::t("Browser", "Tarayıcı"),
         "Apps" => ui::t("Apps", "Uygulamalar"),
         "Dev" => ui::t("Dev", "Geliştirici"),
+        "Custom" => ui::t("Custom", "Özel"),
         _ => ui::t("System", "Sistem"),
     }
 }
@@ -281,7 +390,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         .filter(|(_, s)| s.bytes > 0 || s.files > 0)
         .collect();
     measured.sort_by_key(|(t, _)| {
-        ["User", "Browser", "Apps", "Dev", "System"]
+        ["User", "Browser", "Apps", "Dev", "Custom", "System"]
             .iter()
             .position(|g| *g == t.group)
     });
@@ -393,4 +502,19 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     println!("  | {:<20}{:>22} |", ui::t("files", "dosya"), total.files);
     println!("  +{}+\n", "-".repeat(44));
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rules_parse() {
+        let r = parse_rules("# c\nLogs | /var/log/app | 168\nbad line\n | /x\nShots|/tmp/s\n");
+        assert_eq!(r.len(), 2);
+        assert_eq!(r[0].0, "Logs");
+        assert_eq!(r[0].1, PathBuf::from("/var/log/app"));
+        assert_eq!(r[0].2, Some(168));
+        assert_eq!(r[1].2, None);
+    }
 }

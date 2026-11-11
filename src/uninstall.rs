@@ -7,7 +7,7 @@ use serde::Deserialize;
 use std::path::PathBuf;
 use std::process::Command;
 
-const LIST: &str = r#"
+pub const LIST: &str = r#"
 $roots = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*',
          'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*',
          'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'

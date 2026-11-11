@@ -4,7 +4,7 @@
 use crate::{ps, tr, ui};
 use serde::Deserialize;
 
-const CHECKS: &str = r#"
+pub const CHECKS: &str = r#"
 $tr = $env:KAZMA_TR -eq '1'
 function T([string]$en, [string]$t) { if ($tr) { $t } else { $en } }
 $out = New-Object System.Collections.ArrayList

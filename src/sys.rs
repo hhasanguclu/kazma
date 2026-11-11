@@ -83,3 +83,11 @@ pub fn reveal(path: &std::path::Path) {
         .arg(path.parent().unwrap_or(path))
         .spawn();
 }
+
+/// Open a file with its default program (browser for .html, etc.).
+pub fn open(path: &std::path::Path) {
+    #[cfg(windows)]
+    let _ = std::process::Command::new("explorer.exe").arg(path).spawn();
+    #[cfg(not(windows))]
+    let _ = std::process::Command::new("xdg-open").arg(path).spawn();
+}

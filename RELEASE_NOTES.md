@@ -7,22 +7,23 @@
 ```
 
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64).
-One ~1.5 MB exe. No installer required, no telemetry.
+One ~2.7 MB exe. No installer required, no telemetry.
 
-## What's new in v0.3.0
+## What's new in v0.4.0
 
-- **Türkçe arayüz**: follows the Windows display language; `kz config lang tr|en`
-- **Color themes**: `kz config theme green|amber|white|blue`
-- **`kz startup`**: turn startup programs on/off (Task Manager compatible, reversible)
-- **`kz health`**: disk SMART, battery wear, blue screens, system errors, updates, Defender, firewall
-- **`kz dupes`**: fast duplicate finder (size, partial hash, BLAKE3; parallel)
-- **`kz debloat`**: remove promo apps from a fixed list, turn off Windows ads; `--restore` undoes
-- **`kz privacy`**: recent files, Run / Explorer history, clipboard, browser history & cookies (opt-in)
-- **`kz schedule`**: automatic cleaning with Task Scheduler
-- **`kz update`**: self-update from GitHub with SHA-256 verification
-- **`kz analyze`**: press `b` for the largest files under the current folder
-- **Scoop**: `scoop bucket add kazma https://github.com/hhasanguclu/kazma` then `scoop install kazma`
-- Grouped main menu with hotkeys
+- **`kz backup`**: move-to-a-new-PC kit (winget app list, drivers, program list, settings); `kz backup restore FOLDER` reinstalls
+- **`kz status`**: now a process manager: select a process, `x` ends it, `m` sorts by memory, `/` searches
+- **`kz ports`**: which program listens on which port; `--kill PORT`
+- **`kz net`**: IP and latency, DNS benchmark and `dns set cloudflare|google|quad9|adguard|opendns|auto`, `speed` test, saved `wifi`
+- **`kz empty`**: empty folders, broken shortcuts, 0-byte files
+- **`kz power`**: switch power plans, battery report, what wakes the PC
+- **`kz report`**: one HTML file with hardware, health, startup, programs and drivers
+- **`kz restore`**: list / create System Restore points, open the restore wizard
+- **`kz context install`**: "Analyze with kazma" in Explorer's right-click menu
+- **`kz bench`**: disk speed test (sequential + 4K random, OS cache bypassed)
+- **`kz rules`**: your own folders for `kz clean`
+- **Every list**: `/` search and mouse support; `analyze` sorts by size / name / date with `s`
+- **Menu**: tells you when a new version is out
 
 ## Download
 
@@ -54,22 +55,32 @@ scoop install kazma
 ## Usage
 
 ```
-kz                       interactive menu (English / Türkçe)
+kz                       interactive menu (English / Türkçe, mouse works)
 kz clean                 caches, temp files, logs, Recycle Bin
-kz analyze [path]        disk usage explorer (b = largest files)
+kz analyze [path]        disk explorer (b = largest files, s = sort, / = search)
 kz purge [paths]         node_modules, target, bin/obj, .venv ...
 kz installer             old setup files in Downloads / Desktop
 kz dupes [paths]         duplicate files
+kz empty [paths]         empty folders, broken shortcuts, 0-byte files
 kz privacy               usage traces
 kz uninstall             remove programs + leftovers
 kz upgrade               update installed programs (winget)
 kz drivers               driver updates from Windows Update
 kz startup               startup programs on / off
 kz debloat               promo apps and Windows ads
+kz backup [folder]       new-PC kit;  kz backup restore FOLDER
 kz health                system health report
-kz status                live cpu / memory / disk / network
+kz status                live monitor + process manager
 kz optimize              dns flush, icon cache, ssd trim, dism, sfc
+kz power                 power plans, battery report, wake sources
+kz restore               System Restore points
+kz report                HTML system report
+kz bench [path]          disk speed test
 kz schedule weekly       automatic cleaning
+kz net                   ip, latency, dns, speed test, wifi
+kz ports [filter]        who listens on which port
+kz rules                 your own clean rules
+kz context install       Explorer right-click menu
 kz config lang tr        language / theme
 kz update                update kazma
 kz whitelist             paths kazma must never delete
