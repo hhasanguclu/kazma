@@ -168,14 +168,14 @@ pub fn run() -> anyhow::Result<()> {
     }
     let bad = checks.iter().filter(|c| c.status == "bad").count();
     let warn = checks.iter().filter(|c| c.status == "warn").count();
-    println!("\n  +{}+", "-".repeat(44));
+    println!("\n  .{}.", "-".repeat(44));
     let verdict = match (bad, warn) {
         (0, 0) => tr!("all good", "her şey yolunda"),
         (0, w) => tr!("{w} thing(s) to look at", "{w} konuya göz atın"),
         (b, w) => tr!("{b} problem(s), {w} warning(s)", "{b} sorun, {w} uyarı"),
     };
     println!("  | {:<42} |", verdict);
-    println!("  +{}+\n", "-".repeat(44));
+    println!("  '{}'\n", "-".repeat(44));
     Ok(())
 }
 

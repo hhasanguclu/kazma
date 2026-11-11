@@ -6,8 +6,25 @@
 |_|\_\/_/   \_\/____| |_|  |_|/_/   \_\
 ```
 
-Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64).
+Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~2.7 MB exe. No installer required, no telemetry.
+
+## Next release (Mole parity)
+
+- **100+ cleanup rules**: AI tools (Claude, ChatGPT, Cursor, Windsurf, LM Studio; model caches opt-in),
+  game launchers (Steam, Epic, EA, Battle.net, Ubisoft, Riot, GOG, Xbox), GPU driver leftovers
+  (NVIDIA, AMD, Intel), dev tools (JetBrains, VS, bun, deno, uv, poetry, cargo, rustup...) and Electron apps
+- **analyze**: `(i)` explains special files (hiberfil, pagefile, WSL/Docker disks, iPhone backups,
+  WinSxS...); `w` shows which program holds the selected item open
+- **`kz lock <path>`**: which program has a file or folder open (Restart Manager)
+- **status**: GPU usage and memory, battery; `enter` explains *why a process is running*
+  (service, startup entry, parent)
+- **`kz awake [minutes]`** keeps the PC awake; **`kz cleanscreen [seconds]`** black screen for wiping the display
+- **uninstall**: Microsoft Store and Scoop apps, registry leftovers (exported to a .reg backup first),
+  `--leftovers` finds folders of apps removed some other way
+- **optimize**: remove broken startup entries (backed up), restart Start menu and Search,
+  TRIM / DISM / SFC pre-selected only when due
+- **ARM64 build** (`kz-arm64.exe`); installer, `kz update`, Scoop and winget pick the right one
 
 ## What's new in v0.6.0
 

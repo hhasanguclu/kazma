@@ -8,6 +8,8 @@ enum Action {
     Exec(&'static str, &'static [&'static str]),
     /// PowerShell script.
     Ps(&'static str),
+    /// Rust function.
+    Native(fn() -> Result<(), String>),
 }
 
 struct Task {
@@ -16,6 +18,68 @@ struct Task {
     admin: bool,
     default_on: bool,
     action: Action,
+}
+
+/// Tasks that only need to run now and then: (state key, days between runs).
+fn due_key(a: &Action) -> Option<(&'static str, i64)> {
+    match a {
+        Action::Ps(s) if *s == TRIM => Some(("trim", 7)),
+        Action::Exec(p, _) if p.eq_ignore_ascii_case("dism.exe") => Some(("dism", 30)),
+        Action::Exec(p, _) if p.eq_ignore_ascii_case("sfc") => Some(("sfc", 90)),
+        _ => None,
+    }
+}
+
+const RESTART_SHELL: &str = r#"
+foreach ($n in 'StartMenuExperienceHost', 'SearchHost', 'SearchApp', 'SearchUI', 'ShellExperienceHost') {
+  Stop-Process -Name $n -Force -ErrorAction SilentlyContinue
+}
+"#;
+
+fn state_file() -> Option<std::path::PathBuf> {
+    oplog::data_dir().map(|d| d.join("optimize-state.txt"))
+}
+
+/// Days since 1970-01-01 for "YYYY-MM-DD" (Howard Hinnant's days_from_civil).
+pub fn day_number(date: &str) -> Option<i64> {
+    let mut it = date.get(..10)?.split('-').map(|x| x.parse::<i64>());
+    let (y, m, d) = (it.next()?.ok()?, it.next()?.ok()?, it.next()?.ok()?);
+    let y = if m <= 2 { y - 1 } else { y };
+    let era = y.div_euclid(400);
+    let yoe = y - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    Some(era * 146_097 + doe - 719_468)
+}
+
+/// Days since the task last ran successfully, or None if never.
+fn days_since(key: &str) -> Option<i64> {
+    let text = std::fs::read_to_string(state_file()?).ok()?;
+    let last = text
+        .lines()
+        .find_map(|l| l.strip_prefix(&format!("{key}=")))?;
+    Some(day_number(&oplog::now_utc())? - day_number(last)?)
+}
+
+fn mark_done(key: &str) {
+    let Some(f) = state_file() else { return };
+    let today = &oplog::now_utc()[..10];
+    let mut lines: Vec<String> = std::fs::read_to_string(&f)
+        .unwrap_or_default()
+        .lines()
+        .filter(|l| !l.starts_with(&format!("{key}=")))
+        .map(String::from)
+        .collect();
+    lines.push(format!("{key}={today}"));
+    if let Some(d) = f.parent() {
+        let _ = std::fs::create_dir_all(d);
+    }
+    let _ = std::fs::write(f, lines.join("\n") + "\n");
+}
+
+fn broken_startup() -> Result<(), String> {
+    crate::startup::remove_broken().map(|_| ())
 }
 
 const TRIM: &str = r#"
@@ -34,7 +98,46 @@ if (-not (Get-Process explorer -ErrorAction SilentlyContinue)) { Start-Process e
 
 fn tasks() -> Vec<Task> {
     use Action::*;
-    vec![
+    let broken = if cfg!(windows) {
+        crate::startup::list()
+            .map(|v| v.iter().filter(|e| crate::startup::is_broken(e)).count())
+            .unwrap_or(0)
+    } else {
+        0
+    };
+    let mut v = vec![
+        Task {
+            name: ui::t(
+                "Remove broken startup entries",
+                "Bozuk başlangıç kayıtlarını kaldır",
+            ),
+            detail: if broken > 0 {
+                ui::t(
+                    "programs that no longer exist; backed up first",
+                    "artık var olmayan programlar; önce yedeklenir",
+                )
+            } else {
+                ui::t("none found", "bulunamadı")
+            },
+            admin: false,
+            default_on: broken > 0,
+            action: Native(broken_startup),
+        },
+        Task {
+            name: ui::t(
+                "Restart Start menu and Search",
+                "Başlat menüsünü ve Aramayı yeniden başlat",
+            ),
+            detail: ui::t(
+                "Start or search not opening or stuck",
+                "Başlat ya da arama açılmıyor veya takılıyor",
+            ),
+            admin: false,
+            default_on: false,
+            action: Ps(RESTART_SHELL),
+        },
+    ];
+    v.extend(vec![
         Task {
             name: ui::t("Flush DNS cache", "DNS önbelleğini temizle"),
             detail: ui::t(
@@ -104,7 +207,22 @@ fn tasks() -> Vec<Task> {
             default_on: false,
             action: Exec("sfc", &["/scannow"]),
         },
-    ]
+    ]);
+    // TRIM / DISM / SFC: pre-select only when they are due, and say when they last ran
+    for t in v.iter_mut() {
+        if let Some((key, every)) = due_key(&t.action) {
+            let since = days_since(key);
+            t.default_on = since.is_none_or(|d| d >= every);
+            let when = match since {
+                Some(0) => ui::t("ran today", "bugün çalıştı").to_string(),
+                Some(d) => tr!("last run {d} days ago", "son çalışma {d} gün önce"),
+                None => ui::t("never run by kazma", "kazma ile hiç çalışmadı").to_string(),
+            };
+            // tasks live for this run only; a short leaked string is fine
+            t.detail = Box::leak(format!("{}  ({when})", t.detail).into_boxed_str());
+        }
+    }
+    v
 }
 
 fn execute(a: &Action) -> Result<(), String> {
@@ -116,6 +234,7 @@ fn execute(a: &Action) -> Result<(), String> {
             c.output()
         }
         Action::Ps(script) => ps::powershell(script, &[]).map_err(std::io::Error::other),
+        Action::Native(f) => return f(),
     };
     match out {
         Ok(o) if o.status.success() => Ok(()),
@@ -218,6 +337,9 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         ps::working(&tr!("{:<34} running...", "{:<34} çalışıyor...", t.name));
         match execute(&t.action) {
             Ok(()) => {
+                if let Some((key, _)) = due_key(&t.action) {
+                    mark_done(key);
+                }
                 ui::ok(&tr!("{:<34} done      ", "{:<34} tamam     ", t.name));
                 oplog::record("optimize", t.name);
             }
@@ -239,4 +361,28 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     }
     println!();
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dates() {
+        assert_eq!(day_number("1970-01-01"), Some(0));
+        assert_eq!(
+            day_number("2026-11-11").unwrap() - day_number("2026-11-01").unwrap(),
+            10
+        );
+        assert_eq!(
+            day_number("2024-03-01").unwrap() - day_number("2024-02-28").unwrap(),
+            2
+        );
+        assert!(day_number("bad").is_none());
+        assert_eq!(due_key(&Action::Ps(TRIM)), Some(("trim", 7)));
+        assert_eq!(
+            due_key(&Action::Exec("sfc", &["/scannow"])),
+            Some(("sfc", 90))
+        );
+    }
 }

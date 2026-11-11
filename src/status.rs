@@ -94,6 +94,11 @@ pub fn run() -> anyhow::Result<()> {
     let mut proc_area = Rect::default();
     let (mut rx_s, mut tx_s) = (0.0f64, 0.0f64);
     let mut first = true;
+    // GPU via performance counters, battery, and the "why is it running" panel
+    let mut gpu = crate::gpu::Gpu::new();
+    let (mut gpu_pct, mut gpu_mem): (Option<f64>, Option<u64>) = (None, None);
+    let mut detail: Option<Vec<(String, String)>> = None;
+    let mut startup_cache: Option<Vec<crate::startup::Entry>> = None;
     let res = (|| -> anyhow::Result<()> {
         loop {
             if first || last.elapsed() >= Duration::from_secs(1) {
@@ -104,6 +109,9 @@ pub fn run() -> anyhow::Result<()> {
                 sys.refresh_memory();
                 sys.refresh_processes(ProcessesToUpdate::All, true);
                 nets.refresh(true);
+                if let Some(g) = gpu.as_mut() {
+                    (gpu_pct, gpu_mem) = g.sample();
+                }
                 if tick.is_multiple_of(5) {
                     disks.refresh(true);
                 }
@@ -162,7 +170,7 @@ pub fn run() -> anyhow::Result<()> {
                 let [head, cpu, mem, mid, procs, foot] = Layout::vertical([
                     Constraint::Length(3),
                     Constraint::Length(core_rows + 4),
-                    Constraint::Length(4),
+                    Constraint::Length(if gpu_pct.is_some() { 5 } else { 4 }),
                     Constraint::Length((disks.len() as u16).max(1) + 2),
                     Constraint::Min(5),
                     Constraint::Length(1),
@@ -175,6 +183,16 @@ pub fn run() -> anyhow::Result<()> {
                     Span::styled(
                         crate::tr!(" up {}", " açık {}", uptime(System::uptime().unwrap_or(0))),
                         Style::new().fg(ui::dim()),
+                    ),
+                    Span::styled(
+                        match crate::gpu::battery() {
+                            Some((pct, true)) => {
+                                crate::tr!("   battery {pct}% (charging)", "   pil %{pct} (şarjda)")
+                            }
+                            Some((pct, false)) => crate::tr!("   battery {pct}%", "   pil %{pct}"),
+                            None => String::new(),
+                        },
+                        Style::new().fg(ui::hi()),
                     ),
                 ]);
                 f.render_widget(
@@ -234,20 +252,34 @@ pub fn run() -> anyhow::Result<()> {
                 };
                 let w = mem_l.width.saturating_sub(4);
                 f.render_widget(
-                    Paragraph::new(vec![
-                        meter(
-                            "RAM ",
-                            pct(um, tm),
-                            format!("{}/{}", ui::human(um), ui::human(tm)),
-                            w,
-                        ),
-                        meter(
-                            "SWAP",
-                            pct(us, ts),
-                            format!("{}/{}", ui::human(us), ui::human(ts)),
-                            w,
-                        ),
-                    ])
+                    Paragraph::new(
+                        vec![
+                            meter(
+                                "RAM ",
+                                pct(um, tm),
+                                format!("{}/{}", ui::human(um), ui::human(tm)),
+                                w,
+                            ),
+                            meter(
+                                "SWAP",
+                                pct(us, ts),
+                                format!("{}/{}", ui::human(us), ui::human(ts)),
+                                w,
+                            ),
+                        ]
+                        .into_iter()
+                        .chain(gpu_pct.map(|g| {
+                            meter(
+                                "GPU ",
+                                g,
+                                gpu_mem
+                                    .map(|m| format!("VRAM {}", ui::human(m)))
+                                    .unwrap_or_default(),
+                                w,
+                            )
+                        }))
+                        .collect::<Vec<_>>(),
+                    )
                     .block(ui::block(ui::t("memory", "bellek"))),
                     mem_l,
                 );
@@ -375,6 +407,7 @@ pub fn run() -> anyhow::Result<()> {
                 } else {
                     ui::keys(&[
                         (ui::t("up/down", "yukarı/aşağı"), ui::t("select", "seç")),
+                        ("enter", ui::t("why is it running?", "neden çalışıyor?")),
                         ("x", ui::t("end process", "sonlandır")),
                         ("m", ui::t("cpu / memory", "cpu / bellek")),
                         ("/", ui::t("search", "ara")),
@@ -382,6 +415,53 @@ pub fn run() -> anyhow::Result<()> {
                     ])
                 };
                 f.render_widget(Paragraph::new(footer), Rect { ..foot });
+
+                // "why is this running" panel over the process list
+                if let Some(lines) = &detail {
+                    let area = f.area();
+                    let w = area.width.saturating_sub(8).min(100);
+                    let h = (lines.len() as u16 + 4).min(area.height.saturating_sub(2));
+                    let r = Rect {
+                        x: area.x + (area.width - w) / 2,
+                        y: area.y + (area.height - h) / 2,
+                        width: w,
+                        height: h,
+                    };
+                    let why = ui::t("why", "neden");
+                    let text: Vec<Line> = lines
+                        .iter()
+                        .map(|(k, v)| {
+                            Line::from(vec![
+                                Span::styled(format!(" {k:<16}"), Style::new().fg(ui::dim())),
+                                Span::styled(
+                                    v.clone(),
+                                    Style::new().fg(if k.is_empty() || k == why {
+                                        ui::hi()
+                                    } else {
+                                        ui::fg()
+                                    }),
+                                ),
+                            ])
+                        })
+                        .chain([
+                            Line::default(),
+                            ui::keys(&[
+                                ("enter / esc", ui::t("close", "kapat")),
+                                ("x", ui::t("end process", "sonlandır")),
+                            ]),
+                        ])
+                        .collect();
+                    f.render_widget(ratatui::widgets::Clear, r);
+                    f.render_widget(
+                        Paragraph::new(text)
+                            .wrap(ratatui::widgets::Wrap { trim: false })
+                            .block(ui::block(ui::t(
+                                "why is this running?",
+                                "bu neden çalışıyor?",
+                            ))),
+                        r,
+                    );
+                }
             })?;
 
             if !event::poll(Duration::from_millis(150))? {
@@ -426,6 +506,19 @@ pub fn run() -> anyhow::Result<()> {
                 continue;
             };
             msg.clear();
+            if detail.is_some() {
+                match code {
+                    KeyCode::Enter | KeyCode::Esc | KeyCode::Char('q') => detail = None,
+                    KeyCode::Char('x') => {
+                        detail = None;
+                        confirm = plist
+                            .get(pstate.selected().unwrap_or(0))
+                            .map(|p| (p.0, p.1.clone()));
+                    }
+                    _ => {}
+                }
+                continue;
+            }
             if search.key(code) {
                 sel_pid = None;
                 pstate.select(Some(0));
@@ -439,6 +532,27 @@ pub fn run() -> anyhow::Result<()> {
                 KeyCode::PageDown => go(cur + 10),
                 KeyCode::Home => go(0),
                 KeyCode::End => go(n),
+                KeyCode::Enter => {
+                    if let Some(p) = plist.get(cur) {
+                        if startup_cache.is_none() {
+                            startup_cache = Some(if cfg!(windows) {
+                                crate::startup::list().unwrap_or_default()
+                            } else {
+                                vec![]
+                            });
+                        }
+                        let mut lines = vec![(
+                            ui::t("process", "süreç").to_string(),
+                            format!("{} ({})", p.1, p.0),
+                        )];
+                        lines.extend(crate::procinfo::explain(
+                            &sys,
+                            p.0,
+                            startup_cache.as_deref().unwrap_or(&[]),
+                        ));
+                        detail = Some(lines);
+                    }
+                }
                 KeyCode::Char('m') => {
                     by_mem = !by_mem;
                     sel_pid = None;

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write the Scoop and winget manifests for a kazma release.
 
-Usage: python packaging/update_manifests.py VERSION SHA256
+Usage: python packaging/update_manifests.py VERSION SHA256 [ARM64_SHA256]
 
 - bucket/kazma.json                         Scoop (this repo is the bucket)
 - packaging/winget/VERSION/*.yaml           winget, ready for `wingetcreate submit`
@@ -20,26 +20,29 @@ DESC = "Oldschool ASCII system cleaner, disk explorer and toolkit for Windows"
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
-def scoop(version: str, sha: str) -> dict:
+def scoop(version: str, sha: str, arm: str = "") -> dict:
     url = f"https://github.com/{REPO}/releases/download/v{version}/kz.exe"
+    arch = {"64bit": {"url": url, "hash": sha}}
+    auto = {"64bit": {"url": f"https://github.com/{REPO}/releases/download/v$version/kz.exe"}}
+    if arm:
+        arch["arm64"] = {"url": f"https://github.com/{REPO}/releases/download/v{version}/kz-arm64.exe#/kz.exe", "hash": arm}
+        auto["arm64"] = {"url": f"https://github.com/{REPO}/releases/download/v$version/kz-arm64.exe#/kz.exe"}
     return {
         "version": version,
         "description": DESC,
         "homepage": f"https://github.com/{REPO}",
         "license": "MIT",
-        "architecture": {"64bit": {"url": url, "hash": sha}},
+        "architecture": arch,
         "bin": "kz.exe",
         "checkver": "github",
         "autoupdate": {
-            "architecture": {
-                "64bit": {"url": f"https://github.com/{REPO}/releases/download/v$version/kz.exe"}
-            },
+            "architecture": auto,
             "hash": {"url": "$baseurl/SHA256SUMS.txt"},
         },
     }
 
 
-def winget(version: str, sha: str) -> dict[str, str]:
+def winget(version: str, sha: str, arm: str = "") -> dict[str, str]:
     url = f"https://github.com/{REPO}/releases/download/v{version}/kz.exe"
     head = "# Created by kazma CI (packaging/update_manifests.py)\n"
     return {
@@ -65,27 +68,37 @@ def winget(version: str, sha: str) -> dict[str, str]:
         "MinimumOSVersion: 10.0.17763.0\n"
         "Installers:\n"
         f"- Architecture: x64\n  InstallerUrl: {url}\n  InstallerSha256: {sha.upper()}\n"
-        "ManifestType: installer\nManifestVersion: 1.6.0\n",
+        + (
+            f"- Architecture: arm64\n  InstallerUrl: https://github.com/{REPO}/releases/download/v{version}/kz-arm64.exe\n"
+            f"  InstallerSha256: {arm.upper()}\n"
+            if arm
+            else ""
+        )
+        + "ManifestType: installer\nManifestVersion: 1.6.0\n",
     }
 
 
 def main() -> int:
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         print(__doc__)
         return 2
     version = sys.argv[1].lstrip("vV")
     sha = sys.argv[2].strip().lower()
+    arm = sys.argv[3].strip().lower() if len(sys.argv) == 4 else ""
+    if arm and not re.fullmatch(r"[0-9a-f]{64}", arm):
+        print("bad arm64 sha256", file=sys.stderr)
+        return 2
     if not re.fullmatch(r"\d+\.\d+\.\d+", version) or not re.fullmatch(r"[0-9a-f]{64}", sha):
         print("bad version or sha256", file=sys.stderr)
         return 2
 
     bucket = ROOT / "bucket" / "kazma.json"
     bucket.parent.mkdir(parents=True, exist_ok=True)
-    bucket.write_text(json.dumps(scoop(version, sha), indent=4) + "\n", encoding="utf-8")
+    bucket.write_text(json.dumps(scoop(version, sha, arm), indent=4) + "\n", encoding="utf-8")
 
     out = ROOT / "packaging" / "winget" / version
     out.mkdir(parents=True, exist_ok=True)
-    for name, text in winget(version, sha).items():
+    for name, text in winget(version, sha, arm).items():
         (out / name).write_text(text, encoding="utf-8", newline="\n")
     print(f"wrote {bucket.relative_to(ROOT)} and {out.relative_to(ROOT)}/")
     return 0

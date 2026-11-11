@@ -4,6 +4,7 @@
 
 use crate::{oplog, ps, tr, ui};
 use serde::Deserialize;
+use std::path::PathBuf;
 
 pub const LIST: &str = r#"
 function Approved([string]$hive, [string]$sub, [string]$name) {
@@ -30,6 +31,7 @@ foreach ($r in $runs) {
     })
   }
 }
+$sh = New-Object -ComObject WScript.Shell
 $folders = @(
   @{ Hive = 'HKCU'; Path = [Environment]::GetFolderPath('Startup') },
   @{ Hive = 'HKLM'; Path = [Environment]::GetFolderPath('CommonStartup') }
@@ -40,6 +42,7 @@ foreach ($f in $folders) {
     [void]$out.Add([pscustomobject]@{
       Kind = 'folder'; Hive = $f.Hive; Sub = 'StartupFolder'; Name = $_.Name; TaskPath = ''
       Command = $_.FullName; Enabled = (Approved $f.Hive 'StartupFolder' $_.Name)
+      Target = $(try { [string]$sh.CreateShortcut($_.FullName).TargetPath } catch { '' })
     })
   }
 }
@@ -90,6 +93,107 @@ pub struct Entry {
     #[serde(default)]
     pub command: String,
     pub enabled: bool,
+    /// For Startup-folder shortcuts: the program the shortcut points to.
+    #[serde(default)]
+    pub target: String,
+}
+
+/// The program an entry starts: the shortcut target, or the first path in the command.
+pub fn target_path(e: &Entry) -> Option<PathBuf> {
+    let raw = if e.kind == "folder" {
+        e.target.trim()
+    } else {
+        e.command.trim()
+    };
+    if raw.is_empty() {
+        return None;
+    }
+    let path = if let Some(rest) = raw.strip_prefix('"') {
+        rest.split('"').next().unwrap_or("").to_string()
+    } else {
+        let lower = raw.to_lowercase();
+        match lower.find(".exe") {
+            Some(i) => raw[..i + 4].to_string(),
+            None => raw.split_whitespace().next().unwrap_or("").to_string(),
+        }
+    };
+    let p = crate::whitelist::expand(&path);
+    let s = p.to_string_lossy();
+    // only full paths can be checked; bare names are found through PATH
+    (s.contains(":\\") || s.starts_with("\\\\") || s.starts_with('/')).then_some(p)
+}
+
+/// The entry points at a program that no longer exists.
+pub fn is_broken(e: &Entry) -> bool {
+    target_path(e).is_some_and(|p| !p.exists())
+}
+
+fn backup_dir() -> Result<PathBuf, String> {
+    let d = crate::oplog::data_dir()
+        .ok_or("no data folder")?
+        .join("backups")
+        .join("startup");
+    std::fs::create_dir_all(&d).map_err(|e| e.to_string())?;
+    Ok(d)
+}
+
+/// Remove one broken entry, keeping a backup: Run values are exported to .reg,
+/// tasks to .xml, shortcuts go to the Recycle Bin.
+fn remove_entry(e: &Entry) -> Result<(), String> {
+    let stamp = crate::oplog::now_utc().replace([' ', ':'], "-");
+    match e.kind.as_str() {
+        "run" => {
+            let key = match (e.hive.as_str(), e.sub.as_str()) {
+                ("HKCU", _) => r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
+                (_, "Run32") => r"HKLM\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Run",
+                _ => r"HKLM\Software\Microsoft\Windows\CurrentVersion\Run",
+            };
+            let file = backup_dir()?.join(format!("{stamp}-{}-{}.reg", e.hive, e.sub));
+            let (ok, out) = ps::exec("reg", &["export", key, &file.to_string_lossy(), "/y"]);
+            if !ok {
+                return Err(ps::last_line(&out));
+            }
+            ps::text(
+                "Remove-ItemProperty -LiteralPath (\"Registry::\" + $env:KAZMA_KEY) -Name $env:KAZMA_NAME",
+                &[("KAZMA_KEY", key), ("KAZMA_NAME", &e.name)],
+            )
+            .map(|_| ())
+            .map_err(|x| x.to_string())
+        }
+        "folder" => {
+            crate::fsutil::trash(std::path::Path::new(&e.command)).map_err(|x| x.to_string())
+        }
+        _ => {
+            let file = backup_dir()?.join(format!("{stamp}-task.xml"));
+            ps::text(
+                "Export-ScheduledTask -TaskPath $env:KAZMA_TP -TaskName $env:KAZMA_NAME | Set-Content -LiteralPath $env:KAZMA_FILE -Encoding UTF8; Unregister-ScheduledTask -TaskPath $env:KAZMA_TP -TaskName $env:KAZMA_NAME -Confirm:$false",
+                &[("KAZMA_TP", &e.task_path), ("KAZMA_NAME", &e.name), ("KAZMA_FILE", &file.to_string_lossy())],
+            )
+            .map(|_| ())
+            .map_err(|x| x.to_string())
+        }
+    }
+}
+
+/// Remove every broken startup entry (with backups). Returns how many were removed.
+pub fn remove_broken() -> Result<usize, String> {
+    let entries = list().map_err(|e| e.to_string())?;
+    let mut n = 0;
+    let mut errors = vec![];
+    for e in entries.iter().filter(|e| is_broken(e)) {
+        match remove_entry(e) {
+            Ok(()) => {
+                n += 1;
+                oplog::record("startup", &format!("removed broken entry {}", e.name));
+            }
+            Err(x) => errors.push(format!("{}: {x}", e.name)),
+        }
+    }
+    if n == 0 && !errors.is_empty() {
+        Err(errors.join("; "))
+    } else {
+        Ok(n)
+    }
 }
 
 impl Entry {
@@ -174,13 +278,20 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
             } else {
                 tr!("off", "kapalı")
             };
+            let broken = if is_broken(e) {
+                ui::t("  (broken: program is gone)", "  (bozuk: program silinmiş)")
+            } else {
+                ""
+            };
             let line = format!(
-                "{state:<6} {:<32} {:<18} {}",
+                "{state:<6} {:<32} {:<18} {}{broken}",
                 ui::truncate(&e.name, 32),
                 e.source(),
                 ui::truncate(&e.command, 60)
             );
-            if e.enabled {
+            if !broken.is_empty() {
+                ui::warn(&line)
+            } else if e.enabled {
                 ui::ok(&line)
             } else {
                 ui::skip(&line)
@@ -248,6 +359,43 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn entry(kind: &str, command: &str, target: &str) -> Entry {
+        Entry {
+            kind: kind.into(),
+            hive: "HKCU".into(),
+            sub: "Run".into(),
+            name: "x".into(),
+            task_path: String::new(),
+            command: command.into(),
+            enabled: true,
+            target: target.into(),
+        }
+    }
+
+    #[test]
+    fn finds_the_program_in_a_command() {
+        let p =
+            |c: &str| target_path(&entry("run", c, "")).map(|p| p.to_string_lossy().into_owned());
+        assert_eq!(
+            p(r#""C:\Program Files\App\app.exe" --minimized"#).as_deref(),
+            Some(r"C:\Program Files\App\app.exe")
+        );
+        assert_eq!(
+            p(r"C:\Tools\tray.EXE -silent").as_deref(),
+            Some(r"C:\Tools\tray.EXE")
+        );
+        assert_eq!(
+            p("rundll32.exe shell32.dll,Foo"),
+            None,
+            "bare names resolve through PATH"
+        );
+        assert_eq!(p(""), None);
+        // a shortcut is judged by its target, not by the .lnk file
+        let lnk = entry("folder", r"C:\Users\me\Startup\x.lnk", r"Z:\gone\prog.exe");
+        assert!(is_broken(&lnk));
+        assert!(!is_broken(&entry("folder", "x.lnk", "")));
+    }
 
     #[test]
     fn parses_entries() {

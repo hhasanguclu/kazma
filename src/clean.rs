@@ -103,6 +103,45 @@ pub fn parse_rules(text: &str) -> Vec<(String, PathBuf, Option<u64>)> {
         .collect()
 }
 
+/// Rules from the app / launcher / developer / AI catalog.
+fn catalog_targets() -> Vec<Target> {
+    crate::catalog::RULES
+        .iter()
+        .map(|rule| {
+            let found: Vec<PathBuf> = rule
+                .paths
+                .iter()
+                .flat_map(|p| crate::catalog::expand(p))
+                .collect();
+            let kind = if !found.is_empty() && found.iter().all(|p| p.is_file()) {
+                Kind::Files(found)
+            } else {
+                Kind::Dirs(found.into_iter().filter(|p| p.is_dir()).collect())
+            };
+            Target {
+                group: rule.group,
+                name: ui::t(rule.en, rule.tr),
+                kind,
+                min_age_h: rule.min_age_h,
+                admin: rule.admin,
+                default_on: rule.on,
+            }
+        })
+        .collect()
+}
+
+/// A folder may be named by several rules (e.g. a shader cache); keep it in the
+/// first rule only so nothing is counted or cleaned twice.
+fn dedupe(mut targets: Vec<Target>) -> Vec<Target> {
+    let mut seen = std::collections::HashSet::new();
+    for t in &mut targets {
+        if let Kind::Dirs(v) | Kind::Files(v) = &mut t.kind {
+            v.retain(|p| seen.insert(p.to_string_lossy().to_lowercase()));
+        }
+    }
+    targets
+}
+
 fn custom_targets() -> Vec<Target> {
     let Some(text) = rules_file().and_then(|f| std::fs::read_to_string(f).ok()) else {
         return vec![];
@@ -228,51 +267,304 @@ fn targets() -> Vec<Target> {
         default_on,
     };
     use Kind::*;
-    vec![
+    let builtin = vec![
         // --- user essentials
-        t("User", ui::t("User temp files (>24h)", "Kullanıcı geçici dosyaları (>24s)"), Dirs(existing([env_path("TEMP").or_else(|| l("Temp"))])), Some(24), false, true),
-        t("User", ui::t("Crash dumps", "Çökme dökümleri"), Dirs(existing([l("CrashDumps")])), None, false, true),
-        t("User", ui::t("Error reports (WER)", "Hata raporları (WER)"), Dirs(existing([l("Microsoft\\Windows\\WER\\ReportArchive"), l("Microsoft\\Windows\\WER\\ReportQueue")])), None, false, true),
-        t("User", ui::t("Thumbnail & icon cache", "Küçük resim ve ikon önbelleği"), Files(thumbcache), None, false, false),
-        t("User", ui::t("Recycle Bin", "Geri Dönüşüm Kutusu"), RecycleBin, None, false, false),
+        t(
+            "User",
+            ui::t(
+                "User temp files (>24h)",
+                "Kullanıcı geçici dosyaları (>24s)",
+            ),
+            Dirs(existing([env_path("TEMP").or_else(|| l("Temp"))])),
+            Some(24),
+            false,
+            true,
+        ),
+        t(
+            "User",
+            ui::t("Crash dumps", "Çökme dökümleri"),
+            Dirs(existing([l("CrashDumps")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "User",
+            ui::t("Error reports (WER)", "Hata raporları (WER)"),
+            Dirs(existing([
+                l("Microsoft\\Windows\\WER\\ReportArchive"),
+                l("Microsoft\\Windows\\WER\\ReportQueue"),
+            ])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "User",
+            ui::t("Thumbnail & icon cache", "Küçük resim ve ikon önbelleği"),
+            Files(thumbcache),
+            None,
+            false,
+            false,
+        ),
+        t(
+            "User",
+            ui::t("Recycle Bin", "Geri Dönüşüm Kutusu"),
+            RecycleBin,
+            None,
+            false,
+            false,
+        ),
         // --- browsers
-        t("Browser", ui::t("Google Chrome cache", "Google Chrome önbelleği"), Dirs(chromium(l("Google\\Chrome\\User Data"))), None, false, true),
-        t("Browser", ui::t("Microsoft Edge cache", "Microsoft Edge önbelleği"), Dirs(chromium(l("Microsoft\\Edge\\User Data"))), None, false, true),
-        t("Browser", ui::t("Brave cache", "Brave önbelleği"), Dirs(chromium(l("BraveSoftware\\Brave-Browser\\User Data"))), None, false, true),
-        t("Browser", ui::t("Vivaldi cache", "Vivaldi önbelleği"), Dirs(chromium(l("Vivaldi\\User Data"))), None, false, true),
-        t("Browser", ui::t("Opera cache", "Opera önbelleği"), Dirs(existing([l("Opera Software\\Opera Stable\\Cache"), l("Opera Software\\Opera GX Stable\\Cache")])), None, false, true),
-        t("Browser", ui::t("Firefox cache", "Firefox önbelleği"), Dirs(existing(firefox)), None, false, true),
+        t(
+            "Browser",
+            ui::t("Google Chrome cache", "Google Chrome önbelleği"),
+            Dirs(chromium(l("Google\\Chrome\\User Data"))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Browser",
+            ui::t("Microsoft Edge cache", "Microsoft Edge önbelleği"),
+            Dirs(chromium(l("Microsoft\\Edge\\User Data"))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Browser",
+            ui::t("Brave cache", "Brave önbelleği"),
+            Dirs(chromium(l("BraveSoftware\\Brave-Browser\\User Data"))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Browser",
+            ui::t("Vivaldi cache", "Vivaldi önbelleği"),
+            Dirs(chromium(l("Vivaldi\\User Data"))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Browser",
+            ui::t("Opera cache", "Opera önbelleği"),
+            Dirs(existing([
+                l("Opera Software\\Opera Stable\\Cache"),
+                l("Opera Software\\Opera GX Stable\\Cache"),
+            ])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Browser",
+            ui::t("Firefox cache", "Firefox önbelleği"),
+            Dirs(existing(firefox)),
+            None,
+            false,
+            true,
+        ),
         // --- apps
-        t("Apps", ui::t("Discord cache", "Discord önbelleği"), Dirs(electron(r("discord"))), None, false, true),
-        t("Apps", ui::t("Slack cache", "Slack önbelleği"), Dirs(electron(r("Slack"))), None, false, true),
-        t("Apps", ui::t("VS Code cache", "VS Code önbelleği"), Dirs(existing([r("Code\\Cache"), r("Code\\CachedData"), r("Code\\Code Cache"), r("Code\\GPUCache"), r("Code\\logs")])), None, false, true),
-        t("Apps", ui::t("Microsoft Teams cache", "Microsoft Teams önbelleği"), Dirs(electron(l("Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\EBWebView\\Default"))), None, false, true),
-        t("Apps", ui::t("Spotify cache", "Spotify önbelleği"), Dirs(existing([l("Spotify\\Data")])), None, false, true),
-        t("Apps", ui::t("Steam html cache", "Steam html önbelleği"), Dirs(existing([l("Steam\\htmlcache")])), None, false, true),
-        t("Apps", ui::t("DirectX shader cache", "DirectX gölgelendirici önbelleği"), Dirs(existing([l("D3DSCache"), l("NVIDIA\\DXCache"), l("NVIDIA\\GLCache"), l("AMD\\DxCache"), l("AMD\\DxcCache")])), None, false, true),
+        t(
+            "Apps",
+            ui::t("Discord cache", "Discord önbelleği"),
+            Dirs(electron(r("discord"))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Apps",
+            ui::t("Slack cache", "Slack önbelleği"),
+            Dirs(electron(r("Slack"))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Apps",
+            ui::t("VS Code cache", "VS Code önbelleği"),
+            Dirs(existing([
+                r("Code\\Cache"),
+                r("Code\\CachedData"),
+                r("Code\\Code Cache"),
+                r("Code\\GPUCache"),
+                r("Code\\logs"),
+            ])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Apps",
+            ui::t("Microsoft Teams cache", "Microsoft Teams önbelleği"),
+            Dirs(electron(l(
+                "Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams\\EBWebView\\Default",
+            ))),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Apps",
+            ui::t("Spotify cache", "Spotify önbelleği"),
+            Dirs(existing([l("Spotify\\Data")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Apps",
+            ui::t("Steam html cache", "Steam html önbelleği"),
+            Dirs(existing([l("Steam\\htmlcache")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Apps",
+            ui::t("DirectX shader cache", "DirectX gölgelendirici önbelleği"),
+            Dirs(existing([
+                l("D3DSCache"),
+                l("NVIDIA\\DXCache"),
+                l("NVIDIA\\GLCache"),
+                l("AMD\\DxCache"),
+                l("AMD\\DxcCache"),
+            ])),
+            None,
+            false,
+            true,
+        ),
         // --- developer
-        t("Dev", ui::t("npm cache", "npm önbelleği"), Dirs(existing([l("npm-cache")])), None, false, true),
-        t("Dev", ui::t("Yarn cache", "Yarn önbelleği"), Dirs(existing([l("Yarn\\Cache")])), None, false, true),
-        t("Dev", ui::t("pnpm store", "pnpm deposu"), Dirs(existing([l("pnpm\\store")])), None, false, false),
-        t("Dev", ui::t("pip cache", "pip önbelleği"), Dirs(existing([l("pip\\Cache")])), None, false, true),
-        t("Dev", ui::t("NuGet HTTP cache", "NuGet HTTP önbelleği"), Dirs(existing([l("NuGet\\v3-cache"), l("NuGet\\plugins-cache")])), None, false, true),
-        t("Dev", ui::t("Cargo registry cache", "Cargo kayıt önbelleği"), Dirs(existing([h(".cargo\\registry\\cache")])), None, false, true),
-        t("Dev", ui::t("Go build cache", "Go derleme önbelleği"), Dirs(existing([l("go-build")])), None, false, true),
-        t("Dev", ui::t("Gradle caches", "Gradle önbellekleri"), Dirs(existing([h(".gradle\\caches")])), None, false, false),
+        t(
+            "Dev",
+            ui::t("npm cache", "npm önbelleği"),
+            Dirs(existing([l("npm-cache")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Dev",
+            ui::t("Yarn cache", "Yarn önbelleği"),
+            Dirs(existing([l("Yarn\\Cache")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Dev",
+            ui::t("pnpm store", "pnpm deposu"),
+            Dirs(existing([l("pnpm\\store")])),
+            None,
+            false,
+            false,
+        ),
+        t(
+            "Dev",
+            ui::t("pip cache", "pip önbelleği"),
+            Dirs(existing([l("pip\\Cache")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Dev",
+            ui::t("NuGet HTTP cache", "NuGet HTTP önbelleği"),
+            Dirs(existing([l("NuGet\\v3-cache"), l("NuGet\\plugins-cache")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Dev",
+            ui::t("Cargo registry cache", "Cargo kayıt önbelleği"),
+            Dirs(existing([h(".cargo\\registry\\cache")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Dev",
+            ui::t("Go build cache", "Go derleme önbelleği"),
+            Dirs(existing([l("go-build")])),
+            None,
+            false,
+            true,
+        ),
+        t(
+            "Dev",
+            ui::t("Gradle caches", "Gradle önbellekleri"),
+            Dirs(existing([h(".gradle\\caches")])),
+            None,
+            false,
+            false,
+        ),
         // --- system (needs admin)
-        t("System", ui::t("Windows temp (>24h)", "Windows geçici dosyaları (>24s)"), Dirs(existing([w("Temp")])), Some(24), true, true),
-        t("System", ui::t("Windows Update downloads", "Windows Update indirmeleri"), Dirs(existing([w("SoftwareDistribution\\Download")])), None, true, true),
-        t("System", ui::t("Delivery Optimization cache", "Teslim İyileştirme önbelleği"), Dirs(existing([w("ServiceProfiles\\NetworkService\\AppData\\Local\\Microsoft\\Windows\\DeliveryOptimization\\Cache")])), None, true, true),
-        t("System", ui::t("System error reports (WER)", "Sistem hata raporları (WER)"), Dirs(existing([pd("Microsoft\\Windows\\WER\\ReportArchive"), pd("Microsoft\\Windows\\WER\\ReportQueue")])), None, true, true),
-        t("System", ui::t("Old CBS / DISM logs", "Eski CBS / DISM logları"), Dirs(existing([w("Logs\\CBS"), w("Logs\\DISM")])), Some(24 * 7), true, false),
-    ]
-    .into_iter()
-    .chain(custom_targets())
-    .filter(|t| match &t.kind {
-        Dirs(v) | Files(v) => !v.is_empty(),
-        RecycleBin => cfg!(windows),
-    })
-    .collect()
+        t(
+            "System",
+            ui::t("Windows temp (>24h)", "Windows geçici dosyaları (>24s)"),
+            Dirs(existing([w("Temp")])),
+            Some(24),
+            true,
+            true,
+        ),
+        t(
+            "System",
+            ui::t("Windows Update downloads", "Windows Update indirmeleri"),
+            Dirs(existing([w("SoftwareDistribution\\Download")])),
+            None,
+            true,
+            true,
+        ),
+        t(
+            "System",
+            ui::t(
+                "Delivery Optimization cache",
+                "Teslim İyileştirme önbelleği",
+            ),
+            Dirs(existing([w(
+                "ServiceProfiles\\NetworkService\\AppData\\Local\\Microsoft\\Windows\\DeliveryOptimization\\Cache",
+            )])),
+            None,
+            true,
+            true,
+        ),
+        t(
+            "System",
+            ui::t("System error reports (WER)", "Sistem hata raporları (WER)"),
+            Dirs(existing([
+                pd("Microsoft\\Windows\\WER\\ReportArchive"),
+                pd("Microsoft\\Windows\\WER\\ReportQueue"),
+            ])),
+            None,
+            true,
+            true,
+        ),
+        t(
+            "System",
+            ui::t("Old CBS / DISM logs", "Eski CBS / DISM logları"),
+            Dirs(existing([w("Logs\\CBS"), w("Logs\\DISM")])),
+            Some(24 * 7),
+            true,
+            false,
+        ),
+    ];
+    let all: Vec<Target> = builtin
+        .into_iter()
+        .chain(catalog_targets())
+        .chain(custom_targets())
+        .collect();
+    dedupe(all)
+        .into_iter()
+        .filter(|t| match &t.kind {
+            Dirs(v) | Files(v) => !v.is_empty(),
+            RecycleBin => cfg!(windows),
+        })
+        .collect()
 }
 
 fn cutoff(t: &Target) -> Option<SystemTime> {
@@ -344,6 +636,9 @@ fn group_name(group: &str) -> &'static str {
         "Apps" => ui::t("Apps", "Uygulamalar"),
         "Dev" => ui::t("Dev", "Geliştirici"),
         "Custom" => ui::t("Custom", "Özel"),
+        "AI" => ui::t("AI tools", "Yapay zekâ araçları"),
+        "Games" => ui::t("Games", "Oyunlar"),
+        "GPU" => ui::t("Graphics drivers", "Ekran kartı sürücüleri"),
         _ => ui::t("System", "Sistem"),
     }
 }
@@ -390,9 +685,11 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         .filter(|(_, s)| s.bytes > 0 || s.files > 0)
         .collect();
     measured.sort_by_key(|(t, _)| {
-        ["User", "Browser", "Apps", "Dev", "Custom", "System"]
-            .iter()
-            .position(|g| *g == t.group)
+        [
+            "User", "Browser", "Apps", "AI", "Games", "GPU", "Dev", "Custom", "System",
+        ]
+        .iter()
+        .position(|g| *g == t.group)
     });
 
     if measured.is_empty() {
@@ -489,7 +786,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         }
     }
 
-    println!("\n  +{}+", "-".repeat(44));
+    println!("\n  .{}.", "-".repeat(44));
     println!(
         "  | {:<20}{:>22} |",
         if dry {
@@ -500,7 +797,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         ui::human(total.bytes)
     );
     println!("  | {:<20}{:>22} |", ui::t("files", "dosya"), total.files);
-    println!("  +{}+\n", "-".repeat(44));
+    println!("  '{}'\n", "-".repeat(44));
     Ok(())
 }
 

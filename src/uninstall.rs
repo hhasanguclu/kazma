@@ -186,6 +186,371 @@ fn pause(msg: &str) {
     let _ = std::io::stdin().read_line(&mut String::new());
 }
 
+// ---- Microsoft Store apps and Scoop packages -------------------------------------------
+
+const STORE_LIST: &str = r#"
+@(Get-AppxPackage | Where-Object { -not $_.IsFramework -and -not $_.NonRemovable -and $_.SignatureKind -eq 'Store' -and $_.Name -ne 'Microsoft.WindowsStore' } | ForEach-Object {
+  $n = $_.Name
+  try { $d = (Get-AppxPackageManifest $_).Package.Properties.DisplayName; if ($d -and $d -notlike 'ms-resource*') { $n = $d } } catch {}
+  [pscustomobject]@{
+    Name = [string]$n; Version = [string]$_.Version
+    Publisher = [string]($_.Publisher -replace '^CN=([^,]+).*', '$1')
+    SizeKb = 0; Location = ''; Uninstall = 'appx'; Quiet = ''; Key = 'appx:' + $_.PackageFullName
+  }
+}) | ConvertTo-Json -Compress
+"#;
+
+fn store_apps() -> Vec<Program> {
+    ps::powershell_json(STORE_LIST, &[]).unwrap_or_default()
+}
+
+fn scoop_root() -> Option<PathBuf> {
+    env_path("SCOOP")
+        .or_else(|| crate::fsutil::home().map(|h| h.join("scoop")))
+        .filter(|p| p.join("apps").is_dir())
+}
+
+fn scoop_apps() -> Vec<Program> {
+    let Some(root) = scoop_root() else {
+        return vec![];
+    };
+    std::fs::read_dir(root.join("apps"))
+        .map(|rd| {
+            rd.flatten()
+                .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false))
+                .map(|e| e.file_name().to_string_lossy().into_owned())
+                .filter(|n| n != "scoop")
+                .map(|n| {
+                    let version = std::fs::read_dir(root.join("apps").join(&n))
+                        .map(|rd| {
+                            rd.flatten()
+                                .map(|e| e.file_name().to_string_lossy().into_owned())
+                                .filter(|v| v != "current")
+                                .last()
+                                .unwrap_or_default()
+                        })
+                        .unwrap_or_default();
+                    Program {
+                        name: n.clone(),
+                        version,
+                        publisher: "Scoop".into(),
+                        size_kb: 0,
+                        location: String::new(),
+                        uninstall: "scoop".into(),
+                        quiet: String::new(),
+                        key: format!("scoop:{n}"),
+                    }
+                })
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn source_tag(p: &Program) -> &'static str {
+    if p.key.starts_with("appx:") {
+        "[Store] "
+    } else if p.key.starts_with("scoop:") {
+        "[Scoop] "
+    } else {
+        ""
+    }
+}
+
+/// Run the right uninstaller for each kind of program.
+fn uninstall_one(p: &Program, quiet: bool) -> Result<(), String> {
+    if let Some(full) = p.key.strip_prefix("appx:") {
+        return ps::text(
+            "Remove-AppxPackage -Package $env:KAZMA_PKG",
+            &[("KAZMA_PKG", full)],
+        )
+        .map(|_| ())
+        .map_err(|e| e.to_string());
+    }
+    if let Some(name) = p.key.strip_prefix("scoop:") {
+        return ps::text("scoop uninstall $env:KAZMA_APP", &[("KAZMA_APP", name)])
+            .map(|_| ())
+            .map_err(|e| e.to_string());
+    }
+    let line = command_line(p, quiet);
+    println!(
+        "{}",
+        tr!(
+            "  running: {}",
+            "  çalıştırılıyor: {}",
+            ui::truncate(&line, 90)
+        )
+    );
+    run_command_line(&line)
+        .map(|_| ())
+        .map_err(|e| e.to_string())
+}
+
+fn is_installed(p: &Program) -> bool {
+    if let Some(full) = p.key.strip_prefix("appx:") {
+        return ps::text(
+            "if (Get-AppxPackage | Where-Object PackageFullName -eq $env:KAZMA_PKG) { 'yes' }",
+            &[("KAZMA_PKG", full)],
+        )
+        .map(|o| o.trim() == "yes")
+        .unwrap_or(false);
+    }
+    if let Some(name) = p.key.strip_prefix("scoop:") {
+        return scoop_root().is_some_and(|r| r.join("apps").join(name).is_dir());
+    }
+    still_installed(&p.key)
+}
+
+// ---- registry leftovers ---------------------------------------------------------------------
+
+/// Registry keys named exactly after the program (or publisher\program) that still exist.
+pub fn registry_leftovers(p: &Program) -> Vec<String> {
+    if !cfg!(windows) || p.key.starts_with("appx:") || p.key.starts_with("scoop:") {
+        return vec![];
+    }
+    let name = base_name(&p.name);
+    let publisher = base_name(&p.publisher);
+    if generic(&name) {
+        return vec![];
+    }
+    let mut cands = vec![];
+    for root in [
+        r"HKCU\Software",
+        r"HKLM\Software",
+        r"HKLM\Software\WOW6432Node",
+    ] {
+        cands.push(format!(r"{root}\{name}"));
+        if !publisher.is_empty() && !generic(&publisher) && !publisher.eq_ignore_ascii_case(&name) {
+            cands.push(format!(r"{root}\{publisher}\{name}"));
+        }
+    }
+    let script =
+        "$env:KAZMA_KEYS -split ';' | Where-Object { Test-Path -LiteralPath (\"Registry::$_\") }";
+    ps::text(script, &[("KAZMA_KEYS", &cands.join(";"))])
+        .map(|o| {
+            o.lines()
+                .map(|l| l.trim().to_string())
+                .filter(|l| !l.is_empty())
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+/// Export the key to a .reg file in kazma's backup folder, then delete it.
+fn remove_registry_key(key: &str) -> Result<PathBuf, String> {
+    let dir = crate::oplog::data_dir()
+        .ok_or("no data folder")?
+        .join("backups")
+        .join("registry");
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let safe: String = key
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
+        .collect();
+    let file = dir.join(format!(
+        "{}-{safe}.reg",
+        crate::oplog::now_utc().replace([' ', ':'], "-")
+    ));
+    let (ok, out) = ps::exec("reg", &["export", key, &file.to_string_lossy(), "/y"]);
+    if !ok {
+        return Err(ps::last_line(&out));
+    }
+    let (ok, out) = ps::exec("reg", &["delete", key, "/f"]);
+    if !ok {
+        return Err(ps::last_line(&out));
+    }
+    Ok(file)
+}
+
+// ---- orphaned leftovers (apps removed some other way) ----------------------------------------
+
+/// Folder names that belong to Windows or to many programs, never orphans.
+const KEEP: &[&str] = &[
+    "microsoft",
+    "packages",
+    "temp",
+    "programs",
+    "comms",
+    "connecteddevicesplatform",
+    "d3dscache",
+    "crashdumps",
+    "publishers",
+    "virtualstore",
+    "peerdistrepub",
+    "kazma",
+    "npm",
+    "npm-cache",
+    "pip",
+    "nuget",
+    "package cache",
+    "nvidia",
+    "nvidia corporation",
+    "amd",
+    "intel",
+    "google",
+    "mozilla",
+    "apple",
+    "adobe",
+    "windows",
+    "ssh",
+    "softwaredistribution",
+    "usoshared",
+    "usoprivate",
+    "packagemanagement",
+    "regid.1991-06.com.microsoft",
+    "microsoft help",
+    "desktop",
+    "documents",
+    "start menu",
+    "sun",
+    "oracle",
+    "history",
+    "identities",
+    "media center programs",
+];
+
+fn normalize(s: &str) -> String {
+    s.to_lowercase()
+        .chars()
+        .filter(|c| c.is_alphanumeric())
+        .collect()
+}
+
+/// Does folder `name` look like it belongs to one of the installed programs?
+pub fn belongs(name: &str, installed: &[String]) -> bool {
+    let n = normalize(name);
+    if n.len() < 3 {
+        return true;
+    }
+    installed
+        .iter()
+        .any(|i| i.len() >= 3 && (i.contains(&n) || (n.len() >= 4 && n.contains(i.as_str()))))
+}
+
+pub fn orphans(installed: &[Program]) -> Vec<(PathBuf, u64)> {
+    let names: Vec<String> = installed
+        .iter()
+        .flat_map(|p| {
+            [
+                normalize(&base_name(&p.name)),
+                normalize(&base_name(&p.publisher)),
+                normalize(&p.name),
+            ]
+        })
+        .filter(|n| n.len() >= 3)
+        .collect();
+    let cutoff = std::time::SystemTime::now() - std::time::Duration::from_secs(90 * 86_400);
+    let bases: Vec<PathBuf> = ["APPDATA", "LOCALAPPDATA", "ProgramData"]
+        .iter()
+        .filter_map(|v| env_path(v))
+        .chain(env_path("LOCALAPPDATA").map(|l| l.join("Programs")))
+        .collect();
+    let mut out = vec![];
+    for b in bases {
+        let Ok(rd) = std::fs::read_dir(&b) else {
+            continue;
+        };
+        for e in rd.flatten() {
+            let Ok(ft) = e.file_type() else { continue };
+            let name = e.file_name().to_string_lossy().into_owned();
+            let lower = name.to_lowercase();
+            if !ft.is_dir()
+                || ft.is_symlink()
+                || name.starts_with('.')
+                || name.starts_with('{')
+                || KEEP.contains(&lower.as_str())
+            {
+                continue;
+            }
+            if belongs(&name, &names) {
+                continue;
+            }
+            let recent = e
+                .metadata()
+                .and_then(|m| m.modified())
+                .map(|m| m > cutoff)
+                .unwrap_or(true);
+            if recent || !fsutil::can_remove(&e.path()) {
+                continue;
+            }
+            out.push((e.path(), fsutil::dir_size(&e.path())));
+        }
+    }
+    out.sort_by_key(|(_, s)| std::cmp::Reverse(*s));
+    out
+}
+
+/// `kz uninstall --leftovers`: folders left behind by programs that are gone.
+pub fn run_orphans() -> anyhow::Result<()> {
+    ui::print_banner(ui::t(
+        "uninstall :: leftovers of removed programs",
+        "uninstall :: kaldırılmış programların kalıntıları",
+    ));
+    if !cfg!(windows) {
+        ui::warn(ui::t(
+            "kz uninstall works on Windows only.",
+            "kz uninstall yalnızca Windows'ta çalışır.",
+        ));
+        return Ok(());
+    }
+    ps::working(ui::t(
+        "comparing folders with installed programs...",
+        "klasörler yüklü programlarla karşılaştırılıyor...",
+    ));
+    let mut installed: Vec<Program> = ps::powershell_json(LIST, &[]).unwrap_or_default();
+    installed.extend(store_apps());
+    installed.extend(scoop_apps());
+    let found = orphans(&installed);
+    println!("{:70}", "");
+    if found.is_empty() {
+        ui::ok(ui::t(
+            "No leftovers of removed programs found.",
+            "Kaldırılmış programlardan kalıntı bulunamadı.",
+        ));
+        return Ok(());
+    }
+    if !ui::interactive() {
+        for (d, sz) in &found {
+            println!("  {:>10}  {}", ui::human(*sz), d.display());
+        }
+        return Ok(());
+    }
+    let items = found
+        .iter()
+        .map(|(d, sz)| ui::CheckItem {
+            label: d.display().to_string(),
+            detail: ui::t(
+                "no installed program owns it; untouched for 90+ days",
+                "hiçbir yüklü programa ait değil; 90+ gündür dokunulmadı",
+            )
+            .into(),
+            size: *sz,
+            checked: false,
+        })
+        .collect();
+    let title = ui::t(
+        "kazma uninstall :: check before removing -> Recycle Bin",
+        "kazma uninstall :: silmeden önce kontrol edin -> Geri Dönüşüm Kutusu",
+    );
+    let Some(sel) = ui::checklist(title, items)? else {
+        println!("  {}", ui::t("cancelled.", "iptal edildi."));
+        return Ok(());
+    };
+    for ((d, sz), on) in found.iter().zip(sel) {
+        if !on {
+            continue;
+        }
+        match fsutil::trash(d) {
+            Ok(()) => {
+                ui::ok(&format!("{:>10}  {}", ui::human(*sz), d.display()));
+                oplog::record("uninstall", &format!("trashed orphan {}", d.display()));
+            }
+            Err(e) => ui::warn(&format!("{}  ({e})", d.display())),
+        }
+    }
+    println!();
+    Ok(())
+}
+
 pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
     ui::print_banner(if dry {
         ui::t(
@@ -217,6 +582,8 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
         "yüklü programlar okunuyor...",
     ));
     let mut progs: Vec<Program> = ps::powershell_json(LIST, &[])?;
+    progs.extend(store_apps());
+    progs.extend(scoop_apps());
     println!("{:60}", "");
     progs.sort_by_key(|p| p.name.to_lowercase());
     progs.dedup_by(|a, b| a.name == b.name && a.version == b.version);
@@ -247,7 +614,7 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
     let items = progs
         .iter()
         .map(|p| ui::CheckItem {
-            label: p.name.clone(),
+            label: format!("{}{}", source_tag(p), p.name),
             detail: format!("{}  {}", p.version, p.publisher),
             size: p.size_kb.max(0) as u64 * 1024,
             checked: false,
@@ -292,33 +659,21 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
     let mut removed: Vec<&Program> = vec![];
     for p in &chosen {
         ui::section(&p.name);
-        let line = command_line(p, quiet);
-        println!(
-            "{}",
-            tr!(
-                "  running: {}",
-                "  çalıştırılıyor: {}",
-                ui::truncate(&line, 90)
-            )
-        );
-        match run_command_line(&line) {
-            Ok(_) => {}
-            Err(e) => {
-                ui::warn(&tr!(
-                    "could not start the uninstaller: {e}",
-                    "kaldırma programı başlatılamadı: {e}"
-                ));
-                continue;
-            }
+        if let Err(e) = uninstall_one(p, quiet) {
+            ui::warn(&tr!(
+                "could not start the uninstaller: {e}",
+                "kaldırma programı başlatılamadı: {e}"
+            ));
+            continue;
         }
-        if still_installed(&p.key) {
+        if is_installed(p) {
             // Many uninstallers (NSIS, Inno) hand off to a copy of themselves and exit at once.
             pause(ui::t(
                 "if the uninstaller window is still open, finish it, then press Enter...",
                 "kaldırma penceresi hâlâ açıksa bitirin, sonra Enter'a basın...",
             ));
         }
-        if still_installed(&p.key) {
+        if is_installed(p) {
             ui::warn(ui::t(
                 "still installed (uninstall cancelled or failed), leftovers not touched",
                 "hâlâ yüklü (kaldırma iptal edildi ya da başarısız), kalıntılara dokunulmadı",
@@ -331,15 +686,32 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
         }
     }
 
-    // Leftovers of everything that was really removed.
-    let found: Vec<(PathBuf, u64)> = removed
-        .iter()
-        .flat_map(|p| leftovers(p))
-        .map(|d| {
+    // Leftovers of everything that was really removed: folders and registry keys.
+    enum Left {
+        Folder(PathBuf, u64),
+        Key(String),
+    }
+    let mut found: Vec<Left> = vec![];
+    for p in &removed {
+        if p.key.starts_with("appx:") {
+            continue; // Windows removes a Store app's data itself
+        }
+        for d in leftovers(p) {
             let s = fsutil::dir_size(&d);
-            (d, s)
-        })
-        .collect();
+            found.push(Left::Folder(d, s));
+        }
+        if let Some(name) = p.key.strip_prefix("scoop:")
+            && let Some(persist) = scoop_root()
+                .map(|r| r.join("persist").join(name))
+                .filter(|d| d.is_dir())
+        {
+            let s = fsutil::dir_size(&persist);
+            found.push(Left::Folder(persist, s));
+        }
+        for k in registry_leftovers(p) {
+            found.push(Left::Key(k));
+        }
+    }
     if found.is_empty() {
         println!(
             "\n  {}\n",
@@ -349,17 +721,29 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
     }
     let items = found
         .iter()
-        .map(|(d, s)| ui::CheckItem {
-            label: d.display().to_string(),
-            detail: String::new(),
-            size: *s,
-            checked: true,
+        .map(|l| match l {
+            Left::Folder(d, s) => ui::CheckItem {
+                label: d.display().to_string(),
+                detail: ui::t("folder -> Recycle Bin", "klasör -> Geri Dönüşüm Kutusu").into(),
+                size: *s,
+                checked: true,
+            },
+            Left::Key(k) => ui::CheckItem {
+                label: k.clone(),
+                detail: ui::t(
+                    "registry key, backed up first",
+                    "kayıt defteri anahtarı, önce yedeklenir",
+                )
+                .into(),
+                size: 0,
+                checked: true,
+            },
         })
         .collect();
     let Some(sel) = ui::checklist(
         ui::t(
-            "kazma uninstall :: leftover folders -> Recycle Bin",
-            "kazma uninstall :: kalıntı klasörler -> Geri Dönüşüm Kutusu",
+            "kazma uninstall :: leftovers",
+            "kazma uninstall :: kalıntılar",
         ),
         items,
     )?
@@ -368,17 +752,31 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
         return Ok(());
     };
     ui::section(ui::t("Leftovers", "Kalıntılar"));
-    for ((d, s), on) in found.iter().zip(sel) {
-        if !on {
-            ui::skip(&tr!("{} (kept)", "{} (tutuldu)", d.display()));
-            continue;
-        }
-        match fsutil::trash(d) {
-            Ok(()) => {
-                ui::ok(&format!("{:>10}  {}", ui::human(*s), d.display()));
-                oplog::record("uninstall", &format!("trashed leftover {}", d.display()));
-            }
-            Err(e) => ui::warn(&format!("{}  ({e})", d.display())),
+    for (l, on) in found.iter().zip(sel) {
+        match (l, on) {
+            (Left::Folder(d, _), false) => ui::skip(&tr!("{} (kept)", "{} (tutuldu)", d.display())),
+            (Left::Key(k), false) => ui::skip(&tr!("{} (kept)", "{} (tutuldu)", k)),
+            (Left::Folder(d, s), true) => match fsutil::trash(d) {
+                Ok(()) => {
+                    ui::ok(&format!("{:>10}  {}", ui::human(*s), d.display()));
+                    oplog::record("uninstall", &format!("trashed leftover {}", d.display()));
+                }
+                Err(e) => ui::warn(&format!("{}  ({e})", d.display())),
+            },
+            (Left::Key(k), true) => match remove_registry_key(k) {
+                Ok(backup) => {
+                    ui::ok(&tr!(
+                        "{k}  (backup: {})",
+                        "{k}  (yedek: {})",
+                        backup.display()
+                    ));
+                    oplog::record(
+                        "uninstall",
+                        &format!("removed registry {k} backup={}", backup.display()),
+                    );
+                }
+                Err(e) => ui::warn(&format!("{k}  ({e})")),
+            },
         }
     }
     println!();
@@ -400,6 +798,22 @@ mod tests {
             quiet: quiet.into(),
             key: "k".into(),
         }
+    }
+
+    #[test]
+    fn orphan_matching() {
+        let installed: Vec<String> = ["Mozilla Firefox", "Notepad++", "Discord Inc"]
+            .iter()
+            .map(|s| normalize(s))
+            .collect();
+        assert!(belongs("Notepad++", &installed));
+        assert!(belongs("discord", &installed));
+        assert!(belongs("Firefox", &installed));
+        assert!(!belongs("OldGameStudio", &installed));
+        assert!(
+            belongs("ab", &installed),
+            "very short names are never orphans"
+        );
     }
 
     #[test]

@@ -8,9 +8,17 @@ use std::path::{Path, PathBuf};
 
 pub const REPO: &str = "hhasanguclu/kazma";
 
+/// The release file for this machine's architecture.
+pub const ASSET: &str = if cfg!(target_arch = "aarch64") {
+    "kz-arm64.exe"
+} else {
+    "kz.exe"
+};
+
 const LATEST: &str = r#"
 $r = Invoke-RestMethod -UseBasicParsing -Headers @{ 'User-Agent' = 'kazma-updater' } -Uri "https://api.github.com/repos/$($env:KAZMA_REPO)/releases/latest"
-$exe = $r.assets | Where-Object { $_.name -eq 'kz.exe' } | Select-Object -First 1
+$exe = $r.assets | Where-Object { $_.name -eq $env:KAZMA_ASSET } | Select-Object -First 1
+if (-not $exe) { $exe = $r.assets | Where-Object { $_.name -eq 'kz.exe' } | Select-Object -First 1 }
 $sums = $r.assets | Where-Object { $_.name -eq 'SHA256SUMS.txt' } | Select-Object -First 1
 [pscustomobject]@{ Tag = $r.tag_name; Url = [string]$exe.browser_download_url; Sums = [string]$sums.browser_download_url; Page = $r.html_url } | ConvertTo-Json -Compress
 "#;
@@ -18,7 +26,7 @@ $sums = $r.assets | Where-Object { $_.name -eq 'SHA256SUMS.txt' } | Select-Objec
 const DOWNLOAD: &str = r#"
 Invoke-WebRequest -UseBasicParsing -Headers @{ 'User-Agent' = 'kazma-updater' } -Uri $env:KAZMA_URL -OutFile $env:KAZMA_OUT
 $want = ((Invoke-WebRequest -UseBasicParsing -Headers @{ 'User-Agent' = 'kazma-updater' } -Uri $env:KAZMA_SUMS).Content -split "`n" |
-  Where-Object { $_ -match '\skz\.exe\s*$' } | Select-Object -First 1) -split '\s+' | Select-Object -First 1
+  Where-Object { $_ -match ('\s' + [regex]::Escape($env:KAZMA_ASSET_NAME) + '\s*$') } | Select-Object -First 1) -split '\s+' | Select-Object -First 1
 $got = (Get-FileHash -Algorithm SHA256 -Path $env:KAZMA_OUT).Hash
 if (-not $want -or $got.ToLower() -ne $want.Trim().ToLower()) {
   Remove-Item $env:KAZMA_OUT -Force -ErrorAction SilentlyContinue
@@ -89,7 +97,8 @@ pub fn run(check_only: bool) -> anyhow::Result<()> {
         "checking GitHub for the latest release...",
         "GitHub'da son sürüm kontrol ediliyor..."
     ));
-    let latest: Vec<Latest> = ps::powershell_json(LATEST, &[("KAZMA_REPO", REPO)])?;
+    let latest: Vec<Latest> =
+        ps::powershell_json(LATEST, &[("KAZMA_REPO", REPO), ("KAZMA_ASSET", ASSET)])?;
     println!("{:60}", "");
     let Some(l) = latest.into_iter().next() else {
         anyhow::bail!("{}", tr!("no release found", "release bulunamadı"));
@@ -128,6 +137,7 @@ pub fn run(check_only: bool) -> anyhow::Result<()> {
     let out = ps::powershell(
         DOWNLOAD,
         &[
+            ("KAZMA_ASSET_NAME", ASSET),
             ("KAZMA_URL", &l.url),
             ("KAZMA_SUMS", &l.sums),
             ("KAZMA_OUT", &new.to_string_lossy()),
@@ -184,7 +194,8 @@ pub fn latest_cached() -> Option<String> {
     {
         return Some(tag.to_string());
     }
-    let latest: Vec<Latest> = ps::powershell_json(LATEST, &[("KAZMA_REPO", REPO)]).ok()?;
+    let latest: Vec<Latest> =
+        ps::powershell_json(LATEST, &[("KAZMA_REPO", REPO), ("KAZMA_ASSET", ASSET)]).ok()?;
     let tag = latest.into_iter().next()?.tag;
     if let Some(d) = cache.parent() {
         let _ = std::fs::create_dir_all(d);

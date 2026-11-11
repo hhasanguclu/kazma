@@ -3,6 +3,7 @@
 mod analyze;
 mod backup;
 mod bench;
+mod catalog;
 mod clean;
 mod context;
 mod debloat;
@@ -10,9 +11,12 @@ mod deepclean;
 mod drivers;
 mod dupes;
 mod empty;
+mod explain;
 mod fsutil;
+mod gpu;
 mod health;
 mod installer;
+mod locks;
 mod mft;
 mod net;
 mod oplog;
@@ -20,6 +24,7 @@ mod optimize;
 mod ports;
 mod power;
 mod privacy;
+mod procinfo;
 mod ps;
 mod purge;
 mod remove;
@@ -27,6 +32,7 @@ mod repair;
 mod report;
 mod restore;
 mod schedule;
+mod screen;
 mod settings;
 mod startup;
 mod status;
@@ -122,6 +128,9 @@ enum Cmd {
         /// Use the program's silent uninstaller when it has one
         #[arg(long)]
         quiet: bool,
+        /// Find folders left behind by programs that are already gone
+        #[arg(long)]
+        leftovers: bool,
     },
     /// Windows maintenance: DNS flush, icon cache, SSD TRIM, DISM, SFC
     Optimize {
@@ -280,6 +289,18 @@ enum Cmd {
         #[arg(long, hide = true)]
         verify: bool,
     },
+    /// Which program has a file or folder open (why it cannot be deleted)
+    Lock { path: PathBuf },
+    /// Keep the screen on (no sleep) for MINUTES, or until you press q
+    Awake {
+        #[arg(default_value_t = 0)]
+        minutes: u64,
+    },
+    /// Black screen that ignores input, so you can wipe the display
+    Cleanscreen {
+        #[arg(default_value_t = 30)]
+        seconds: u64,
+    },
     /// Your own clean rules (extra folders for `kz clean`); --edit opens Notepad
     Rules {
         #[arg(long)]
@@ -437,6 +458,13 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "HTML sistem raporu",
     ),
     ('v', "bench", "disk speed test", "disk hız testi"),
+    ('A', "awake", "keep the screen on", "ekranı açık tut"),
+    (
+        'n',
+        "cleanscreen",
+        "black screen for wiping the display",
+        "ekranı silmek için siyah ekran",
+    ),
     (
         'z',
         "schedule",
@@ -772,10 +800,12 @@ fn pause() {
 }
 
 fn run_menu_item(name: &str) -> anyhow::Result<bool> {
-    let wait = !matches!(name, "analyze" | "status");
+    let wait = !matches!(name, "analyze" | "status" | "awake" | "cleanscreen");
     match name {
         "clean" => clean::run(false, false)?,
         "deepclean" => deepclean::run(false)?,
+        "awake" => screen::awake(0)?,
+        "cleanscreen" => screen::cleanscreen(30)?,
         "types" => types::run(None, "auto".into(), false)?,
         "repair" => repair::run(None, false, false)?,
         "analyze" => analyze::run(None)?,
@@ -834,7 +864,17 @@ fn main() -> anyhow::Result<()> {
             dry_run,
             yes,
         }) => installer::run(paths, dry_run, yes),
-        Some(Cmd::Uninstall { dry_run, quiet }) => uninstall::run(dry_run, quiet),
+        Some(Cmd::Uninstall {
+            dry_run,
+            quiet,
+            leftovers,
+        }) => {
+            if leftovers {
+                uninstall::run_orphans()
+            } else {
+                uninstall::run(dry_run, quiet)
+            }
+        }
         Some(Cmd::Upgrade { dry_run, yes }) => upgrade::run(dry_run, yes),
         Some(Cmd::Drivers {
             installed,
@@ -885,6 +925,9 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Context { action }) => context::run(action),
         Some(Cmd::Bench { path, size_mb }) => bench::run(path, size_mb),
         Some(Cmd::Rules { edit }) => clean::rules(edit),
+        Some(Cmd::Lock { path }) => locks::run(path),
+        Some(Cmd::Awake { minutes }) => screen::awake(minutes),
+        Some(Cmd::Cleanscreen { seconds }) => screen::cleanscreen(seconds),
         Some(Cmd::Types {
             path,
             method,

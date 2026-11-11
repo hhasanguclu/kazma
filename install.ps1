@@ -6,8 +6,10 @@ $ErrorActionPreference = 'Stop'
 $repo = 'hhasanguclu/kazma'
 $dir  = Join-Path $env:LOCALAPPDATA 'Programs\kazma'
 $exe  = Join-Path $dir 'kz.exe'
-$url  = if ($env:KAZMA_VERSION) { "https://github.com/$repo/releases/download/$($env:KAZMA_VERSION)/kz.exe" }
-        else { "https://github.com/$repo/releases/latest/download/kz.exe" }
+$arm  = ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') -or ($env:PROCESSOR_ARCHITEW6432 -eq 'ARM64')
+$asset = if ($arm) { 'kz-arm64.exe' } else { 'kz.exe' }
+$url  = if ($env:KAZMA_VERSION) { "https://github.com/$repo/releases/download/$($env:KAZMA_VERSION)/$asset" }
+        else { "https://github.com/$repo/releases/latest/download/$asset" }
 
 Write-Host "  kazma :: installing to $dir" -ForegroundColor Green
 New-Item -ItemType Directory -Force -Path $dir | Out-Null

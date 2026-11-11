@@ -25,6 +25,13 @@ jobs:
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
       - run: cargo build --release
+      # ARM64 (Snapdragon) build; never blocks an x64 release
+      - name: Build ARM64
+        id: arm64
+        continue-on-error: true
+        run: |
+          rustup target add aarch64-pc-windows-msvc
+          cargo build --release --target aarch64-pc-windows-msvc
 
       # Read-only commands run for real on Windows, so every PowerShell script
       # they use is executed (a syntax error fails the build).
@@ -61,7 +68,9 @@ jobs:
             @('context', 'install'),
             @('context', 'status'),
             @('context', 'uninstall'),
-            @('bench', $env:RUNNER_TEMP, '--size-mb', '64')
+            @('bench', $env:RUNNER_TEMP, '--size-mb', '64'),
+            @('uninstall', '--leftovers'),
+            @('lock', "$env:GITHUB_WORKSPACE\Cargo.toml")
           )) {
             Write-Host "== kz $($args_ -join ' ')"
             & $kz @args_
@@ -89,6 +98,19 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "MFT scan disagrees with the directory walk" }
           Measure-Command { target/release/kz.exe types C:\Windows --method mft } | Select-Object -ExpandProperty TotalSeconds | ForEach-Object { "MFT scan of C:\Windows: $_ s" }
           target/release/kz.exe types C:\Windows --method mft
+      # Restart Manager must name the process that holds a file open
+      - name: Lock finder self-test
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $f = Join-Path $env:RUNNER_TEMP 'held.txt'
+          Set-Content $f 'x'
+          $p = Start-Process pwsh -PassThru -WindowStyle Hidden -ArgumentList '-NoProfile', '-Command', "`$h = [IO.File]::Open('$f', 'Open', 'Read', 'None'); Start-Sleep 60"
+          Start-Sleep 5
+          $out = target/release/kz.exe lock $f | Out-String
+          Write-Host $out
+          Stop-Process -Id $p.Id -Force
+          if ($out -notmatch "$($p.Id)") { throw "kz lock did not name the holder (pid $($p.Id))" }
       - name: Smoke test (deepclean, repair)
         run: |
           target/release/kz.exe deepclean --dry-run
@@ -135,6 +157,9 @@ jobs:
         run: |
           New-Item -ItemType Directory dist | Out-Null
           Copy-Item target/release/kz.exe dist/
+          if (Test-Path target/aarch64-pc-windows-msvc/release/kz.exe) {
+            Copy-Item target/aarch64-pc-windows-msvc/release/kz.exe dist/kz-arm64.exe
+          }
       - name: Upload unsigned exe
         id: unsigned
         uses: actions/upload-artifact@v4
@@ -193,7 +218,9 @@ jobs:
         shell: pwsh
         run: |
           $hash = (Get-FileHash dist/kz.exe -Algorithm SHA256).Hash.ToLower()
-          python packaging/update_manifests.py "${{ steps.rel.outputs.version }}" $hash
+          $arm = ''
+          if (Test-Path dist/kz-arm64.exe) { $arm = (Get-FileHash dist/kz-arm64.exe -Algorithm SHA256).Hash.ToLower() }
+          python packaging/update_manifests.py "${{ steps.rel.outputs.version }}" $hash $arm
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add bucket packaging

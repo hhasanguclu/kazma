@@ -333,7 +333,19 @@ impl App {
                     self.load(cwd, sel);
                 }
             }
-            Err(err) => self.message = tr!("delete failed: {err}", "silinemedi: {err}"),
+            Err(err) => {
+                // say who holds it, the usual reason a delete fails
+                let who = crate::locks::lockers(&path);
+                self.message = if who.is_empty() {
+                    tr!("delete failed: {err}", "silinemedi: {err}")
+                } else {
+                    tr!(
+                        "delete failed, {}",
+                        "silinemedi, {}",
+                        crate::locks::summary(&who)
+                    )
+                };
+            }
         }
     }
 
@@ -444,6 +456,12 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
                     }
                 }
                 KeyCode::Char('t') => app.treemap = !app.treemap,
+                KeyCode::Char('w') => {
+                    if let Some(e) = app.selected() {
+                        let list = crate::locks::lockers(&e.path);
+                        app.message = format!("{}: {}", e.name, crate::locks::summary(&list));
+                    }
+                }
                 KeyCode::Char('s') if !app.big => {
                     app.sort_key = match app.sort_key {
                         SortKey::Size => SortKey::Name,
@@ -480,7 +498,7 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
     let [head, main, foot] = Layout::vertical([
         Constraint::Length(3),
         Constraint::Min(3),
-        Constraint::Length(3),
+        Constraint::Length(4),
     ])
     .areas(f.area());
 
@@ -562,8 +580,14 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
                 Style::new().fg(ui::dim())
             };
             // name first (like Explorer), then the numbers, then the bar
+            let has_note = crate::explain::explain(&e.path, &e.name, e.is_dir).is_some();
+            let shown_name = if has_note {
+                format!("{} (i)", ui::truncate(&name, name_w.saturating_sub(4)))
+            } else {
+                ui::truncate(&name, name_w)
+            };
             let mut spans = vec![Span::styled(
-                format!(" {:<name_w$}", ui::truncate(&name, name_w)),
+                format!(" {:<name_w$}", shown_name),
                 name_style,
             )];
             match e.size {
@@ -679,13 +703,34 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
                 ("t", ui::t("treemap", "harita")),
                 ("s", ui::t("sort", "sırala")),
                 ("/", ui::t("search", "ara")),
+                ("w", ui::t("who uses it", "kim kullanıyor")),
                 ("d", ui::t("delete", "sil")),
                 ("q", ui::t("quit", "çık")),
             ])
         }
     };
+    // first line: what the selected item is (a note for special items, else its path)
+    let info = match app.selected() {
+        Some(e) => match crate::explain::explain(&e.path, &e.name, e.is_dir) {
+            Some(note) => Line::from(vec![
+                Span::styled(
+                    " (i) ",
+                    Style::new().fg(ui::hi()).add_modifier(Modifier::BOLD),
+                ),
+                Span::styled(note, Style::new().fg(ui::fg())),
+            ]),
+            None => Line::from(Span::styled(
+                format!(" {}", e.path.display()),
+                Style::new().fg(ui::dim()),
+            )),
+        },
+        None => Line::default(),
+    };
     let keys = tr!("keys", "tuşlar");
-    f.render_widget(Paragraph::new(footer).block(ui::block(&keys)), foot);
+    f.render_widget(
+        Paragraph::new(vec![info, footer]).block(ui::block(&keys)),
+        foot,
+    );
 }
 
 const BIG_COUNT: usize = 200;
