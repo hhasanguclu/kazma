@@ -32,9 +32,7 @@ Translations live in `locales/*.json`, corrections are welcome. The README is av
   TRIM / DISM / SFC pre-selected only when due
 - **ARM64 build** (`kz-arm64.exe`); installer, `kz update`, Scoop and winget pick the right one
 
-## v0.6.0
-
-A clearer, richer ASCII interface that stays minimal:
+**New ASCII interface**, clearer and richer while staying minimal:
 
 - **Main menu in two columns**: all commands on one screen, dimmed descriptions, group headings,
   a detail bar for the selected command, left/right moves between columns
