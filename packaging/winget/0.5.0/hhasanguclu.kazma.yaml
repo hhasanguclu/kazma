@@ -1,0 +1,6 @@
+# Created by kazma CI (packaging/update_manifests.py)
+PackageIdentifier: hhasanguclu.kazma
+PackageVersion: 0.5.0
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.6.0
