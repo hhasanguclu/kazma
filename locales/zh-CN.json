@@ -858,5 +858,7 @@
  "kz upgrade works on Windows only.": "kz upgrade 仅适用于 Windows。",
  "not an interactive terminal: re-run with --yes to upgrade, or --dry-run to preview": "不是交互式终端：请加 --yes 重新运行以升级，或用 --dry-run 预览",
  "kazma upgrade :: select programs to update": "kazma upgrade :: 选择要更新的程序",
- "whitelist :: paths kazma will never delete": "whitelist :: kazma 绝不删除的路径"
+ "whitelist :: paths kazma will never delete": "whitelist :: kazma 绝不删除的路径",
+ "delete {} manually": "请手动删除 {}",
+ "asking winget for updates (this can take a few seconds)...": "正在向 winget 查询更新（可能需要几秒钟）..."
 }

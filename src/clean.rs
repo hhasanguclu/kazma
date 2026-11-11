@@ -762,7 +762,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         };
         ui::ok(&format!(
             "{} {:>10}{note}",
-            ui::pad(&t.name, 34),
+            ui::pad(t.name, 34),
             ui::human(r.bytes)
         ));
         total.bytes += r.bytes;

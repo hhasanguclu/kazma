@@ -3930,6 +3930,12 @@
   "file": "remove.rs"
  },
  {
+  "en": "delete {} manually",
+  "tr": "{} dosyasını elle silin",
+  "kind": "fmt",
+  "file": "remove.rs"
+ },
+ {
   "en": "bye. thanks for using kazma.",
   "tr": "hoşça kal. kazma'yı kullandığın için teşekkürler.",
   "kind": "plain",
@@ -5060,6 +5066,12 @@
  {
   "en": "kz upgrade works on Windows only.",
   "tr": "kz upgrade yalnızca Windows'ta çalışır.",
+  "kind": "plain",
+  "file": "upgrade.rs"
+ },
+ {
+  "en": "asking winget for updates (this can take a few seconds)...",
+  "tr": "winget'e güncellemeler soruluyor (birkaç saniye sürebilir)...",
   "kind": "plain",
   "file": "upgrade.rs"
  },

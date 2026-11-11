@@ -858,5 +858,7 @@
  "kz upgrade works on Windows only.": "kz upgrade は Windows 専用です。",
  "not an interactive terminal: re-run with --yes to upgrade, or --dry-run to preview": "対話型ターミナルではありません: アップグレードするには --yes、プレビューするには --dry-run を付けて再実行してください",
  "kazma upgrade :: select programs to update": "kazma upgrade :: 更新するプログラムを選択",
- "whitelist :: paths kazma will never delete": "whitelist :: kazma が絶対に削除しないパス"
+ "whitelist :: paths kazma will never delete": "whitelist :: kazma が絶対に削除しないパス",
+ "delete {} manually": "{} を手動で削除してください",
+ "asking winget for updates (this can take a few seconds)...": "winget に更新を問い合わせ中 (数秒かかることがあります)..."
 }

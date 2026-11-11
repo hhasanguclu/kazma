@@ -858,5 +858,7 @@
  "kz upgrade works on Windows only.": "kz upgrade funktioniert nur unter Windows.",
  "not an interactive terminal: re-run with --yes to upgrade, or --dry-run to preview": "kein interaktives Terminal: mit --yes zum Aktualisieren erneut ausführen, oder --dry-run für eine Vorschau",
  "kazma upgrade :: select programs to update": "kazma upgrade :: zu aktualisierende Programme auswählen",
- "whitelist :: paths kazma will never delete": "whitelist :: Pfade, die kazma nie löscht"
+ "whitelist :: paths kazma will never delete": "whitelist :: Pfade, die kazma nie löscht",
+ "delete {} manually": "{} bitte manuell löschen",
+ "asking winget for updates (this can take a few seconds)...": "frage winget nach Updates (kann ein paar Sekunden dauern)..."
 }
