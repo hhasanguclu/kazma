@@ -1,0 +1,21 @@
+# Created by kazma CI (packaging/update_manifests.py)
+PackageIdentifier: hhasanguclu.kazma
+PackageVersion: 0.4.0
+PackageLocale: en-US
+Publisher: hhasanguclu
+PublisherUrl: https://github.com/hhasanguclu
+PackageName: kazma
+PackageUrl: https://github.com/hhasanguclu/kazma
+License: MIT
+LicenseUrl: https://github.com/hhasanguclu/kazma/blob/main/LICENSE
+ShortDescription: Oldschool ASCII system cleaner, disk explorer and toolkit for Windows
+Moniker: kz
+Tags:
+- cleaner
+- disk-usage
+- uninstaller
+- drivers
+- tui
+ReleaseNotesUrl: https://github.com/hhasanguclu/kazma/releases/tag/v0.4.0
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0
