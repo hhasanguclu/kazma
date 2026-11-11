@@ -38,7 +38,19 @@ fn kind_name(k: i64) -> &'static str {
 }
 
 fn list() -> anyhow::Result<Vec<Point>> {
-    ps::powershell_json(LIST, &[])
+    ps::powershell_json(LIST, &[]).map_err(|e| {
+        if e.to_string().contains("not supported") {
+            anyhow::anyhow!(
+                "{}",
+                ui::t(
+                    "System Restore is not available on this edition of Windows (e.g. Windows Server)",
+                    "Sistem Geri Yükleme bu Windows sürümünde yok (örneğin Windows Server)"
+                )
+            )
+        } else {
+            e
+        }
+    })
 }
 
 fn need_admin() -> anyhow::Result<()> {
