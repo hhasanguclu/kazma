@@ -1800,12 +1800,6 @@
   "file": "health.rs"
  },
  {
-  "en": "english",
-  "tr": "turkish",
-  "kind": "ps",
-  "file": "health.rs"
- },
- {
   "en": "{}d old  {}",
   "tr": "{} gün önce  {}",
   "kind": "fmt",

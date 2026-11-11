@@ -299,7 +299,6 @@
  "days": "天",
  "not available (third-party antivirus?)": "無法使用（第三方防毒軟體？）",
  "off for: {0}": "關閉的項目：{0}",
- "english": "英文",
  "{}d old  {}": "{} 天前  {}",
  "newer than {RECENT_DAYS}d, kept": "不到 {RECENT_DAYS} 天，已保留",
  "not selected": "未選取",

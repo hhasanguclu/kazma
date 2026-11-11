@@ -134,7 +134,7 @@ pub struct Check {
     pub status: String,
 }
 
-/// Translations of the script's `T 'english' 'turkish'` texts for the current language.
+/// Translations of the texts the script passes to its `T` helper, for the current language.
 pub fn ps_table() -> String {
     let keys = crate::i18n::ps_keys(CHECKS);
     crate::i18n::ps_table(&keys.iter().map(String::as_str).collect::<Vec<_>>())
