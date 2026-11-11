@@ -40,7 +40,7 @@ mod upgrade;
 mod whitelist;
 
 use clap::{Parser, Subcommand};
-use crossterm::event::{self, KeyCode};
+use crossterm::event::{self, Event, KeyCode};
 use ratatui::layout::{Constraint, Layout};
 use ratatui::style::{Modifier, Style};
 use ratatui::text::{Line, Span};
@@ -490,89 +490,190 @@ fn selectable(i: usize) -> bool {
     MENU.get(i).is_some_and(|m| m.0 != ' ')
 }
 
+/// Split the menu into two columns at a group boundary, roughly half each.
+fn menu_columns() -> (Vec<usize>, Vec<usize>) {
+    let half = MENU.len() / 2;
+    let split = (0..MENU.len())
+        .filter(|&i| MENU[i].0 == ' ')
+        .min_by_key(|&i| (i as i64 - half as i64).abs())
+        .unwrap_or(MENU.len());
+    ((0..split).collect(), (split..MENU.len()).collect())
+}
+
+fn menu_row(i: usize, width: usize, tr_mode: bool) -> ListItem<'static> {
+    let (key, name, en, trd) = MENU[i];
+    let desc = if tr_mode { trd } else { en };
+    if key == ' ' {
+        // Turkish casing: i -> İ, ı -> I (Rust's to_uppercase is locale-free)
+        let title: String = if tr_mode {
+            desc.chars()
+                .map(|c| match c {
+                    'i' => 'İ'.to_string(),
+                    'ı' => 'I'.to_string(),
+                    c => c.to_uppercase().to_string(),
+                })
+                .collect()
+        } else {
+            desc.to_uppercase()
+        };
+        let rule = width.saturating_sub(title.chars().count() + 4);
+        return ListItem::new(Line::from(vec![
+            Span::styled(
+                format!("  {title} "),
+                Style::new().fg(ui::dim()).add_modifier(Modifier::BOLD),
+            ),
+            Span::styled("-".repeat(rule), Style::new().fg(ui::line_c())),
+        ]));
+    }
+    let room = width.saturating_sub(19);
+    ListItem::new(Line::from(vec![
+        Span::styled(
+            format!("   {key}  "),
+            Style::new().fg(ui::hi()).add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(
+            format!("{name:<11} "),
+            Style::new().fg(ui::fg()).add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(ui::truncate_end(desc, room), Style::new().fg(ui::dim())),
+    ]))
+}
+
 fn menu(
     start: usize,
     notice: &std::sync::mpsc::Receiver<String>,
     newer: &mut Option<String>,
 ) -> anyhow::Result<(&'static str, usize)> {
     let mut terminal = ui::tui_start();
-    let mut state = ListState::default().with_selected(Some(start));
-    let mut list_area = ratatui::layout::Rect::default();
+    let mut sel = start;
+    let (left, right) = menu_columns();
+    let mut areas: Vec<(ratatui::layout::Rect, Vec<usize>, usize)> = vec![];
     let res = (|| -> anyhow::Result<(&'static str, usize)> {
         loop {
             if let Ok(tag) = notice.try_recv() {
                 *newer = Some(tag);
             }
             terminal.draw(|f| {
-                let banner_h = ui::BANNER.lines().count() as u16 + 1;
-                let [top, list, foot] = Layout::vertical([
-                    Constraint::Length(banner_h),
-                    Constraint::Min(5),
-                    Constraint::Length(1),
+                let full = f.area();
+                let big_banner = full.height >= 34;
+                let top_h = if big_banner {
+                    ui::BANNER.lines().count() as u16 + 1
+                } else {
+                    2
+                };
+                // the menu frame is only as tall as its longest column
+                let two_cols = full.width >= 102;
+                let rows = if two_cols {
+                    left.len().max(right.len())
+                } else {
+                    MENU.len()
+                } as u16;
+                let [top, body, foot, _] = Layout::vertical([
+                    Constraint::Length(top_h),
+                    Constraint::Max(rows + 2),
+                    Constraint::Length(4),
+                    Constraint::Min(0),
                 ])
-                .areas(f.area());
-                list_area = list;
-                let mut lines: Vec<Line> = ui::BANNER
-                    .lines()
-                    .map(|l| Line::from(Span::styled(format!("  {l}"), Style::new().fg(ui::fg()))))
-                    .collect();
-                let mut sub = vec![Span::styled(
-                    format!(
-                        "  v{}  ::  {}",
-                        env!("CARGO_PKG_VERSION"),
+                .areas(full);
+
+                // banner with a top-to-bottom gradient, or one compact line on short screens
+                let mut lines: Vec<Line> = vec![];
+                if big_banner {
+                    for (n, l) in ui::BANNER.lines().filter(|l| !l.is_empty()).enumerate() {
+                        lines.push(Line::from(Span::styled(
+                            format!("  {l}"),
+                            Style::new().fg(ui::grad(n)).add_modifier(Modifier::BOLD),
+                        )));
+                    }
+                } else {
+                    lines.push(Line::from(Span::styled(
+                        "  k a z m a",
+                        Style::new().fg(ui::grad(0)).add_modifier(Modifier::BOLD),
+                    )));
+                }
+                let mut sub = vec![
+                    Span::styled(
+                        format!("  v{}", env!("CARGO_PKG_VERSION")),
+                        Style::new().fg(ui::hi()),
+                    ),
+                    Span::styled("  ::  ", Style::new().fg(ui::line_c())),
+                    Span::styled(
                         tr!(
                             "oldschool system toolkit for windows",
                             "windows için oldschool sistem araç kutusu"
-                        )
+                        ),
+                        Style::new().fg(ui::dim()),
                     ),
-                    Style::new().fg(ui::dim()),
-                )];
+                ];
                 if let Some(tag) = newer.as_ref() {
                     sub.push(Span::styled(
-                        tr!(
-                            "   * {tag} is out: press u *",
-                            "   * {tag} çıktı: u'ya basın *"
-                        ),
+                        tr!("    {tag} is out - press u", "    {tag} çıktı - u'ya basın"),
                         Style::new().fg(ui::hi()).add_modifier(Modifier::BOLD),
                     ));
                 }
                 lines.push(Line::from(sub));
                 f.render_widget(Paragraph::new(lines), top);
 
-                let tr_mode = ui::is_tr();
-                let items: Vec<ListItem> = MENU
-                    .iter()
-                    .map(|(key, name, en, trd)| {
-                        let desc = if tr_mode { *trd } else { *en };
-                        if *key == ' ' {
-                            ListItem::new(Line::from(Span::styled(
-                                format!(" -- {desc} --"),
-                                Style::new().fg(ui::dim()),
-                            )))
-                        } else {
-                            ListItem::new(Line::from(vec![
-                                Span::styled(format!("  {key}. "), Style::new().fg(ui::dim())),
-                                Span::styled(
-                                    format!("{name:<11}"),
-                                    Style::new().fg(ui::hi()).add_modifier(Modifier::BOLD),
-                                ),
-                                Span::styled(desc, Style::new().fg(ui::fg())),
-                            ]))
-                        }
-                    })
-                    .collect();
+                // one or two columns inside a single frame
                 let title = tr!("main menu", "ana menü");
-                let l = List::new(items)
-                    .block(ui::block(&title))
-                    .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
-                    .highlight_symbol(">");
-                f.render_stateful_widget(l, list, &mut state);
-                let help = tr!(
-                    " [up/down] move  [enter] select  [key] jump  [mouse] click  [q] quit",
-                    " [yukarı/aşağı] gez  [enter] seç  [tuş] atla  [fare] tıkla  [q] çık"
-                );
+                let frame = ui::block(&title);
+                let inner = frame.inner(body);
+                f.render_widget(frame, body);
+                let two = two_cols;
+                let cols: Vec<(ratatui::layout::Rect, Vec<usize>)> = if two {
+                    let [a, gap, b] = Layout::horizontal([
+                        Constraint::Percentage(50),
+                        Constraint::Length(1),
+                        Constraint::Percentage(50),
+                    ])
+                    .areas(inner);
+                    let _ = gap;
+                    vec![(a, left.clone()), (b, right.clone())]
+                } else {
+                    vec![(inner, (0..MENU.len()).collect())]
+                };
+                let tr_mode = ui::is_tr();
+                areas.clear();
+                for (area, idx) in cols {
+                    let items: Vec<ListItem> = idx
+                        .iter()
+                        .map(|&i| menu_row(i, area.width as usize, tr_mode))
+                        .collect();
+                    let mut st =
+                        ListState::default().with_selected(idx.iter().position(|&i| i == sel));
+                    f.render_stateful_widget(
+                        List::new(items)
+                            .highlight_style(ui::sel_style())
+                            .highlight_symbol(">"),
+                        area,
+                        &mut st,
+                    );
+                    areas.push((area, idx, st.offset()));
+                }
+
+                // what the selected command does, then the keys
+                let (key, name, en, trd) = MENU[sel];
+                let detail = Line::from(vec![
+                    Span::styled(
+                        format!(" {name}"),
+                        Style::new().fg(ui::fg()).add_modifier(Modifier::BOLD),
+                    ),
+                    Span::styled(format!("  ({key})  "), Style::new().fg(ui::hi())),
+                    Span::styled(
+                        if ui::is_tr() { trd } else { en },
+                        Style::new().fg(ui::dim()),
+                    ),
+                ]);
+                let keys = ui::keys(&[
+                    (ui::t("arrows", "oklar"), ui::t("move", "gez")),
+                    ("enter", ui::t("open", "aç")),
+                    (ui::t("letter", "harf"), ui::t("jump", "doğrudan aç")),
+                    (ui::t("mouse", "fare"), ui::t("click", "tıkla")),
+                    ("q", ui::t("quit", "çık")),
+                ]);
                 f.render_widget(
-                    Paragraph::new(Span::styled(help, Style::new().fg(ui::dim()))),
+                    Paragraph::new(vec![detail, keys])
+                        .block(ui::block(ui::t("selected", "seçili"))),
                     foot,
                 );
             })?;
@@ -580,7 +681,6 @@ fn menu(
                 continue;
             }
             let ev = event::read()?;
-            let sel = state.selected().unwrap_or(1);
             let step = |from: usize, down: bool| -> usize {
                 let mut i = from;
                 loop {
@@ -589,22 +689,50 @@ fn menu(
                     } else {
                         i.saturating_sub(1)
                     };
-                    if selectable(i) || i == 0 || i == MENU.len() - 1 {
-                        return if selectable(i) { i } else { from };
+                    if selectable(i) {
+                        return i;
+                    }
+                    if i == 0 || i == MENU.len() - 1 {
+                        return from;
                     }
                 }
             };
-            if let Some(m) = ui::mouse(&ev, list_area, state.offset(), MENU.len()) {
-                match m {
-                    ui::Mouse::ScrollUp => state.select(Some(step(sel, false))),
-                    ui::Mouse::ScrollDown => state.select(Some(step(sel, true))),
-                    ui::Mouse::Click { index, .. } if index == sel && selectable(index) => {
-                        return Ok((MENU[index].1, index));
+            // jump to the other column, to the item on (about) the same row
+            let across = |from: usize| -> usize {
+                if areas.len() < 2 {
+                    return from;
+                }
+                let (cur, other) = if areas[0].1.contains(&from) {
+                    (&areas[0].1, &areas[1].1)
+                } else {
+                    (&areas[1].1, &areas[0].1)
+                };
+                let row = cur.iter().position(|&i| i == from).unwrap_or(0);
+                other
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, i)| selectable(**i))
+                    .min_by_key(|(r, _)| (*r as i64 - row as i64).abs())
+                    .map(|(_, &i)| i)
+                    .unwrap_or(from)
+            };
+            if let Event::Mouse(_) = ev {
+                for (area, idx, offset) in &areas {
+                    if let Some(m) = ui::mouse(&ev, *area, *offset, idx.len()) {
+                        match m {
+                            ui::Mouse::ScrollUp => sel = step(sel, false),
+                            ui::Mouse::ScrollDown => sel = step(sel, true),
+                            ui::Mouse::Click { index, .. } => {
+                                let i = idx[index];
+                                if i == sel && selectable(i) {
+                                    return Ok((MENU[i].1, i));
+                                }
+                                if selectable(i) {
+                                    sel = i;
+                                }
+                            }
+                        }
                     }
-                    ui::Mouse::Click { index, .. } if selectable(index) => {
-                        state.select(Some(index))
-                    }
-                    ui::Mouse::Click { .. } => {}
                 }
                 continue;
             }
@@ -612,8 +740,9 @@ fn menu(
                 continue;
             };
             match code {
-                KeyCode::Up | KeyCode::Char('k') => state.select(Some(step(sel, false))),
-                KeyCode::Down | KeyCode::Char('j') => state.select(Some(step(sel, true))),
+                KeyCode::Up | KeyCode::Char('k') => sel = step(sel, false),
+                KeyCode::Down | KeyCode::Char('j') => sel = step(sel, true),
+                KeyCode::Left | KeyCode::Right | KeyCode::Tab => sel = across(sel),
                 KeyCode::Enter => return Ok((MENU[sel].1, sel)),
                 KeyCode::Esc => return Ok(("quit", sel)),
                 KeyCode::Char(c) => {

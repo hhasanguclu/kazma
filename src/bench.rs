@@ -129,7 +129,7 @@ fn progress(label: &str, done: u64, total: u64, t: Instant) {
     let mbs = done as f64 / 1_048_576.0 / t.elapsed().as_secs_f64().max(0.001);
     print!(
         "\r  {label:<16} {} {:>8.1} MB/s ",
-        ui::bar(done as f64 / total.max(1) as f64, 24),
+        ui::cbar(done as f64 / total.max(1) as f64, 24),
         mbs
     );
     let _ = std::io::stdout().flush();
@@ -300,7 +300,7 @@ pub fn run(dir: Option<PathBuf>, size_mb: u64) -> anyhow::Result<()> {
         println!(
             "  {name:<20} {:>9.1} MB/s  {}  {extra}",
             mbs,
-            ui::bar(mbs / top, 30)
+            ui::cbar(mbs / top, 30)
         );
     }
     if !r.direct {

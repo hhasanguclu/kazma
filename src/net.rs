@@ -184,7 +184,7 @@ fn info() -> anyhow::Result<()> {
                 "  {:<12} {:>6.1} ms  {}",
                 name,
                 ms,
-                ui::bar((ms / 200.0).min(1.0), 20)
+                ui::cbar((ms / 200.0).min(1.0), 20)
             ),
             None => ui::warn(&tr!("{name}: unreachable", "{name}: ulaşılamıyor")),
         }
@@ -253,7 +253,7 @@ fn dns_bench() -> anyhow::Result<()> {
             "{:<22} {:<16} {ms}  {}{fails}",
             r.name,
             r.server,
-            ui::bar(r.ms.max(0.0) / worst, 20)
+            ui::cbar(r.ms.max(0.0) / worst, 20)
         );
         if i == 0 {
             ui::ok(&line)
@@ -324,14 +324,14 @@ fn speed() -> anyhow::Result<()> {
         "  {:<10} {:>8.1} Mbps  {}",
         ui::t("download", "indirme"),
         d,
-        ui::bar(d / top, 30)
+        ui::cbar(d / top, 30)
     );
     if s.up_ok {
         println!(
             "  {:<10} {:>8.1} Mbps  {}",
             ui::t("upload", "yükleme"),
             u,
-            ui::bar(u / top, 30)
+            ui::cbar(u / top, 30)
         );
     } else {
         ui::warn(ui::t("upload test failed", "yükleme testi başarısız"));

@@ -14,10 +14,19 @@ use std::sync::OnceLock;
 
 #[derive(Clone, Copy)]
 pub struct Theme {
+    /// Main text.
     pub fg: Color,
+    /// Accent: titles, keys, numbers.
     pub hi: Color,
+    /// Secondary text.
     pub dim: Color,
     pub warn: Color,
+    /// Box lines: quieter than text so the content stands out.
+    pub line: Color,
+    /// Background of the selected row.
+    pub sel: Color,
+    /// Banner gradient, top to bottom.
+    pub grad: [u8; 5],
 }
 
 pub fn theme_by_name(name: &str) -> Theme {
@@ -25,26 +34,38 @@ pub fn theme_by_name(name: &str) -> Theme {
         "amber" => Theme {
             fg: Color::Indexed(214),
             hi: Color::Indexed(229),
-            dim: Color::Indexed(94),
+            dim: Color::Indexed(137),
             warn: Color::Indexed(196),
+            line: Color::Indexed(94),
+            sel: Color::Indexed(58),
+            grad: [229, 221, 214, 208, 166],
         },
         "white" => Theme {
-            fg: Color::Gray,
-            hi: Color::White,
-            dim: Color::DarkGray,
-            warn: Color::Red,
+            fg: Color::Indexed(252),
+            hi: Color::Indexed(231),
+            dim: Color::Indexed(244),
+            warn: Color::Indexed(203),
+            line: Color::Indexed(240),
+            sel: Color::Indexed(238),
+            grad: [231, 254, 251, 248, 245],
         },
         "blue" => Theme {
-            fg: Color::Cyan,
-            hi: Color::Indexed(153),
-            dim: Color::Indexed(24),
-            warn: Color::Red,
+            fg: Color::Indexed(117),
+            hi: Color::Indexed(229),
+            dim: Color::Indexed(67),
+            warn: Color::Indexed(203),
+            line: Color::Indexed(25),
+            sel: Color::Indexed(17),
+            grad: [159, 123, 117, 75, 33],
         },
         _ => Theme {
-            fg: Color::Green,
-            hi: Color::Yellow,
-            dim: Color::DarkGray,
-            warn: Color::Red,
+            fg: Color::Indexed(77),
+            hi: Color::Indexed(221),
+            dim: Color::Indexed(244),
+            warn: Color::Indexed(203),
+            line: Color::Indexed(28),
+            sel: Color::Indexed(22),
+            grad: [120, 84, 77, 71, 35],
         },
     }
 }
@@ -66,6 +87,42 @@ pub fn dim() -> Color {
 }
 pub fn warn_c() -> Color {
     theme().warn
+}
+pub fn line_c() -> Color {
+    theme().line
+}
+pub fn grad(i: usize) -> Color {
+    let g = theme().grad;
+    Color::Indexed(g[i.min(g.len() - 1)])
+}
+
+/// Style of the selected row: one calm background bar, text keeps its colors.
+pub fn sel_style() -> Style {
+    Style::new().bg(theme().sel).add_modifier(Modifier::BOLD)
+}
+
+/// `[######......]` as colored spans: filled part in `color`, the rest dim.
+pub fn bar_spans(ratio: f64, width: usize, color: Color) -> Vec<Span<'static>> {
+    let filled = (ratio.clamp(0.0, 1.0) * width as f64).round() as usize;
+    vec![
+        Span::styled("[", Style::new().fg(line_c())),
+        Span::styled("#".repeat(filled), Style::new().fg(color)),
+        Span::styled(".".repeat(width - filled), Style::new().fg(line_c())),
+        Span::styled("]", Style::new().fg(line_c())),
+    ]
+}
+
+/// Footer key hints: keys in the accent color, what they do in dim.
+pub fn keys(pairs: &[(&str, &str)]) -> Line<'static> {
+    let mut spans = vec![Span::raw(" ")];
+    for (k, label) in pairs {
+        spans.push(Span::styled(
+            k.to_string(),
+            Style::new().fg(hi()).add_modifier(Modifier::BOLD),
+        ));
+        spans.push(Span::styled(format!(" {label}   "), Style::new().fg(dim())));
+    }
+    Line::from(spans)
 }
 
 fn ct(c: Color) -> crossterm::style::Color {
@@ -135,12 +192,12 @@ pub const BANNER: &str = r"
 |_|\_\/_/   \_\/____| |_|  |_|/_/   \_\
 ";
 
-/// Pure ASCII box drawing: +---+ / | |
+/// Pure ASCII box drawing with soft corners:  .----.  |    |  '----'
 pub const ASCII_BORDER: border::Set = border::Set {
-    top_left: "+",
-    top_right: "+",
-    bottom_left: "+",
-    bottom_right: "+",
+    top_left: ".",
+    top_right: ".",
+    bottom_left: "'",
+    bottom_right: "'",
     vertical_left: "|",
     vertical_right: "|",
     horizontal_top: "-",
@@ -150,11 +207,12 @@ pub const ASCII_BORDER: border::Set = border::Set {
 pub fn block(title: &str) -> Block<'_> {
     Block::bordered()
         .border_set(ASCII_BORDER)
-        .border_style(Style::new().fg(fg()))
-        .title(Span::styled(
-            format!("[ {title} ]"),
-            Style::new().fg(hi()).add_modifier(Modifier::BOLD),
-        ))
+        .border_style(Style::new().fg(line_c()))
+        .title(Line::from(vec![
+            Span::styled("[ ", Style::new().fg(line_c())),
+            Span::styled(title, Style::new().fg(hi()).add_modifier(Modifier::BOLD)),
+            Span::styled(" ]", Style::new().fg(line_c())),
+        ]))
 }
 
 pub fn human(bytes: u64) -> String {
@@ -172,20 +230,77 @@ pub fn human(bytes: u64) -> String {
     }
 }
 
-/// `[#######.......]` style bar.
+/// `[#####.....]` for printed (non full-screen) output: filled part in the
+/// main color, the rest in the quiet line color.
+pub fn cbar(ratio: f64, width: usize) -> String {
+    let filled = (ratio.clamp(0.0, 1.0) * width as f64).round() as usize;
+    let l = ct(line_c());
+    format!(
+        "{}{}{}{}",
+        "[".with(l),
+        "#".repeat(filled).with(ct(fg())),
+        ".".repeat(width - filled).with(l),
+        "]".with(l)
+    )
+}
+
+/// `[#######.......]` style bar (plain text).
+#[cfg(test)]
 pub fn bar(ratio: f64, width: usize) -> String {
     let r = ratio.clamp(0.0, 1.0);
     let filled = (r * width as f64).round() as usize;
     format!("[{}{}]", "#".repeat(filled), ".".repeat(width - filled))
 }
 
+/// Compact header for command output:
+///   .-----------------------------------------------------------------.
+///   | kazma / clean   reclaim disk space                       v0.5.0 |
+///   '-----------------------------------------------------------------'
 pub fn print_banner(subtitle: &str) {
-    println!("{}", BANNER.with(ct(fg())));
-    println!("  {}\n", subtitle.with(ct(dim())));
+    const W: usize = 66;
+    let (cmd, desc) = subtitle.split_once(" :: ").unwrap_or(("", subtitle));
+    let ver = format!("v{}", env!("CARGO_PKG_VERSION"));
+    let used = "kazma".len() + 3 + cmd.chars().count() + 3 + ver.len();
+    let room = W.saturating_sub(used + 2);
+    let desc = truncate_end(desc, room);
+    let pad = room.saturating_sub(desc.chars().count());
+    let l = ct(line_c());
+    println!();
+    println!("  {}", format!(".{}.", "-".repeat(W)).with(l));
+    println!(
+        "  {} {}{}{}   {}{}{} {}",
+        "|".with(l),
+        "kazma".with(ct(fg())).bold(),
+        " / ".with(l),
+        cmd.with(ct(hi())).bold(),
+        desc.with(ct(fg())),
+        " ".repeat(pad),
+        ver.with(ct(dim())),
+        "|".with(l)
+    );
+    println!("  {}", format!("'{}'", "-".repeat(W)).with(l));
+    println!();
 }
 
+/// Section heading:  Browser ----------------------------------
 pub fn section(title: &str) {
-    println!("\n{} {}", ">>".with(ct(hi())).bold(), title.bold());
+    let rule = 62usize.saturating_sub(title.chars().count());
+    println!(
+        "\n  {} {}",
+        title.with(ct(hi())).bold(),
+        "-".repeat(rule).with(ct(line_c()))
+    );
+}
+
+/// Cut from the end ("long text...") for headers; `truncate` keeps the end for paths.
+pub fn truncate_end(s: &str, max: usize) -> String {
+    if s.chars().count() <= max {
+        s.to_string()
+    } else if max <= 3 {
+        s.chars().take(max).collect()
+    } else {
+        format!("{}...", s.chars().take(max - 3).collect::<String>())
+    }
 }
 
 pub fn ok(msg: &str) {
@@ -193,7 +308,7 @@ pub fn ok(msg: &str) {
 }
 
 pub fn skip(msg: &str) {
-    println!("  {} {}", "[--]".with(ct(dim())), msg.with(ct(dim())));
+    println!("  {} {}", "[--]".with(ct(line_c())), msg.with(ct(dim())));
 }
 
 pub fn bad(msg: &str) {
@@ -367,7 +482,7 @@ pub fn checklist_opts(
         let count = items.iter().filter(|i| i.checked).count();
         terminal.draw(|f| {
             let [main, foot] =
-                Layout::vertical([Constraint::Min(3), Constraint::Length(3)]).areas(f.area());
+                Layout::vertical([Constraint::Min(3), Constraint::Length(4)]).areas(f.area());
             list_area = main;
             let w = main.width.saturating_sub(4) as usize;
             let rows: Vec<ListItem> = visible
@@ -383,13 +498,19 @@ pub fn checklist_opts(
                     let label_w = w.saturating_sub(24).min(52);
                     let label = truncate(&i.label, label_w);
                     let detail_w = w.saturating_sub(label_w + 20);
+                    // checked rows are bright, unchecked rows step back
+                    let (mark_c, text_c) = if i.checked {
+                        (hi(), fg())
+                    } else {
+                        (line_c(), dim())
+                    };
                     ListItem::new(Line::from(vec![
                         Span::styled(
-                            format!("{mark} "),
-                            Style::new().fg(if i.checked { hi() } else { dim() }),
+                            format!(" {mark} "),
+                            Style::new().fg(mark_c).add_modifier(Modifier::BOLD),
                         ),
-                        Span::styled(format!("{label:<label_w$}"), Style::new().fg(fg())),
-                        Span::styled(size, Style::new().fg(hi())),
+                        Span::styled(format!("{label:<label_w$}"), Style::new().fg(text_c)),
+                        Span::styled(size, Style::new().fg(if i.checked { hi() } else { dim() })),
                         Span::styled(
                             format!("  {}", truncate(&i.detail, detail_w)),
                             Style::new().fg(dim()),
@@ -404,34 +525,42 @@ pub fn checklist_opts(
             };
             let list = List::new(rows)
                 .block(block(&shown))
-                .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
+                .highlight_style(sel_style())
                 .highlight_symbol(">");
             f.render_stateful_widget(list, main, &mut state);
-            let help = match search.status() {
-                Some(s) => Line::from(Span::styled(s, Style::new().fg(hi()).bold())),
-                None => Line::from(vec![
-                    Span::styled(
-                        if show_size {
-                            crate::tr!(
-                                " selected: {count}  ->  {}   ",
-                                " seçili: {count}  ->  {}   ",
-                                human(total)
-                            )
-                        } else {
-                            crate::tr!(" selected: {count}   ", " seçili: {count}   ")
-                        },
-                        Style::new().fg(hi()).bold(),
+            let mut summary = vec![
+                Span::raw(" "),
+                Span::styled(
+                    crate::tr!(
+                        "{count} of {} selected",
+                        "{} öğeden {count} seçili",
+                        items.len()
                     ),
-                    Span::styled(
-                        t(
-                            "[space] toggle  [a] all  [n] none  [/] search  [enter] go  [q] cancel",
-                            "[boşluk] seç  [a] hepsi  [n] hiçbiri  [/] ara  [enter] uygula  [q] iptal",
-                        ),
-                        Style::new().fg(dim()),
-                    ),
+                    Style::new().fg(fg()).add_modifier(Modifier::BOLD),
+                ),
+            ];
+            if show_size {
+                summary.push(Span::styled("   =   ", Style::new().fg(line_c())));
+                summary.push(Span::styled(
+                    human(total),
+                    Style::new().fg(hi()).add_modifier(Modifier::BOLD),
+                ));
+            }
+            let second = match search.status() {
+                Some(st) => Line::from(Span::styled(st, Style::new().fg(hi()).bold())),
+                None => keys(&[
+                    (t("space", "boşluk"), t("toggle", "seç")),
+                    ("a", t("all", "hepsi")),
+                    ("n", t("none", "hiçbiri")),
+                    ("/", t("search", "ara")),
+                    ("enter", t("go", "uygula")),
+                    ("q", t("cancel", "iptal")),
                 ]),
             };
-            f.render_widget(Paragraph::new(help).block(block(t("keys", "tuşlar"))), foot);
+            f.render_widget(
+                Paragraph::new(vec![Line::from(summary), second]).block(block(t("keys", "tuşlar"))),
+                foot,
+            );
         })?;
         let ev = event::read()?;
         let sel = state.selected().unwrap_or(0);

@@ -177,7 +177,7 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
             category_name(i),
             ui::human(b),
             pct,
-            ui::bar(b as f64 / top as f64, 24),
+            ui::cbar(b as f64 / top as f64, 24),
             tr!("{c} files", "{c} dosya")
         );
     }
@@ -195,7 +195,7 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
             name,
             ui::human(*b),
             c,
-            ui::bar(*b as f64 / top as f64, 24)
+            ui::cbar(*b as f64 / top as f64, 24)
         );
     }
     println!();

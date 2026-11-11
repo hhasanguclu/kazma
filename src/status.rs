@@ -26,15 +26,19 @@ fn meter(label: &str, pct: f64, extra: String, width: u16) -> Line<'static> {
     let bar_w = (width as usize)
         .saturating_sub(label.len() + extra.len() + 12)
         .clamp(5, 60);
-    Line::from(vec![
-        Span::styled(format!("{label} "), Style::new().fg(ui::fg())),
-        Span::styled(
-            ui::bar(pct / 100.0, bar_w),
-            Style::new().fg(level_color(pct)),
-        ),
-        Span::styled(format!(" {pct:>5.1}% "), Style::new().fg(ui::hi())),
-        Span::styled(extra, Style::new().fg(ui::dim())),
-    ])
+    Line::from(
+        vec![Span::styled(
+            format!("{label} "),
+            Style::new().fg(ui::fg()).add_modifier(Modifier::BOLD),
+        )]
+        .into_iter()
+        .chain(ui::bar_spans(pct / 100.0, bar_w, level_color(pct)))
+        .chain([
+            Span::styled(format!(" {pct:>5.1}% "), Style::new().fg(ui::hi())),
+            Span::styled(extra, Style::new().fg(ui::dim())),
+        ])
+        .collect::<Vec<_>>(),
+    )
 }
 
 /// Tiny ASCII sparkline using " .:-=+*#%@" density ramp.
@@ -252,7 +256,7 @@ pub fn run() -> anyhow::Result<()> {
                     .iter()
                     .chain(tx_hist.iter())
                     .cloned()
-                    .fold(1.0, f64::max);
+                    .fold(1024.0, f64::max);
                 let sw = nw.saturating_sub(18);
                 f.render_widget(
                     Paragraph::new(vec![
@@ -306,30 +310,50 @@ pub fn run() -> anyhow::Result<()> {
 
                 // Processes
                 proc_area = procs;
-                let head = format!("  {:>7}  {:>6}  {:>10}  {}", "PID", "CPU%", ui::t("MEM", "BELLEK"), ui::t("NAME", "AD"));
-                let rows: Vec<ListItem> = std::iter::once(ListItem::new(Line::from(Span::styled(head, Style::new().fg(ui::dim())))))
-                    .chain(plist.iter().map(|(pid, name, c, mem)| {
-                        ListItem::new(Line::from(vec![
-                            Span::styled(format!("{pid:>7}  "), Style::new().fg(ui::dim())),
-                            Span::styled(format!("{c:>6.1}  "), Style::new().fg(level_color(*c as f64))),
-                            Span::styled(format!("{:>10}  ", ui::human(*mem)), Style::new().fg(ui::hi())),
-                            Span::styled(name.clone(), Style::new().fg(ui::fg())),
-                        ]))
-                    }))
-                    .collect();
+                let head = format!(
+                    "  {:>7}  {:>6}  {:>10}  {}",
+                    "PID",
+                    "CPU%",
+                    ui::t("MEM", "BELLEK"),
+                    ui::t("NAME", "AD")
+                );
+                let rows: Vec<ListItem> = std::iter::once(ListItem::new(Line::from(Span::styled(
+                    head,
+                    Style::new().fg(ui::dim()),
+                ))))
+                .chain(plist.iter().map(|(pid, name, c, mem)| {
+                    ListItem::new(Line::from(vec![
+                        Span::styled(format!("{pid:>7}  "), Style::new().fg(ui::dim())),
+                        Span::styled(
+                            format!("{c:>6.1}  "),
+                            Style::new().fg(level_color(*c as f64)),
+                        ),
+                        Span::styled(
+                            format!("{:>10}  ", ui::human(*mem)),
+                            Style::new().fg(ui::hi()),
+                        ),
+                        Span::styled(name.clone(), Style::new().fg(ui::fg())),
+                    ]))
+                }))
+                .collect();
                 let title = format!(
                     "{} ({}, {})",
                     ui::t("processes", "süreçler"),
                     plist.len(),
-                    if by_mem { ui::t("by memory", "belleğe göre") } else { ui::t("by cpu", "cpu'ya göre") }
+                    if by_mem {
+                        ui::t("by memory", "belleğe göre")
+                    } else {
+                        ui::t("by cpu", "cpu'ya göre")
+                    }
                 );
                 // row 0 is the header, so the list state is shifted by one
-                let mut shown = ListState::default().with_selected(pstate.selected().map(|i| i + 1));
+                let mut shown =
+                    ListState::default().with_selected(pstate.selected().map(|i| i + 1));
                 *shown.offset_mut() = pstate.offset();
                 f.render_stateful_widget(
                     List::new(rows)
                         .block(ui::block(&title))
-                        .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
+                        .highlight_style(ui::sel_style())
                         .highlight_symbol(">"),
                     procs,
                     &mut shown,
@@ -337,22 +361,25 @@ pub fn run() -> anyhow::Result<()> {
                 *pstate.offset_mut() = shown.offset();
 
                 let footer = if let Some((pid, name)) = &confirm {
-                    Span::styled(
-                        crate::tr!(" end {name} (pid {pid})? [y/N]", " {name} (pid {pid}) sonlandırılsın mı? [y/N]"),
-                        Style::new().fg(ui::warn_c()).bold(),
-                    )
-                } else if let Some(st) = search.status() {
-                    Span::styled(st, Style::new().fg(ui::hi()).bold())
-                } else if !msg.is_empty() {
-                    Span::styled(format!(" {msg}"), Style::new().fg(ui::hi()))
-                } else {
-                    Span::styled(
-                        ui::t(
-                            " [up/down] select  [x] end process  [m] cpu/memory  [/] search  [q] quit",
-                            " [yukarı/aşağı] seç  [x] süreci sonlandır  [m] cpu/bellek  [/] ara  [q] çık",
+                    Line::from(Span::styled(
+                        crate::tr!(
+                            " end {name} (pid {pid})? [y/N]",
+                            " {name} (pid {pid}) sonlandırılsın mı? [y/N]"
                         ),
-                        Style::new().fg(ui::dim()),
-                    )
+                        Style::new().fg(ui::warn_c()).bold(),
+                    ))
+                } else if let Some(st) = search.status() {
+                    Line::from(Span::styled(st, Style::new().fg(ui::hi()).bold()))
+                } else if !msg.is_empty() {
+                    Line::from(Span::styled(format!(" {msg}"), Style::new().fg(ui::hi())))
+                } else {
+                    ui::keys(&[
+                        (ui::t("up/down", "yukarı/aşağı"), ui::t("select", "seç")),
+                        ("x", ui::t("end process", "sonlandır")),
+                        ("m", ui::t("cpu / memory", "cpu / bellek")),
+                        ("/", ui::t("search", "ara")),
+                        ("q", ui::t("quit", "çık")),
+                    ])
                 };
                 f.render_widget(Paragraph::new(footer), Rect { ..foot });
             })?;

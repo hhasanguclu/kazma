@@ -544,47 +544,58 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
         .max(1);
     let width = main.width.saturating_sub(4) as usize;
     let bar_w = 20usize;
-    let name_w = width.saturating_sub(bar_w + 2 + 10 + 2 + 7 + 3);
+    let name_w = width.saturating_sub(bar_w + 2 + 12 + 8 + 2).clamp(10, 56);
     app.list_area = main;
     let items: Vec<ListItem> = app
         .view
         .iter()
         .map(|&i| &app.entries[i])
         .map(|e| {
-            let (size, bar, pct) = match e.size {
-                Some(s) => (
-                    ui::human(s),
-                    ui::bar(s as f64 / max as f64, bar_w),
-                    if total > 0 {
-                        format!("{:>5.1}%", s as f64 * 100.0 / total as f64)
-                    } else {
-                        "     -".into()
-                    },
-                ),
-                None => (
-                    "...".into(),
-                    format!("[{}]", "?".repeat(bar_w)),
-                    "     -".into(),
-                ),
-            };
             let name = if e.is_dir {
                 format!("{}{}", e.name, std::path::MAIN_SEPARATOR)
             } else {
                 e.name.clone()
             };
-            ListItem::new(Line::from(vec![
-                Span::styled(bar, Style::new().fg(ui::fg())),
-                Span::styled(format!(" {size:>10} "), Style::new().fg(ui::hi())),
-                Span::styled(format!("{pct} "), Style::new().fg(ui::dim())),
-                Span::styled(
-                    ui::truncate(&name, name_w),
-                    if e.is_dir {
-                        Style::new().fg(ui::fg()).add_modifier(Modifier::BOLD)
+            let name_style = if e.is_dir {
+                Style::new().fg(ui::fg()).add_modifier(Modifier::BOLD)
+            } else {
+                Style::new().fg(ui::dim())
+            };
+            // name first (like Explorer), then the numbers, then the bar
+            let mut spans = vec![Span::styled(
+                format!(" {:<name_w$}", ui::truncate(&name, name_w)),
+                name_style,
+            )];
+            match e.size {
+                Some(sz) => {
+                    let pct = if total > 0 {
+                        sz as f64 * 100.0 / total as f64
                     } else {
-                        Style::new().fg(ui::fg())
-                    },
-                ),
-            ]))
+                        0.0
+                    };
+                    spans.push(Span::styled(
+                        format!(" {:>10} ", ui::human(sz)),
+                        Style::new().fg(ui::hi()),
+                    ));
+                    spans.push(Span::styled(
+                        format!("{pct:>5.1}%  "),
+                        Style::new().fg(ui::dim()),
+                    ));
+                    spans.extend(ui::bar_spans(sz as f64 / max as f64, bar_w, ui::fg()));
+                }
+                None => {
+                    spans.push(Span::styled(
+                        format!(" {:>10} ", "..."),
+                        Style::new().fg(ui::dim()),
+                    ));
+                    spans.push(Span::styled("     -  ", Style::new().fg(ui::dim())));
+                    spans.push(Span::styled(
+                        format!("[{}]", "?".repeat(bar_w)),
+                        Style::new().fg(ui::line_c()),
+                    ));
+                }
+            }
+            ListItem::new(Line::from(spans))
         })
         .collect();
     let title = if app.view.len() == app.entries.len() {
@@ -599,7 +610,7 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
     };
     let list = List::new(items)
         .block(ui::block(&title))
-        .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
+        .highlight_style(ui::sel_style())
         .highlight_symbol(">");
     if app.treemap {
         let inner = Rect {
@@ -651,18 +662,27 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
             Style::new().fg(ui::hi()),
         ))
     } else {
-        let help = if app.big {
-            tr!(
-                " [enter] show in explorer  [b/bksp] back  [/] search  [d] delete  [r] rescan  [q] quit",
-                " [enter] gezginde göster  [b/bksp] geri  [/] ara  [d] sil  [r] yeniden tara  [q] çık"
-            )
+        if app.big {
+            ui::keys(&[
+                ("enter", ui::t("show in explorer", "gezginde göster")),
+                ("b", ui::t("back", "geri")),
+                ("/", ui::t("search", "ara")),
+                ("d", ui::t("delete", "sil")),
+                ("r", ui::t("rescan", "yeniden tara")),
+                ("q", ui::t("quit", "çık")),
+            ])
         } else {
-            tr!(
-                " [enter] open  [bksp] up  [b] largest  [t] treemap  [s] sort  [/] search  [d] delete  [q] quit",
-                " [enter] aç  [bksp] üst  [b] en büyükler  [t] ağaç haritası  [s] sırala  [/] ara  [d] sil  [q] çık"
-            )
-        };
-        Line::from(Span::styled(help, Style::new().fg(ui::dim())))
+            ui::keys(&[
+                ("enter", ui::t("open", "aç")),
+                ("bksp", ui::t("up", "üst")),
+                ("b", ui::t("largest", "en büyükler")),
+                ("t", ui::t("treemap", "harita")),
+                ("s", ui::t("sort", "sırala")),
+                ("/", ui::t("search", "ara")),
+                ("d", ui::t("delete", "sil")),
+                ("q", ui::t("quit", "çık")),
+            ])
+        }
     };
     let keys = tr!("keys", "tuşlar");
     f.render_widget(Paragraph::new(footer).block(ui::block(&keys)), foot);
