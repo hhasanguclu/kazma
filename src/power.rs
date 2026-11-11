@@ -99,8 +99,8 @@ fn show() {
     println!(
         "  {}\n",
         ui::t(
-            "more:    kz power battery | kz power wake",
-            "diğer:    kz power battery | kz power wake"
+            "more:    kz power battery | kz power wake | kz power hibernate off|reduced|full",
+            "diğer:    kz power battery | kz power wake | kz power hibernate off|reduced|full"
         )
     );
 }
@@ -131,6 +131,51 @@ fn set(key: &str) -> anyhow::Result<()> {
     }
     oplog::record("power", &format!("plan {key}"));
     ui::ok(&tr!("power plan: {name}", "güç planı: {name}"));
+    Ok(())
+}
+
+/// off: delete hiberfil.sys (also disables Fast Startup); reduced: half size,
+/// Fast Startup keeps working; full / on: normal hibernation.
+fn hibernate(mode: &str) -> anyhow::Result<()> {
+    let args: &[&str] = match mode {
+        "off" => &["/h", "off"],
+        "on" => &["/h", "on"],
+        "reduced" => &["/h", "/type", "reduced"],
+        "full" => &["/h", "/type", "full"],
+        _ => anyhow::bail!(
+            "{}",
+            ui::t(
+                "use: kz power hibernate off | reduced | full | on",
+                "kullanım: kz power hibernate off | reduced | full | on"
+            )
+        ),
+    };
+    if !sys::is_admin() {
+        anyhow::bail!(
+            "{}",
+            ui::t(
+                "this needs an elevated terminal",
+                "bunun için yönetici terminali gerekir"
+            )
+        );
+    }
+    let (ok, out) = ps::exec("powercfg", args);
+    if !ok {
+        anyhow::bail!("{}", ps::last_line(&out));
+    }
+    oplog::record("power", &format!("hibernate {mode}"));
+    let msg = match mode {
+        "off" => ui::t(
+            "hibernation off: hiberfil.sys removed (Fast Startup is off too)",
+            "hazırda bekletme kapalı: hiberfil.sys silindi (Hızlı Başlangıç da kapandı)",
+        ),
+        "reduced" => ui::t(
+            "hibernation file reduced; Fast Startup still works",
+            "hazırda bekletme dosyası küçültüldü; Hızlı Başlangıç çalışıyor",
+        ),
+        _ => ui::t("hibernation on", "hazırda bekletme açık"),
+    };
+    ui::ok(msg);
     Ok(())
 }
 
@@ -205,6 +250,7 @@ pub fn run(action: Option<String>, arg: Option<String>) -> anyhow::Result<()> {
         }
         (Some("set"), Some(k)) => set(&k.to_lowercase()),
         (Some("battery"), _) => battery(),
+        (Some("hibernate"), Some(mode)) => hibernate(&mode.to_lowercase()),
         (Some("wake"), _) => {
             wake();
             Ok(())
@@ -212,8 +258,8 @@ pub fn run(action: Option<String>, arg: Option<String>) -> anyhow::Result<()> {
         _ => anyhow::bail!(
             "{}",
             ui::t(
-                "usage: kz power [set PLAN | battery | wake]",
-                "kullanım: kz power [set PLAN | battery | wake]"
+                "usage: kz power [set PLAN | battery | wake | hibernate MODE]",
+                "kullanım: kz power [set PLAN | battery | wake | hibernate MOD]"
             )
         ),
     }

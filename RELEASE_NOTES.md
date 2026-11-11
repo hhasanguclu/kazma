@@ -9,21 +9,17 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64).
 One ~2.7 MB exe. No installer required, no telemetry.
 
-## What's new in v0.4.0
+## What's new in v0.5.0
 
-- **`kz backup`**: move-to-a-new-PC kit (winget app list, drivers, program list, settings); `kz backup restore FOLDER` reinstalls
-- **`kz status`**: now a process manager: select a process, `x` ends it, `m` sorts by memory, `/` searches
-- **`kz ports`**: which program listens on which port; `--kill PORT`
-- **`kz net`**: IP and latency, DNS benchmark and `dns set cloudflare|google|quad9|adguard|opendns|auto`, `speed` test, saved `wifi`
-- **`kz empty`**: empty folders, broken shortcuts, 0-byte files
-- **`kz power`**: switch power plans, battery report, what wakes the PC
-- **`kz report`**: one HTML file with hardware, health, startup, programs and drivers
-- **`kz restore`**: list / create System Restore points, open the restore wizard
-- **`kz context install`**: "Analyze with kazma" in Explorer's right-click menu
-- **`kz bench`**: disk speed test (sequential + 4K random, OS cache bypassed)
-- **`kz rules`**: your own folders for `kz clean`
-- **Every list**: `/` search and mouse support; `analyze` sorts by size / name / date with `s`
-- **Menu**: tells you when a new version is out
+- **Instant drive scans**: run as administrator on NTFS and `kz analyze` / `kz types` read the Master File Table
+  directly (the trick behind WizTree). Verified byte-for-byte against a normal scan in CI.
+- **`kz analyze`**: `t` shows an ASCII **treemap** of the current folder
+- **`kz types`**: what kind of files take the space (video, images, archives, programs...) and the top extensions
+- **`kz deepclean`**: Windows.old, upgrade setup files, ESD files, memory dumps, hibernation file (shrink),
+  older restore points (newest kept). Uses Windows' own Disk Cleanup for the protected folders.
+- **`kz repair`**: reset network (Winsock, TCP/IP, DNS), reset Windows Update components, reset Store cache,
+  DISM RestoreHealth + SFC, sync the clock, clear a stuck print queue. Restore point first.
+- **`kz power hibernate off | reduced | full`**
 
 ## Download
 
@@ -57,7 +53,9 @@ scoop install kazma
 ```
 kz                       interactive menu (English / Türkçe, mouse works)
 kz clean                 caches, temp files, logs, Recycle Bin
-kz analyze [path]        disk explorer (b = largest files, s = sort, / = search)
+kz deepclean             Windows.old, upgrade files, dumps, hibernation file
+kz analyze [path]        disk explorer (t = treemap, b = largest files, s = sort, / = search)
+kz types [path]          what kind of files take the space
 kz purge [paths]         node_modules, target, bin/obj, .venv ...
 kz installer             old setup files in Downloads / Desktop
 kz dupes [paths]         duplicate files
@@ -72,6 +70,7 @@ kz backup [folder]       new-PC kit;  kz backup restore FOLDER
 kz health                system health report
 kz status                live monitor + process manager
 kz optimize              dns flush, icon cache, ssd trim, dism, sfc
+kz repair [fix]          network, update, store, dism, time, printer
 kz power                 power plans, battery report, wake sources
 kz restore               System Restore points
 kz report                HTML system report

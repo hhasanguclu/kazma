@@ -71,6 +71,29 @@ jobs:
           & $kz health
           if ($LASTEXITCODE -ne 0) { throw "kz health (tr) failed" }
           if (-not (Test-Path "$env:RUNNER_TEMP\kazma-report.html")) { throw "report was not written" }
+      # The raw MFT reader must agree byte-for-byte with a normal directory walk.
+      - name: MFT self-test
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP 'mft-test'
+          New-Item -ItemType Directory -Force "$root\a\b\c", "$root\Türkçe klasör", "$root\many" | Out-Null
+          [IO.File]::WriteAllBytes("$root\tiny.txt", [byte[]]::new(300))
+          [IO.File]::WriteAllBytes("$root\a\big.bin", [byte[]]::new(5MB))
+          [IO.File]::WriteAllBytes("$root\a\b\c\deep.mp4", [byte[]]::new(123457))
+          [IO.File]::WriteAllBytes("$root\Türkçe klasör\belge.pdf", [byte[]]::new(77777))
+          1..3000 | ForEach-Object { [IO.File]::WriteAllBytes("$root\many\f$_.log", [byte[]]::new($_ % 2000)) }
+          fsutil file createnew "$root\sparse.img" 50000000 | Out-Null
+          Write-VolumeCache -DriveLetter ($root.Substring(0,1))
+          target/release/kz.exe types $root --verify
+          if ($LASTEXITCODE -ne 0) { throw "MFT scan disagrees with the directory walk" }
+          Measure-Command { target/release/kz.exe types C:\Windows --method mft } | Select-Object -ExpandProperty TotalSeconds | ForEach-Object { "MFT scan of C:\Windows: $_ s" }
+          target/release/kz.exe types C:\Windows --method mft
+      - name: Smoke test (deepclean, repair)
+        run: |
+          target/release/kz.exe deepclean --dry-run
+          target/release/kz.exe repair --dry-run
+          target/release/kz.exe power
       # Network-dependent checks: informative, never block a release.
       - name: Smoke test (Windows Update driver search)
         continue-on-error: true

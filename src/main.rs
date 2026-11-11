@@ -6,12 +6,14 @@ mod bench;
 mod clean;
 mod context;
 mod debloat;
+mod deepclean;
 mod drivers;
 mod dupes;
 mod empty;
 mod fsutil;
 mod health;
 mod installer;
+mod mft;
 mod net;
 mod oplog;
 mod optimize;
@@ -21,6 +23,7 @@ mod privacy;
 mod ps;
 mod purge;
 mod remove;
+mod repair;
 mod report;
 mod restore;
 mod schedule;
@@ -28,6 +31,8 @@ mod settings;
 mod startup;
 mod status;
 mod sys;
+mod treemap;
+mod types;
 mod ui;
 mod uninstall;
 mod update;
@@ -249,6 +254,32 @@ enum Cmd {
         #[arg(long, default_value_t = 1024)]
         size_mb: u64,
     },
+    /// The big space hogs: Windows.old, upgrade files, memory dumps,
+    /// hibernation file, old restore points (needs administrator)
+    Deepclean {
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Fixes: network | update | store | dism | time | printer (needs administrator)
+    Repair {
+        /// Run only this fix
+        fix: Option<String>,
+        /// List the fixes
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        #[arg(long)]
+        no_restore_point: bool,
+    },
+    /// What kind of files take the space (uses the MFT when run as administrator)
+    Types {
+        path: Option<PathBuf>,
+        /// auto | mft | walk
+        #[arg(long, default_value = "auto")]
+        method: String,
+        /// Scan with both MFT and walk and compare (self-test)
+        #[arg(long, hide = true)]
+        verify: bool,
+    },
     /// Your own clean rules (extra folders for `kz clean`); --edit opens Notepad
     Rules {
         #[arg(long)]
@@ -278,10 +309,22 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "önbellek, geçici dosya, log, geri dönüşüm kutusu",
     ),
     (
+        'd',
+        "deepclean",
+        "Windows.old, upgrade files, dumps, hibernation",
+        "Windows.old, yükseltme dosyaları, dökümler, hazırda bekletme",
+    ),
+    (
         '2',
         "analyze",
         "explore what is using your disk",
         "diski ne kaplıyor, gez ve gör",
+    ),
+    (
+        'y',
+        "types",
+        "what kind of files take the space",
+        "hangi tür dosyalar yer kaplıyor",
     ),
     (
         '3',
@@ -362,6 +405,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "status",
         "live monitor and process manager",
         "canlı izleme ve süreç yöneticisi",
+    ),
+    (
+        'f',
+        "repair",
+        "fix network, Windows Update, Store, system files",
+        "ağ, Windows Update, Store, sistem dosyası onarımı",
     ),
     (
         'o',
@@ -597,6 +646,9 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
     let wait = !matches!(name, "analyze" | "status");
     match name {
         "clean" => clean::run(false, false)?,
+        "deepclean" => deepclean::run(false)?,
+        "types" => types::run(None, "auto".into(), false)?,
+        "repair" => repair::run(None, false, false)?,
         "analyze" => analyze::run(None)?,
         "purge" => purge::run(vec![], false, false)?,
         "installer" => installer::run(vec![], false, false)?,
@@ -704,6 +756,17 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Context { action }) => context::run(action),
         Some(Cmd::Bench { path, size_mb }) => bench::run(path, size_mb),
         Some(Cmd::Rules { edit }) => clean::rules(edit),
+        Some(Cmd::Types {
+            path,
+            method,
+            verify,
+        }) => types::run(path, method, verify),
+        Some(Cmd::Deepclean { dry_run }) => deepclean::run(dry_run),
+        Some(Cmd::Repair {
+            fix,
+            dry_run,
+            no_restore_point,
+        }) => repair::run(fix, dry_run, no_restore_point),
         Some(Cmd::Remove { dry_run, yes }) => remove::run(dry_run, yes),
         Some(Cmd::History { limit }) => {
             oplog::show_history(limit);

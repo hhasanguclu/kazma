@@ -34,16 +34,18 @@ no telemetry. The interface speaks English and Turkish and follows your Windows 
 
 | | |
 |---|---|
-| **Clean up** | caches, temp files, logs and the Recycle Bin (`clean`) · disk explorer with a largest-files view (`analyze`) · project build artifacts (`purge`) · old installers (`installer`) · duplicate files (`dupes`) · empty folders and broken shortcuts (`empty`) · usage traces (`privacy`) |
+| **Clean up** | caches, temp files, logs and the Recycle Bin (`clean`) · Windows.old, upgrade files, memory dumps, hibernation file, old restore points (`deepclean`) · disk explorer with treemap and largest-files view (`analyze`) · file types (`types`) · project build artifacts (`purge`) · old installers (`installer`) · duplicate files (`dupes`) · empty folders and broken shortcuts (`empty`) · usage traces (`privacy`) |
 | **Programs & drivers** | uninstall programs and their leftovers (`uninstall`) · update programs with winget (`upgrade`) · driver updates from Windows Update (`drivers`) · startup programs (`startup`) · promo apps and Windows ads (`debloat`) · move-to-a-new-PC backup (`backup`) |
-| **System** | health report (`health`) · live monitor and process manager (`status`) · maintenance: DNS, icon cache, SSD TRIM, DISM, SFC (`optimize`) · power plans and battery (`power`) · restore points (`restore`) · HTML report (`report`) · disk speed test (`bench`) · automatic cleaning (`schedule`) |
+| **System** | health report (`health`) · live monitor and process manager (`status`) · maintenance: DNS, icon cache, SSD TRIM, DISM, SFC (`optimize`) · repairs: network, Windows Update, Store, system files (`repair`) · power plans and battery (`power`) · restore points (`restore`) · HTML report (`report`) · disk speed test (`bench`) · automatic cleaning (`schedule`) |
 | **Network** | IP, latency, DNS benchmark and switch, speed test, saved Wi-Fi (`net`) · who uses which port (`ports`) |
 | **kazma** | protected paths (`whitelist`) · your own clean rules (`rules`) · Explorer right-click menu (`context`) · language and theme (`config`) · self-update (`update`) · log (`history`) · uninstall kazma (`remove`) |
 
 Every list has `/` search and works with the mouse (click to select, click again to open, wheel to scroll).
 The menu tells you when a new version is out.
 
-It is fast: sizes are computed in parallel, and `dupes` compares by size, then the first and last
+It is fast. Run as administrator on an NTFS drive, `analyze` and `types` read the drive's Master File Table
+directly (the trick behind WizTree), so the sizes of a whole drive are ready in seconds. Otherwise sizes are
+computed in parallel, and `dupes` compares by size, then the first and last
 64 KB, and only then hashes whole files with BLAKE3 (83,000 files / 5.9 GB in about 7 seconds).
 
 ### Install
@@ -71,7 +73,9 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 |---|---|
 | `kz` | Interactive menu |
 | `kz clean` | Temp files, crash dumps, browser / app / developer caches, Recycle Bin |
-| `kz analyze [path]` | Disk usage explorer; `b` shows the largest files; delete goes to the Recycle Bin |
+| `kz deepclean` | Windows.old, upgrade setup files, ESD files, memory dumps, hibernation file, older restore points (admin) |
+| `kz analyze [path]` | Disk usage explorer: `t` treemap, `b` largest files, `s` sort, `/` search; delete goes to the Recycle Bin |
+| `kz types [path]` | What kind of files take the space (video, images, archives...) and the top extensions |
 | `kz purge [paths...]` | Build artifacts: `node_modules`, `target`, `bin/obj`, `.venv`, `__pycache__`, ... |
 | `kz installer [paths...]` | Old setup files (`.exe`, `.msi`, `.msix`, `.iso`) in Downloads and on the Desktop |
 | `kz dupes [paths...]` | Duplicate files (size -> partial hash -> BLAKE3, all parallel) |
@@ -85,13 +89,14 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz backup [folder]` | New-PC kit: winget app list, drivers, program list, kazma settings; `kz backup restore FOLDER` reinstalls |
 | `kz health` | Disk SMART, battery wear, blue screens, errors, updates, Defender, firewall |
 | `kz status` | Live CPU, memory, disk, network; select a process and press `x` to end it, `m` sorts by memory |
-| `kz power` | Power plans (`set saver / balanced / high / ultimate`), `battery` report, `wake` sources |
+| `kz power` | Power plans (`set saver / balanced / high / ultimate`), `battery` report, `wake` sources, `hibernate off / reduced / full` |
 | `kz restore` | System Restore points: `list`, `create "desc"`, `enable`, `open` (Windows' own wizard) |
 | `kz report` | HTML system report: hardware, health, startup, programs, drivers |
 | `kz bench [path]` | Disk speed test: sequential and 4K random, OS cache bypassed |
 | `kz net` | IP and latency; `dns` benchmark, `dns set cloudflare`; `speed` test; `wifi [--show]` |
 | `kz ports [filter]` | Which program listens on which port; `--kill PORT` closes it |
 | `kz optimize` | DNS flush, icon cache refresh, SSD TRIM, DISM component cleanup, SFC |
+| `kz repair [fix]` | `network`, `update` (Windows Update reset), `store`, `dism` (+SFC), `time`, `printer`; restore point first (admin) |
 | `kz schedule weekly` | Run `kz clean --yes` automatically (`daily`, `weekly`, `monthly`, `off`, `status`) |
 | `kz whitelist` | Paths kazma must never delete (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Your own clean rules for `kz clean` (`--edit` opens Notepad) |
@@ -115,6 +120,9 @@ tasks, and clean Windows Update and system temp caches.
 - `drivers` only installs drivers offered by **Windows Update** and creates a **restore point** first.
 - `startup` only flips Task Manager's on/off flags; `debloat` only removes apps on a fixed list and `--restore` undoes its settings.
 - `update` verifies the download against the release's `SHA256SUMS.txt`.
+- `deepclean` removes Windows.old and upgrade files through Windows' own Disk Cleanup, and always keeps the newest restore point.
+- `repair` renames the Windows Update folders instead of deleting them and offers a restore point first.
+- The MFT reader only reads the drive; it never writes to it.
 - **Whitelist**: paths in `%LOCALAPPDATA%\kazma\whitelist.txt` are never deleted. If that file exists but can't be read, kazma refuses to run.
 - Every action is logged (`kz history`); without a terminal nothing is deleted unless `--yes` is passed.
 
@@ -145,16 +153,18 @@ Türkçeyse kendiliğinden Türkçe açılır.
 
 | | |
 |---|---|
-| **Temizlik** | önbellek, geçici dosya, log ve Geri Dönüşüm Kutusu (`clean`) · en büyük dosyalar görünümlü disk gezgini (`analyze`) · proje derleme çıktıları (`purge`) · eski kurulum dosyaları (`installer`) · yinelenen dosyalar (`dupes`) · boş klasörler ve bozuk kısayollar (`empty`) · kullanım izleri (`privacy`) |
+| **Temizlik** | önbellek, geçici dosya, log ve Geri Dönüşüm Kutusu (`clean`) · Windows.old, yükseltme dosyaları, bellek dökümleri, hazırda bekletme dosyası, eski geri yükleme noktaları (`deepclean`) · ağaç haritalı ve en büyük dosyalar görünümlü disk gezgini (`analyze`) · dosya türleri (`types`) · proje derleme çıktıları (`purge`) · eski kurulum dosyaları (`installer`) · yinelenen dosyalar (`dupes`) · boş klasörler ve bozuk kısayollar (`empty`) · kullanım izleri (`privacy`) |
 | **Programlar ve sürücüler** | program ve kalıntılarını kaldırma (`uninstall`) · winget ile program güncelleme (`upgrade`) · Windows Update'ten sürücü güncelleme (`drivers`) · başlangıç programları (`startup`) · tanıtım uygulamaları ve Windows reklamları (`debloat`) · yeni bilgisayara taşıma yedeği (`backup`) |
-| **Sistem** | sağlık raporu (`health`) · canlı izleme ve süreç yöneticisi (`status`) · bakım: DNS, ikon önbelleği, SSD TRIM, DISM, SFC (`optimize`) · güç planı ve pil (`power`) · geri yükleme noktaları (`restore`) · HTML rapor (`report`) · disk hız testi (`bench`) · otomatik temizlik (`schedule`) |
+| **Sistem** | sağlık raporu (`health`) · canlı izleme ve süreç yöneticisi (`status`) · bakım: DNS, ikon önbelleği, SSD TRIM, DISM, SFC (`optimize`) · onarım: ağ, Windows Update, Store, sistem dosyaları (`repair`) · güç planı ve pil (`power`) · geri yükleme noktaları (`restore`) · HTML rapor (`report`) · disk hız testi (`bench`) · otomatik temizlik (`schedule`) |
 | **Ağ** | IP, gecikme, DNS karşılaştırma ve değiştirme, hız testi, kayıtlı Wi-Fi (`net`) · hangi port hangi programda (`ports`) |
 | **kazma** | korunan yollar (`whitelist`) · kendi temizlik kuralların (`rules`) · Gezgin sağ tık menüsü (`context`) · dil ve tema (`config`) · kendini güncelleme (`update`) · geçmiş (`history`) · kazma'yı kaldırma (`remove`) |
 
 Her listede `/` ile arama var ve fare çalışır (tıkla seç, tekrar tıkla aç, tekerlekle kaydır).
 Yeni sürüm çıkınca menü haber verir.
 
-Hızlıdır: boyutlar paralel hesaplanır. `dupes` önce boyuta, sonra dosyanın ilk ve son 64 KB'ına
+Hızlıdır. NTFS bir diskte yönetici olarak çalıştırıldığında `analyze` ve `types` diskin Ana Dosya Tablosu'nu (MFT)
+doğrudan okur (WizTree'nin hızının sırrı); tüm diskin boyutları saniyeler içinde hazır olur. Aksi halde boyutlar
+paralel hesaplanır. `dupes` önce boyuta, sonra dosyanın ilk ve son 64 KB'ına
 bakar; yalnızca hâlâ eşleşenlerin tamamını BLAKE3 ile karşılaştırır (83.000 dosya / 5,9 GB yaklaşık 7 saniye).
 
 ### Kurulum
@@ -182,7 +192,9 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 |---|---|
 | `kz` | Etkileşimli menü |
 | `kz clean` | Geçici dosyalar, çökme dökümleri, tarayıcı / uygulama / geliştirici önbellekleri, Geri Dönüşüm Kutusu |
-| `kz analyze [yol]` | Disk gezgini; `b` en büyük dosyaları gösterir; silinenler Geri Dönüşüm Kutusu'na gider |
+| `kz deepclean` | Windows.old, yükseltme kurulum dosyaları, ESD dosyaları, bellek dökümleri, hazırda bekletme dosyası, eski geri yükleme noktaları (yönetici) |
+| `kz analyze [yol]` | Disk gezgini: `t` ağaç haritası, `b` en büyük dosyalar, `s` sıralama, `/` arama; silinenler Geri Dönüşüm Kutusu'na gider |
+| `kz types [yol]` | Hangi tür dosyalar yer kaplıyor (video, resim, arşiv...) ve en büyük uzantılar |
 | `kz purge [yollar]` | Derleme çıktıları: `node_modules`, `target`, `bin/obj`, `.venv`, `__pycache__`... |
 | `kz installer [yollar]` | İndirilenler ve Masaüstü'ndeki eski `.exe`, `.msi`, `.msix`, `.iso` dosyaları |
 | `kz dupes [yollar]` | Yinelenen dosyalar (boyut -> kısmi özet -> BLAKE3, hepsi paralel) |
@@ -196,13 +208,14 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz backup [klasör]` | Yeni bilgisayar paketi: winget program listesi, sürücüler, program listesi, kazma ayarları; `kz backup restore KLASÖR` geri kurar |
 | `kz health` | Disk sağlığı, pil yıpranması, mavi ekranlar, hatalar, güncellemeler, Defender, güvenlik duvarı |
 | `kz status` | Canlı CPU, bellek, disk, ağ; süreç seçip `x` ile sonlandırma, `m` ile belleğe göre sıralama |
-| `kz power` | Güç planı (`set saver / balanced / high / ultimate`), `battery` raporu, `wake` uyanma nedenleri |
+| `kz power` | Güç planı (`set saver / balanced / high / ultimate`), `battery` raporu, `wake` uyanma nedenleri, `hibernate off / reduced / full` |
 | `kz restore` | Geri yükleme noktaları: `list`, `create "açıklama"`, `enable`, `open` (Windows'un kendi sihirbazı) |
 | `kz report` | HTML sistem raporu: donanım, sağlık, başlangıç, programlar, sürücüler |
 | `kz bench [yol]` | Disk hız testi: sıralı ve 4K rastgele, işletim sistemi önbelleği devre dışı |
 | `kz net` | IP ve gecikme; `dns` karşılaştırma, `dns set cloudflare`; `speed` hız testi; `wifi [--show]` |
 | `kz ports [filtre]` | Hangi port hangi programda; `--kill PORT` programı kapatır |
 | `kz optimize` | DNS temizleme, ikon önbelleği, SSD TRIM, DISM bileşen temizliği, SFC |
+| `kz repair [düzeltme]` | `network`, `update` (Windows Update sıfırlama), `store`, `dism` (+SFC), `time`, `printer`; önce geri yükleme noktası (yönetici) |
 | `kz schedule weekly` | `kz clean --yes`'i otomatik çalıştırır (`daily`, `weekly`, `monthly`, `off`, `status`) |
 | `kz whitelist` | kazma'nın asla silmeyeceği yollar (`--add`, `--remove`, `--edit`) |
 | `kz rules` | `kz clean` için kendi temizlik kuralların (`--edit` Not Defteri'nde açar) |
@@ -226,6 +239,9 @@ dosyalarını temizlemek için terminali **yönetici olarak** açın.
 - `drivers` yalnızca **Windows Update**'in sunduğu sürücüleri kurar ve önce **geri yükleme noktası** oluşturur.
 - `startup` yalnızca Görev Yöneticisi'nin açık / kapalı ayarını değiştirir; `debloat` yalnızca listedeki uygulamaları kaldırır, ayarlarını `--restore` geri alır.
 - `update` indirilen dosyayı release'teki `SHA256SUMS.txt` ile doğrular.
+- `deepclean`, Windows.old ve yükseltme dosyalarını Windows'un kendi Disk Temizleme aracıyla kaldırır; en yeni geri yükleme noktası her zaman kalır.
+- `repair`, Windows Update klasörlerini silmez, yeniden adlandırır; önce geri yükleme noktası önerir.
+- MFT okuyucu diski yalnızca okur, hiçbir şey yazmaz.
 - **Whitelist**: `%LOCALAPPDATA%\kazma\whitelist.txt` içindeki yollar asla silinmez. Dosya var ama okunamıyorsa kazma çalışmayı reddeder.
 - Her işlem kaydedilir (`kz history`); terminal yoksa `--yes` verilmeden hiçbir şey silinmez.
 
@@ -250,6 +266,7 @@ test eder, salt-okunur komutların hepsini gerçekten çalıştırır, sonra `vX
 |---|---|
 | **Main menu, Turkish** / Ana menü, Türkçe<br><img src="docs/screenshots/menu-tr.png" alt="main menu, Turkish"> | **Main menu, English, amber theme** / Ana menü, İngilizce, amber tema<br><img src="docs/screenshots/menu-en.png" alt="main menu, English, amber theme"> |
 | **`kz analyze`** / disk gezgini<br><img src="docs/screenshots/analyze-tr.png" alt="analyze"> | **`kz analyze` + `b`**: largest files / en büyük dosyalar<br><img src="docs/screenshots/analyze-largest.png" alt="largest files"> |
+| **`kz analyze` + `t`**: treemap / ağaç haritası<br><img src="docs/screenshots/treemap-tr.png" alt="treemap"> | **`kz types`**: file types / dosya türleri<br><img src="docs/screenshots/types-en.png" alt="file types"> |
 | **`kz clean`** selection / seçim ekranı<br><img src="docs/screenshots/clean-tr.png" alt="clean"> | **`kz purge`**, blue theme / mavi tema<br><img src="docs/screenshots/purge-en.png" alt="purge"> |
 | **`kz health`** on Windows / Windows'ta<br><img src="docs/screenshots/health-windows.png" alt="health report on Windows"> | **`kz startup --list`** on Windows / Windows'ta<br><img src="docs/screenshots/startup-windows.png" alt="startup list on Windows"> |
 

@@ -52,7 +52,7 @@ $i = $s.CreateUpdateInstaller();  $i.Updates = $c; $res = $i.Install()
 }) | ConvertTo-Json -Compress
 "#;
 
-const RESTORE_POINT: &str = r#"
+pub const RESTORE_POINT: &str = r#"
 Checkpoint-Computer -Description 'kazma: before driver update' -RestorePointType DEVICE_DRIVER_INSTALL
 "#;
 

@@ -1,7 +1,7 @@
 //! `kz analyze`: interactive disk usage explorer.
 //! Children are listed instantly; their sizes stream in from a background thread pool.
 
-use crate::{fsutil, oplog, sys, tr, ui};
+use crate::{fsutil, mft, oplog, sys, tr, ui};
 use crossterm::event;
 use crossterm::event::KeyCode;
 use ratatui::layout::{Constraint, Layout, Rect};
@@ -10,6 +10,7 @@ use ratatui::text::{Line, Span};
 use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 use std::sync::mpsc::{Receiver, Sender, channel};
 use std::time::{Duration, SystemTime};
 
@@ -27,6 +28,9 @@ enum SortKey {
     Name,
     Date,
 }
+
+/// A finished MFT scan: the index and every folder's size.
+type MftResult = Option<(Arc<mft::Index>, HashMap<PathBuf, u64>)>;
 
 struct App {
     cwd: PathBuf,
@@ -48,6 +52,10 @@ struct App {
     search: ui::Search,
     sort_key: SortKey,
     list_area: Rect,
+    /// Raw MFT index of the drive (administrator + NTFS): instant folder sizes.
+    mft: Option<Arc<mft::Index>>,
+    mft_rx: Option<Receiver<MftResult>>,
+    treemap: bool,
 }
 
 impl App {
@@ -70,7 +78,22 @@ impl App {
             search: ui::Search::default(),
             sort_key: SortKey::Size,
             list_area: Rect::default(),
+            mft: None,
+            mft_rx: None,
+            treemap: false,
         };
+        if cfg!(windows) && sys::is_admin() && std::env::var_os("KAZMA_NO_MFT").is_none() {
+            let (tx, rx) = channel();
+            let at = start.clone();
+            std::thread::spawn(move || {
+                let res = mft::scan_drive(&at).ok().map(|ix| {
+                    let sizes = ix.dir_sizes();
+                    (Arc::new(ix), sizes)
+                });
+                let _ = tx.send(res);
+            });
+            app.mft_rx = Some(rx);
+        }
         app.load(start, 0);
         app
     }
@@ -107,7 +130,11 @@ impl App {
                     .collect()
             })
             .unwrap_or_default();
-        for e in self.entries.iter().filter(|e| e.size.is_none()) {
+        for e in self.entries.iter_mut().filter(|e| e.size.is_none()) {
+            if let Some(s) = self.cache.get(&e.path) {
+                e.size = Some(*s);
+                continue;
+            }
             let (tx, p) = (self.tx.clone(), e.path.clone());
             rayon::spawn(move || {
                 let s = fsutil::dir_size(&p);
@@ -156,8 +183,12 @@ impl App {
     fn start_big(&mut self) {
         let (tx, rx) = channel();
         let dir = self.cwd.clone();
+        let mft = self.mft.clone();
         rayon::spawn(move || {
-            let _ = tx.send(largest_files(&dir, BIG_COUNT));
+            let list = mft
+                .and_then(|ix| ix.largest(&dir, BIG_COUNT))
+                .unwrap_or_else(|| largest_files(&dir, BIG_COUNT));
+            let _ = tx.send(list);
         });
         self.big = true;
         self.big_rx = Some(rx);
@@ -191,7 +222,26 @@ impl App {
             self.state.select((!self.view.is_empty()).then_some(0));
         }
         let mut changed = false;
+        if let Some(rx) = &self.mft_rx
+            && let Ok(res) = rx.try_recv()
+        {
+            self.mft_rx = None;
+            if let Some((ix, sizes)) = res {
+                self.cache.extend(sizes);
+                self.mft = Some(ix);
+                for e in self.entries.iter_mut().filter(|e| e.is_dir) {
+                    if let Some(s) = self.cache.get(&e.path) {
+                        e.size = Some(*s);
+                        changed = true;
+                    }
+                }
+            }
+        }
         while let Ok((p, s)) = self.rx.try_recv() {
+            // once the MFT is loaded its numbers win (hard links counted once)
+            if self.mft.is_some() && self.cache.contains_key(&p) {
+                continue;
+            }
             self.cache.insert(p.clone(), s);
             if let Some(e) = self.entries.iter_mut().find(|e| e.path == p) {
                 e.size = Some(s);
@@ -305,6 +355,8 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
         .or_else(fsutil::home)
         .unwrap_or_else(|| PathBuf::from("."));
     let start = std::fs::canonicalize(&start).unwrap_or(start);
+    // drop Windows' \\?\ prefix so paths match the MFT index and the cache
+    let start = PathBuf::from(start.to_string_lossy().trim_start_matches(r"\\?\"));
     let mut app = App::new(start);
     let mut terminal = ui::tui_start();
     let res = (|| -> anyhow::Result<()> {
@@ -391,6 +443,7 @@ pub fn run(path: Option<PathBuf>) -> anyhow::Result<()> {
                         app.start_big();
                     }
                 }
+                KeyCode::Char('t') => app.treemap = !app.treemap,
                 KeyCode::Char('s') if !app.big => {
                     app.sort_key = match app.sort_key {
                         SortKey::Size => SortKey::Name,
@@ -458,6 +511,13 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
         status
     } else {
         format!("{status}  [{}: {sort}]", ui::t("sort", "sıra"))
+    };
+    let status = if app.mft.is_some() {
+        format!("{status}  [MFT]")
+    } else if app.mft_rx.is_some() {
+        format!("{status}  [{}]", ui::t("reading MFT...", "MFT okunuyor..."))
+    } else {
+        status
     };
     let header = Line::from(vec![
         Span::styled(
@@ -541,7 +601,38 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
         .block(ui::block(&title))
         .highlight_style(Style::new().add_modifier(Modifier::REVERSED))
         .highlight_symbol(">");
-    f.render_stateful_widget(list, main, &mut app.state);
+    if app.treemap {
+        let inner = Rect {
+            x: main.x + 1,
+            y: main.y + 1,
+            width: main.width.saturating_sub(2),
+            height: main.height.saturating_sub(2),
+        };
+        let shown: Vec<(String, u64)> = app
+            .view
+            .iter()
+            .map(|&i| &app.entries[i])
+            .filter(|e| e.size.unwrap_or(0) > 0)
+            .take(60)
+            .map(|e| (e.name.clone(), e.size.unwrap_or(0)))
+            .collect();
+        let sel = app.state.selected().filter(|&s| s < shown.len());
+        f.render_widget(
+            ui::block(&format!("{title}  [{}]", ui::t("treemap", "ağaç haritası"))),
+            main,
+        );
+        f.render_widget(
+            Paragraph::new(crate::treemap::render(
+                &shown,
+                sel,
+                inner.width,
+                inner.height,
+            )),
+            inner,
+        );
+    } else {
+        f.render_stateful_widget(list, main, &mut app.state);
+    }
 
     let footer = if app.confirm_delete {
         let name = app.selected().map(|e| e.name.clone()).unwrap_or_default();
@@ -567,8 +658,8 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
             )
         } else {
             tr!(
-                " [enter] open  [bksp] up  [b] largest  [s] sort  [/] search  [d] delete  [o] explorer  [q] quit",
-                " [enter] aç  [bksp] üst  [b] en büyükler  [s] sırala  [/] ara  [d] sil  [o] gezgin  [q] çık"
+                " [enter] open  [bksp] up  [b] largest  [t] treemap  [s] sort  [/] search  [d] delete  [q] quit",
+                " [enter] aç  [bksp] üst  [b] en büyükler  [t] ağaç haritası  [s] sırala  [/] ara  [d] sil  [q] çık"
             )
         };
         Line::from(Span::styled(help, Style::new().fg(ui::dim())))
