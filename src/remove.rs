@@ -8,8 +8,50 @@ pub fn ask(question: &str) -> bool {
     print!("  ?? {question} [y/N] ");
     let _ = std::io::stdout().flush();
     let mut s = String::new();
-    std::io::stdin().read_line(&mut s).is_ok()
-        && matches!(s.trim().to_lowercase().as_str(), "y" | "yes" | "e" | "evet")
+    std::io::stdin().read_line(&mut s).is_ok() && is_yes(&s)
+}
+
+/// "y" or "yes" in any of kazma's languages, so nobody has to type English.
+pub fn is_yes(answer: &str) -> bool {
+    matches!(
+        answer.trim().to_lowercase().as_str(),
+        "y" | "yes"
+            | "e"
+            | "evet"
+            | "j"
+            | "ja"
+            | "o"
+            | "oui"
+            | "t"
+            | "tak"
+            | "д"
+            | "да"
+            | "т"
+            | "так"
+            | "是"
+            | "是的"
+            | "好"
+            | "は"
+            | "はい"
+            | "예"
+            | "네"
+            | "ㅇ"
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn yes_in_every_language() {
+        for a in [
+            "y", "Yes", "evet", "Ja", "oui", "tak", "да", "так", "是", "はい", "네",
+        ] {
+            assert!(super::is_yes(a), "{a}");
+        }
+        for a in ["", "n", "no", "hayır", "nein", "нет"] {
+            assert!(!super::is_yes(a), "{a}");
+        }
+    }
 }
 
 /// Is `dir` in the user's PATH? Compared case-insensitively, ignoring trailing slashes.

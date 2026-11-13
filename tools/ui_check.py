@@ -71,26 +71,39 @@ def check_boxes(lines, where):
 GAP = re.compile(r"\S(\s{2,})\S")
 
 
+def second_field(line):
+    """Display columns where the text after the first wide gap starts and ends
+    (it ends at the next wide gap or the end of the line)."""
+    m = GAP.search(line)
+    start = width(line[: m.end() - 1])
+    rest = line[m.end() - 1:]
+    n = re.search(r"\s{2,}", rest)
+    field = rest[: n.start()] if n else rest
+    return start, start + width(field)
+
+
 def check_columns(lines, where):
-    """Inside a block of similar lines, the text after the first wide gap should
-    start at the same display column. Flags lines that are off by 1-6 columns."""
+    """Inside a block of similar lines, the second column must line up: either
+    its start (left-aligned text) or its end (right-aligned numbers) matches the
+    rest of the block. Flags lines that are off by 1-6 columns."""
     out = []
     block = []
 
+    def mode(values):
+        return max(set(values), key=values.count)
+
     def flush():
         if len(block) >= 3:
-            cols = {}
-            for n, line in block:
-                m = GAP.search(line)
-                col = width(line[: m.end() - 1])
-                cols.setdefault(col, []).append((n, line))
-            if len(cols) > 1:
-                main = max(cols, key=lambda c: len(cols[c]))
-                if len(cols[main]) >= 2:
-                    for col, rows in cols.items():
-                        if col != main and 0 < abs(col - main) <= 6 and len(rows) < len(cols[main]):
-                            for n, line in rows:
-                                out.append(f"{where}:{n + 1}: column at {col}, block uses {main}: {line.strip()[:90]}")
+            fields = [(n, line, second_field(line)) for n, line in block]
+            starts = [f[0] for _, _, f in fields]
+            ends = [f[1] for _, _, f in fields]
+            ms, me = mode(starts), mode(ends)
+            for n, line, (st, en) in fields:
+                if st == ms or en == me:
+                    continue
+                off = min(abs(st - ms), abs(en - me))
+                if 0 < off <= 6:
+                    out.append(f"{where}:{n + 1}: column starts at {st}/ends at {en}, block uses {ms}/{me}: {line.strip()[:90]}")
         block.clear()
 
     prefix = None
@@ -152,7 +165,8 @@ def check_wide(lines, where, limit):
 def main():
     args = sys.argv[1:]
     problems = []
-    if args and args[0] == "--screen":
+    screen = bool(args) and args[0] == "--screen"
+    if screen:
         lang, w, files = args[1], int(args[2]), args[3:]
         limit = w
     else:
@@ -163,7 +177,8 @@ def main():
         lines = clean(pathlib.Path(f).read_text(encoding="utf-8", errors="replace"))
         name = pathlib.Path(f).name
         problems += check_boxes(lines, name)
-        problems += check_columns(lines, name)
+        if not screen:
+            problems += check_columns(lines, name)
         problems += check_wide(lines, name, limit)
         problems += check_english(lines, name, keys)
     for p in problems:

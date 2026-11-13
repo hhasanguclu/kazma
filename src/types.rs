@@ -185,8 +185,8 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
             format!(".{ext}")
         };
         println!(
-            "  {:<12} {:>10}  {:>8}  {}",
-            name,
+            "  {} {:>10}  {:>8}  {}",
+            ui::pad(&name, 12),
             ui::human(*b),
             c,
             ui::cbar(*b as f64 / top as f64, 24)

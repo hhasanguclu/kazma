@@ -94,6 +94,42 @@ jobs:
           }
           Remove-Item Env:KAZMA_LANG
           if (-not (Test-Path "$env:RUNNER_TEMP\kazma-report.html")) { throw "report was not written" }
+      # Layout check in every language on real Windows output: box edges, columns
+      # (CJK counts as two columns), untranslated text. Reported, reviewed before release.
+      - name: Interface check (11 languages)
+        continue-on-error: true
+        shell: pwsh
+        env:
+          KAZMA_NO_OPLOG: "1"
+          KAZMA_NO_UPDATE_CHECK: "1"
+          PYTHONIOENCODING: utf-8
+        run: |
+          $kz = (Resolve-Path target/release/kz.exe).Path
+          $out = Join-Path $env:RUNNER_TEMP 'ui'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $cmds = [ordered]@{
+            health = @('health'); startup = @('startup', '--list'); clean = @('clean', '--dry-run')
+            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run')
+            privacy = @('privacy', '--dry-run'); power = @('power'); ports = @('ports'); schedule = @('schedule', 'status')
+            whitelist = @('whitelist'); config = @('config'); drivers = @('drivers', '--installed'); deepclean = @('deepclean', '--dry-run')
+            repair = @('repair', '--dry-run'); backup = @('backup', '--dry-run'); context = @('context', 'status')
+            types = @('types', $env:GITHUB_WORKSPACE); leftovers = @('uninstall', '--leftovers'); history = @('history')
+          }
+          $bad = 0
+          foreach ($l in 'en', 'tr', 'zh-CN', 'zh-TW', 'ja', 'ko', 'de', 'fr', 'pl', 'uk', 'ru') {
+            $env:KAZMA_LANG = $l
+            $files = @()
+            foreach ($k in $cmds.Keys) {
+              $f = Join-Path $out "$l-$k.txt"
+              $a = $cmds[$k]
+              & $kz @a 2>&1 | Out-File -Encoding utf8 $f
+              $files += $f
+            }
+            python tools/ui_check.py $l @files
+            if ($LASTEXITCODE -ne 0) { $bad++ }
+          }
+          Remove-Item Env:KAZMA_LANG
+          if ($bad) { throw "interface problems in $bad language(s), see above" }
       # The raw MFT reader must agree byte-for-byte with a normal directory walk.
       - name: MFT self-test
         shell: pwsh
