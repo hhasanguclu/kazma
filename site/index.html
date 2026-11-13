@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>kazma - oldschool ASCII system toolkit for Windows</title>
+<meta name="description" content="kazma (kz) cleans, explores and maintains a Windows PC from the terminal: 100+ cache rules, disk explorer with treemap, uninstaller, drivers, updates, health report. One ~3 MB exe, 11 languages, no telemetry.">
+<meta property="og:title" content="kazma - oldschool ASCII system toolkit for Windows">
+<meta property="og:description" content="Clean, explore and maintain Windows from the terminal. One exe, 11 languages, no telemetry.">
+<meta property="og:image" content="https://hhasanguclu.github.io/kazma/screenshots/menu-en.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230c0c0c'/%3E%3Ctext x='2' y='13' font-family='monospace' font-size='13' fill='%2316c60c'%3Ek%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c0c;
+  --panel: #111411;
+  --fg: #cccccc;
+  --dim: #8a8a8a;
+  --green: #16c60c;
+  --green2: #5fd75f;
+  --amber: #ffd75f;
+  --line: #1f5f1f;
+  --red: #e74856;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.6 var(--mono);
+  -webkit-font-smoothing: antialiased;
+}
+/* faint scanlines, the oldschool CRT touch */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+  z-index: 10;
+}
+a { color: var(--green2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: var(--mono); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+nav {
+  position: sticky; top: 0; z-index: 5;
+  background: rgba(12,12,12,.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px dashed var(--line);
+}
+nav .wrap { display: flex; align-items: center; gap: 18px; height: 52px; }
+nav .brand { color: var(--green); font-weight: 700; }
+nav .links { display: flex; gap: 16px; margin-left: auto; font-size: 13px; }
+nav .links a { color: var(--dim); }
+nav .links a:hover { color: var(--green2); }
+.lang-btn {
+  background: none; border: 1px dashed var(--line); color: var(--amber);
+  font: 12px var(--mono); padding: 3px 8px; cursor: pointer;
+}
+.lang-btn:hover { border-color: var(--green); }
+
+header { padding: 56px 0 24px; }
+.banner {
+  margin: 0; font-size: clamp(9px, 2.6vw, 18px); line-height: 1.15;
+  background: linear-gradient(90deg, #16c60c, #5fd75f 45%, #ffd75f);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  white-space: pre; overflow: hidden;
+}
+.tag { font-size: clamp(16px, 2.4vw, 22px); color: #f2f2f2; margin: 18px 0 6px; }
+.sub { color: var(--dim); max-width: 720px; margin: 0 0 26px; }
+.cursor::after { content: "_"; color: var(--green); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.install {
+  display: flex; align-items: stretch; max-width: 760px;
+  border: 1px dashed var(--line); background: var(--panel);
+}
+.install code {
+  flex: 1; padding: 12px 14px; overflow-x: auto; white-space: nowrap; color: #f2f2f2; font-size: 13px;
+}
+.install code::before { content: "PS> "; color: var(--green); }
+.copy {
+  border: 0; border-left: 1px dashed var(--line); background: none; color: var(--amber);
+  font: 13px var(--mono); padding: 0 16px; cursor: pointer;
+}
+.copy:hover { background: #172017; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0 0; }
+.btn {
+  display: inline-block; padding: 8px 16px; border: 1px solid var(--green); color: var(--green);
+}
+.btn:hover { background: var(--green); color: #000; text-decoration: none; }
+.btn.alt { border-color: var(--line); color: var(--fg); }
+.btn.alt:hover { background: #172017; color: var(--fg); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 22px 0 0; color: var(--dim); font-size: 13px; }
+.facts b { color: var(--amber); font-weight: 400; }
+
+.hero-shot { margin: 34px 0 0; border: 1px dashed var(--line); }
+.hero-shot img { display: block; width: 100%; height: auto; }
+
+section { padding: 46px 0 8px; }
+h2 {
+  font-size: 15px; color: var(--amber); font-weight: 700; margin: 0 0 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+h2::after { content: ""; flex: 1; border-top: 1px dashed var(--line); }
+h2 .n { color: var(--green); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.card { border: 1px dashed var(--line); background: var(--panel); padding: 14px 16px; }
+.card h3 { margin: 0 0 6px; font-size: 14px; color: #f2f2f2; }
+.card h3 span { color: var(--green); }
+.card p { margin: 0; color: var(--dim); font-size: 13px; }
+.card code { color: var(--green2); }
+
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.shot { margin: 0; border: 1px dashed var(--line); background: var(--panel); }
+.shot img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+.shot figcaption { padding: 7px 10px; font-size: 12px; color: var(--dim); border-top: 1px dashed var(--line); }
+.shot figcaption b { color: var(--green2); font-weight: 400; }
+
+.langs { display: flex; flex-wrap: wrap; gap: 8px; }
+.langs a { border: 1px dashed var(--line); padding: 5px 10px; color: var(--fg); font-size: 14px; }
+.langs a:hover { border-color: var(--green); color: var(--green2); text-decoration: none; }
+
+.how { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.how pre {
+  margin: 6px 0 0; padding: 10px 12px; background: var(--panel); border: 1px dashed var(--line);
+  overflow-x: auto; font-size: 12.5px; color: #f2f2f2;
+}
+.note { color: var(--dim); font-size: 13px; margin: 14px 0 0; }
+
+ul.safe { list-style: none; padding: 0; margin: 0; columns: 2 340px; column-gap: 28px; }
+ul.safe li { break-inside: avoid; margin: 0 0 8px; padding-left: 4ch; text-indent: -4ch; color: var(--fg); font-size: 13.5px; }
+ul.safe li::before { content: "[ok] "; color: var(--green); }
+
+footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px dashed var(--line); color: var(--dim); font-size: 13px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; }
+
+/* lightbox */
+#zoom {
+  position: fixed; inset: 0; background: rgba(0,0,0,.9); display: none;
+  align-items: center; justify-content: center; z-index: 20; cursor: zoom-out; padding: 16px;
+}
+#zoom.on { display: flex; }
+#zoom img { max-width: 100%; max-height: 100%; border: 1px dashed var(--line); }
+
+@media (max-width: 640px) {
+  nav .links a.opt { display: none; }
+  header { padding-top: 32px; }
+  .install code { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#">kz</a>
+    <div class="links">
+      <a href="#features" data-t="nav_features">features</a>
+      <a class="opt" href="#screens" data-t="nav_screens">screenshots</a>
+      <a class="opt" href="#install" data-t="nav_install">install</a>
+      <a href="https://github.com/hhasanguclu/kazma">github</a>
+      <button class="lang-btn" id="lang" aria-label="language">TR</button>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+<pre class="banner" aria-label="kazma"> _  __    _     _____  __  __     _
+| |/ /   / \   |__  / |  \/  |   / \
+| ' /   / _ \    / /  | |\/| |  / _ \
+| . \  / ___ \  / /_  | |  | | / ___ \
+|_|\_\/_/   \_\/____| |_|  |_|/_/   \_\</pre>
+    <p class="tag cursor" data-t="tag">Oldschool, all-ASCII system toolkit for Windows</p>
+    <p class="sub" data-t="sub">Clean, explore and maintain your PC from the terminal. One small exe, no installer, no background service, no telemetry.</p>
+    <div class="install">
+      <code id="cmd">iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 | iex</code>
+      <button class="copy" data-copy="cmd" data-t="copy">copy</button>
+    </div>
+    <div class="cta">
+      <a class="btn" href="https://github.com/hhasanguclu/kazma/releases/latest" data-t="download">download kz.exe</a>
+      <a class="btn alt" href="https://github.com/hhasanguclu/kazma" data-t="source">source on GitHub</a>
+    </div>
+    <div class="facts">
+      <span><b>~3 MB</b> <span data-t="f_exe">single exe</span></span>
+      <span><b>35+</b> <span data-t="f_cmd">commands</span></span>
+      <span><b>100+</b> <span data-t="f_rules">cleanup rules</span></span>
+      <span><b>11</b> <span data-t="f_lang">languages</span></span>
+      <span><b>x64 · ARM64</b></span>
+      <span><b>MIT</b> <span data-t="f_lic">open source</span></span>
+    </div>
+    <div class="hero-shot"><img src="screenshots/menu-en.png" alt="kazma main menu" width="2088" height="1364"></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="features">
+  <h2><span class="n">01</span> <span data-t="h_features">what it does</span></h2>
+  <div class="grid">
+    <div class="card"><h3><span>clean</span> · <span data-t="c1">reclaim space</span></h3><p data-t="c1d">100+ kinds of caches, temp files and logs: browsers, AI tools, game launchers, GPU driver leftovers, dev tools. Windows.old and upgrade leftovers with <code>deepclean</code>.</p></div>
+    <div class="card"><h3><span>analyze</span> · <span data-t="c2">see the disk</span></h3><p data-t="c2d">Disk explorer with treemap, largest files and file types. Reads the NTFS MFT directly for instant scans. Explains special files and shows which program holds a file open.</p></div>
+    <div class="card"><h3><span>uninstall</span> · <span data-t="c3">remove for real</span></h3><p data-t="c3d">Classic, Microsoft Store and Scoop apps, then leftover folders and registry keys (backed up first). Finds leftovers of apps removed some other way.</p></div>
+    <div class="card"><h3><span>upgrade · drivers</span></h3><p data-t="c4d">Update programs through winget and drivers through Windows Update, with a restore point first.</p></div>
+    <div class="card"><h3><span>health · status</span></h3><p data-t="c5d">Health report for disks, battery, stability and security. Live CPU, GPU, memory and network monitor that explains why a process is running.</p></div>
+    <div class="card"><h3><span>optimize · repair</span></h3><p data-t="c6d">Broken startup entries, DNS, icon cache, TRIM / DISM / SFC when due. One-key fixes for network, Windows Update, Store and printers.</p></div>
+    <div class="card"><h3><span>purge · dupes · empty</span></h3><p data-t="c7d">Build folders like node_modules and target, duplicate files, empty folders and broken shortcuts. Everything goes to the Recycle Bin.</p></div>
+    <div class="card"><h3><span>startup · debloat · privacy</span></h3><p data-t="c8d">Control startup apps, remove promoted apps and ads, clear recent-file and run history.</p></div>
+    <div class="card"><h3><span>backup · power · net · ports</span></h3><p data-t="c9d">Move-to-a-new-PC kit, power plans and battery report, network and speed test, which program uses which port. Plus <code>lock</code>, <code>awake</code>, <code>cleanscreen</code>.</p></div>
+  </div>
+</section>
+
+<section id="screens">
+  <h2><span class="n">02</span> <span data-t="h_screens">screenshots</span></h2>
+  <div class="shots">
+    <figure class="shot"><img loading="lazy" src="screenshots/analyze-tr.png" alt="kz analyze"><figcaption><b>kz analyze</b> · <span data-t="s1">disk explorer, (i) explains special files</span></figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/treemap-tr.png" alt="kz analyze treemap"><figcaption><b>kz analyze + t</b> · <span data-t="s2">treemap</span></figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/analyze-largest.png" alt="largest files"><figcaption><b>kz analyze + b</b> · <span data-t="s3">largest files</span></figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/clean-de.png" alt="kz clean in German"><figcaption><b>kz clean</b> · Deutsch</figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/health-windows.png" alt="kz health on Windows"><figcaption><b>kz health</b> · Windows</figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/health-windows-ja.png" alt="kz health on Windows in Japanese"><figcaption><b>kz health</b> · Windows · 日本語</figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/menu-ja.png" alt="main menu in Japanese"><figcaption><b>kz</b> · 日本語 · <span data-t="s4">blue theme</span></figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/types-en.png" alt="kz types"><figcaption><b>kz types</b> · <span data-t="s5">what kinds of files fill the disk</span></figcaption></figure>
+    <figure class="shot"><img loading="lazy" src="screenshots/purge-en.png" alt="kz purge"><figcaption><b>kz purge</b> · <span data-t="s6">project build folders</span></figcaption></figure>
+  </div>
+</section>
+
+<section id="install">
+  <h2><span class="n">03</span> <span data-t="h_install">install</span></h2>
+  <div class="how">
+    <div><span data-t="i1">PowerShell, no admin needed:</span><pre>iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 | iex</pre></div>
+    <div>Scoop:<pre>scoop bucket add kazma https://github.com/hhasanguclu/kazma
+scoop install kazma</pre></div>
+    <div><span data-t="i3">Or download the exe:</span><pre><a href="https://github.com/hhasanguclu/kazma/releases/latest">releases/latest</a> → kz.exe / kz-arm64.exe</pre></div>
+  </div>
+  <p class="note" data-t="i_note">Then type kz. Every command that deletes something has --dry-run. The exe is not code-signed yet, so SmartScreen may ask: More info → Run anyway. Update with kz update, remove with kz remove.</p>
+</section>
+
+<section id="safety">
+  <h2><span class="n">04</span> <span data-t="h_safety">safe by design</span></h2>
+  <ul class="safe">
+    <li data-t="k1">Only known, regenerable cache and temp locations are cleaned</li>
+    <li data-t="k2">Drive roots, your profile, Windows and Program Files are hard-blocked</li>
+    <li data-t="k3">Files you pick go to the Recycle Bin</li>
+    <li data-t="k4">Registry keys and startup entries are backed up before removal</li>
+    <li data-t="k5">Drivers only from Windows Update, with a restore point first</li>
+    <li data-t="k6">Self-update is verified against SHA-256 checksums</li>
+    <li data-t="k7">Your whitelist is never touched; every action is logged</li>
+    <li data-t="k8">No telemetry, no background service, no account</li>
+  </ul>
+</section>
+
+<section id="languages">
+  <h2><span class="n">05</span> <span data-t="h_langs">11 languages</span></h2>
+  <p class="note" style="margin:0 0 14px" data-t="l_note">kazma starts in your Windows display language. The README is available in each:</p>
+  <div class="langs">
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.md">English</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.tr.md">Türkçe</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.zh-CN.md">简体中文</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.zh-TW.md">繁體中文</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.ja.md">日本語</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.ko.md">한국어</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.de.md">Deutsch</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.fr.md">Français</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.pl.md">Polski</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.uk.md">Українська</a>
+    <a href="https://github.com/hhasanguclu/kazma/blob/main/README.ru.md">Русский</a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>kazma · MIT · <a href="https://github.com/hhasanguclu">hhasanguclu</a></span>
+    <span data-t="foot">inspired by <a href="https://github.com/tw93/Mole">Mole</a> for macOS · written from scratch in Rust</span>
+  </div>
+</footer>
+
+<div id="zoom" role="dialog" aria-label="screenshot"><img alt=""></div>
+
+<script>
+const TR = {
+  nav_features: "özellikler", nav_screens: "ekranlar", nav_install: "kurulum",
+  tag: "Windows için oldschool, tamamen ASCII sistem araç kutusu",
+  sub: "Bilgisayarınızı terminalden temizleyin, inceleyin ve bakımını yapın. Tek küçük exe; kurulum, arka plan servisi ya da veri toplama yok.",
+  copy: "kopyala", download: "kz.exe indir", source: "GitHub'da kaynak kod",
+  f_exe: "tek exe", f_cmd: "komut", f_rules: "temizlik kuralı", f_lang: "dil", f_lic: "açık kaynak",
+  h_features: "neler yapar",
+  c1: "yer aç", c1d: "100+ tür önbellek, geçici dosya ve log: tarayıcılar, yapay zekâ araçları, oyun başlatıcıları, ekran kartı sürücü artıkları, geliştirici araçları. deepclean ile Windows.old ve yükseltme artıkları.",
+  c2: "diski gör", c2d: "Ağaç haritası, en büyük dosyalar ve dosya türleriyle disk gezgini. Anında tarama için NTFS MFT'yi doğrudan okur. Özel dosyaları açıklar, dosyayı hangi programın açık tuttuğunu gösterir.",
+  c3: "gerçekten kaldır", c3d: "Klasik, Microsoft Store ve Scoop uygulamaları; ardından kalıntı klasörler ve kayıt defteri anahtarları (önce yedeklenir). Başka yolla silinmiş uygulamaların kalıntılarını bulur.",
+  c4d: "Programları winget ile, sürücüleri Windows Update ile günceller; önce geri yükleme noktası oluşturur.",
+  c5d: "Diskler, pil, kararlılık ve güvenlik için sağlık raporu. Bir sürecin neden çalıştığını açıklayan canlı CPU, GPU, bellek ve ağ izleyici.",
+  c6d: "Bozuk başlangıç kayıtları, DNS, ikon önbelleği, zamanı gelince TRIM / DISM / SFC. Ağ, Windows Update, Store ve yazıcı için tek tuşla onarım.",
+  c7d: "node_modules ve target gibi derleme klasörleri, yinelenen dosyalar, boş klasörler ve bozuk kısayollar. Hepsi Geri Dönüşüm Kutusu'na gider.",
+  c8d: "Başlangıç uygulamalarını yönetin, önerilen uygulamaları ve reklamları kaldırın, son dosya ve çalıştırma geçmişini temizleyin.",
+  c9d: "Yeni bilgisayara taşınma kiti, güç planları ve pil raporu, ağ ve hız testi, hangi programın hangi portu kullandığı. Ayrıca lock, awake, cleanscreen.",
+  h_screens: "ekran görüntüleri",
+  s1: "disk gezgini, (i) özel dosyaları açıklar", s2: "ağaç haritası", s3: "en büyük dosyalar", s4: "mavi tema",
+  s5: "diski hangi dosya türleri dolduruyor", s6: "proje derleme klasörleri",
+  h_install: "kurulum", i1: "PowerShell, yönetici gerekmez:", i3: "Ya da exe'yi indirin:",
+  i_note: "Sonra kz yazın. Bir şey silen her komutta --dry-run vardır. Exe henüz imzalı değil, SmartScreen sorabilir: Ek bilgi → Yine de çalıştır. kz update ile güncelleyin, kz remove ile kaldırın.",
+  h_safety: "güvenli tasarım",
+  k1: "Yalnızca bilinen, yeniden oluşturulabilen önbellek ve geçici konumlar temizlenir",
+  k2: "Sürücü kökleri, profiliniz, Windows ve Program Files kesin olarak korunur",
+  k3: "Seçtiğiniz dosyalar Geri Dönüşüm Kutusu'na gider",
+  k4: "Kayıt defteri anahtarları ve başlangıç kayıtları silinmeden önce yedeklenir",
+  k5: "Sürücüler yalnızca Windows Update'ten, önce geri yükleme noktasıyla",
+  k6: "Kendi güncellemesi SHA-256 sağlama toplamıyla doğrulanır",
+  k7: "Beyaz listeniz asla silinmez; her işlem kaydedilir",
+  k8: "Veri toplama, arka plan servisi ya da hesap yok",
+  h_langs: "11 dil", l_note: "kazma, Windows'un görüntü dilinde açılır. README her dilde mevcut:",
+  foot: "macOS için <a href=\"https://github.com/tw93/Mole\">Mole</a>'dan esinlenildi · sıfırdan Rust ile yazıldı",
+};
+const EN = {};
+document.querySelectorAll("[data-t]").forEach(el => { EN[el.dataset.t] = el.innerHTML; });
+function setLang(l) {
+  const dict = l === "tr" ? TR : EN;
+  document.querySelectorAll("[data-t]").forEach(el => {
+    if (dict[el.dataset.t] !== undefined) el.innerHTML = dict[el.dataset.t];
+  });
+  document.documentElement.lang = l;
+  document.getElementById("lang").textContent = l === "tr" ? "EN" : "TR";
+  try { localStorage.setItem("kz-lang", l); } catch (e) {}
+}
+let saved = null;
+try { saved = localStorage.getItem("kz-lang"); } catch (e) {}
+let lang = saved || ((navigator.language || "").toLowerCase().startsWith("tr") ? "tr" : "en");
+if (lang === "tr") setLang("tr");
+document.getElementById("lang").addEventListener("click", () => {
+  lang = lang === "tr" ? "en" : "tr";
+  setLang(lang);
+});
+document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
+  const text = document.getElementById(b.dataset.copy).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const old = b.textContent;
+    b.textContent = lang === "tr" ? "kopyalandı" : "copied";
+    setTimeout(() => { b.textContent = old; }, 1400);
+  });
+}));
+const zoom = document.getElementById("zoom");
+document.querySelectorAll(".shot img, .hero-shot img").forEach(img => img.addEventListener("click", () => {
+  zoom.querySelector("img").src = img.src;
+  zoom.classList.add("on");
+}));
+zoom.addEventListener("click", () => zoom.classList.remove("on"));
+document.addEventListener("keydown", e => { if (e.key === "Escape") zoom.classList.remove("on"); });
+</script>
+</body>
+</html>
