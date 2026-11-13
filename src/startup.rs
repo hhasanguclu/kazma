@@ -297,7 +297,13 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
                 ui::pad(&state, sw),
                 ui::pad(&ui::truncate(&e.name, 32), 32),
                 ui::pad(&e.source(), srcw),
-                ui::truncate(&e.command, 60)
+                // the command gets what is left of the terminal width
+                ui::truncate(
+                    &e.command,
+                    ui::term_width()
+                        .saturating_sub(7 + sw + 1 + 32 + 1 + srcw + 1 + ui::width(broken))
+                        .max(20)
+                )
             );
             if !broken.is_empty() {
                 ui::warn(&line)

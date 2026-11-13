@@ -8,7 +8,7 @@ Usage:
 Checks:
   box      every line of an ASCII box is as wide as its top edge and ends with '|'
   column   lines of one block put their second column at the same display column
-  wide     no line is wider than the terminal (screen mode) or 140 columns
+  wide     no line is wider than the terminal (screen mode) or 120 columns
   english  no English UI text is left where the language has a translation
 
 Display width counts CJK characters as two columns, like a terminal does.
@@ -188,7 +188,7 @@ def main():
         limit = w
     else:
         lang, files = args[0], args[1:]
-        limit = 140
+        limit = 120
     keys = english_keys(lang)
     for f in files:
         lines = clean(pathlib.Path(f).read_text(encoding="utf-8", errors="replace"))

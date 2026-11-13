@@ -171,7 +171,12 @@ pub fn run() -> anyhow::Result<()> {
             section = c.section.clone();
             ui::section(&section);
         }
-        let line = format!("{} {}", ui::fit(&c.item, 44), c.value);
+        let room = ui::term_width().saturating_sub(2 + 5 + 44 + 1).max(20);
+        let line = format!(
+            "{} {}",
+            ui::fit(&c.item, 44),
+            ui::truncate_end(&c.value, room)
+        );
         match c.status.as_str() {
             "ok" => ui::ok(&line),
             "warn" => ui::warn(&line),
