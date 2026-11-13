@@ -8,7 +8,7 @@ use ratatui::symbols::border;
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, List, ListItem, ListState, Paragraph};
 use std::io::IsTerminal;
-use std::sync::OnceLock;
+use std::sync::RwLock;
 
 // ---- theme -------------------------------------------------------------------
 
@@ -70,10 +70,24 @@ pub fn theme_by_name(name: &str) -> Theme {
     }
 }
 
-static THEME: OnceLock<Theme> = OnceLock::new();
+/// The color themes, in the order `kz config` lists them.
+pub const THEMES: [&str; 4] = ["green", "amber", "white", "blue"];
+
+static THEME: RwLock<Option<Theme>> = RwLock::new(None);
 
 fn theme() -> Theme {
-    *THEME.get_or_init(|| theme_by_name("green"))
+    THEME
+        .read()
+        .ok()
+        .and_then(|t| *t)
+        .unwrap_or_else(|| theme_by_name("green"))
+}
+
+/// Switch the color theme (used at startup and live by `kz config`).
+pub fn set_theme(name: &str) {
+    if let Ok(mut t) = THEME.write() {
+        *t = Some(theme_by_name(&name.to_lowercase()));
+    }
 }
 pub fn fg() -> Color {
     theme().fg
@@ -160,7 +174,7 @@ pub fn init() {
         .ok()
         .or_else(|| crate::settings::get("theme"))
         .unwrap_or_default();
-    let _ = THEME.set(theme_by_name(&name.to_lowercase()));
+    set_theme(&name);
     crate::i18n::lang();
 }
 
@@ -520,7 +534,7 @@ pub fn checklist_opts(
                             format!(" {mark} "),
                             Style::new().fg(mark_c).add_modifier(Modifier::BOLD),
                         ),
-                        Span::styled(format!("{label:<label_w$}"), Style::new().fg(text_c)),
+                        Span::styled(pad(&label, label_w), Style::new().fg(text_c)),
                         Span::styled(size, Style::new().fg(if i.checked { hi() } else { dim() })),
                         Span::styled(
                             format!("  {}", truncate(&i.detail, detail_w)),

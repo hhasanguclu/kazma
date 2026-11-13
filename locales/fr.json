@@ -383,7 +383,6 @@
  "show passwords: kz net wifi --show": "afficher les mots de passe: kz net wifi --show",
  "net :: network tools": "net :: outils réseau",
  "usage: kz net [info | dns | dns set NAME | speed | wifi [--show]]": "usage: kz net [info | dns | dns set NOM | speed | wifi [--show]]",
- "No history yet ({})": "Pas encore d'historique ({})",
  "none found": "aucun trouvé",
  "Flush DNS cache": "Vider le cache DNS",
  "Refresh icon cache": "Actualiser le cache d'icônes",
@@ -861,5 +860,17 @@
  "whitelist :: paths kazma will never delete": "whitelist :: chemins que kazma ne supprimera jamais",
  "delete {} manually": "supprimez {} manuellement",
  "asking winget for updates (this can take a few seconds)...": "recherche des mises à jour via winget (quelques secondes)...",
- "Firewall": "Pare-feu"
+ "Firewall": "Pare-feu",
+ "LANGUAGE": "LANGUE",
+ "COLOR THEME": "THÈME DE COULEUR",
+ "automatic": "automatique",
+ "follows Windows (now: {})": "suit Windows (actuellement : {})",
+ "kazma config :: settings": "kazma config :: paramètres",
+ "choices are saved at once to {}": "les choix sont enregistrés aussitôt dans {}",
+ "choose": "choisir",
+ "done": "terminé",
+ "saved: language = {}": "enregistré : langue = {}",
+ "saved: theme = {t}": "enregistré : thème = {t}",
+ "history :: what kazma did": "history :: ce que kazma a fait",
+ "No history yet.": "Aucun historique pour l'instant."
 }

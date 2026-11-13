@@ -383,7 +383,6 @@
  "show passwords: kz net wifi --show": "비밀번호 보기: kz net wifi --show",
  "net :: network tools": "net :: 네트워크 도구",
  "usage: kz net [info | dns | dns set NAME | speed | wifi [--show]]": "사용법: kz net [info | dns | dns set NAME | speed | wifi [--show]]",
- "No history yet ({})": "아직 기록이 없습니다 ({})",
  "none found": "찾지 못함",
  "Flush DNS cache": "DNS 캐시 비우기",
  "Refresh icon cache": "아이콘 캐시 새로 고침",
@@ -861,5 +860,17 @@
  "whitelist :: paths kazma will never delete": "whitelist :: kazma가 절대 삭제하지 않을 경로",
  "delete {} manually": "{}을(를) 직접 삭제하세요",
  "asking winget for updates (this can take a few seconds)...": "winget에서 업데이트 확인 중(몇 초 걸릴 수 있음)...",
- "Firewall": "방화벽"
+ "Firewall": "방화벽",
+ "LANGUAGE": "언어",
+ "COLOR THEME": "색 테마",
+ "automatic": "자동",
+ "follows Windows (now: {})": "Windows를 따름(현재: {})",
+ "kazma config :: settings": "kazma config :: 설정",
+ "choices are saved at once to {}": "선택 즉시 {}에 저장됩니다",
+ "choose": "선택",
+ "done": "완료",
+ "saved: language = {}": "저장됨: 언어 = {}",
+ "saved: theme = {t}": "저장됨: 테마 = {t}",
+ "history :: what kazma did": "history :: kazma 작업 기록",
+ "No history yet.": "아직 기록이 없습니다."
 }

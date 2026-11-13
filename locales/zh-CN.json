@@ -383,7 +383,6 @@
  "show passwords: kz net wifi --show": "显示密码：kz net wifi --show",
  "net :: network tools": "net :: 网络工具",
  "usage: kz net [info | dns | dns set NAME | speed | wifi [--show]]": "用法：kz net [info | dns | dns set NAME | speed | wifi [--show]]",
- "No history yet ({})": "暂无历史记录（{}）",
  "none found": "未找到",
  "Flush DNS cache": "刷新 DNS 缓存",
  "Refresh icon cache": "刷新图标缓存",
@@ -861,5 +860,17 @@
  "whitelist :: paths kazma will never delete": "whitelist :: kazma 绝不删除的路径",
  "delete {} manually": "请手动删除 {}",
  "asking winget for updates (this can take a few seconds)...": "正在向 winget 查询更新（可能需要几秒钟）...",
- "Firewall": "防火墙"
+ "Firewall": "防火墙",
+ "LANGUAGE": "语言",
+ "COLOR THEME": "颜色主题",
+ "automatic": "自动",
+ "follows Windows (now: {})": "跟随 Windows（当前：{}）",
+ "kazma config :: settings": "kazma config :: 设置",
+ "choices are saved at once to {}": "选择会立即保存到 {}",
+ "choose": "选择",
+ "done": "完成",
+ "saved: language = {}": "已保存：语言 = {}",
+ "saved: theme = {t}": "已保存：主题 = {t}",
+ "history :: what kazma did": "history :: kazma 的操作记录",
+ "No history yet.": "暂无记录。"
 }

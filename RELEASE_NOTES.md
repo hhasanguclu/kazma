@@ -9,7 +9,17 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~2.7 MB exe. No installer required, no telemetry.
 
-## What's new in v1.0.0
+## What's new in v1.0.1
+
+- **`kz config` is now a screen**: pick the language and the color theme with the arrow keys
+  (or a mouse click). A choice is saved at once and the screen switches to it right away.
+  `kz config lang de` still works for scripts.
+- Commands started from the main menu open on a clean screen instead of under the previous output.
+- `kz history` got the same header as the other commands.
+- `kz clean`: the group column fits long group names in every language.
+- `kz health`: "Firewall" is translated.
+
+## v1.0.0
 
 **11 languages.** English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski, Українська, Русский.
 kazma starts in your Windows display language; change it with `kz config lang de` (or `auto`).

@@ -800,7 +800,20 @@ fn pause() {
 }
 
 fn run_menu_item(name: &str) -> anyhow::Result<bool> {
-    let wait = !matches!(name, "analyze" | "status" | "awake" | "cleanscreen");
+    let wait = !matches!(
+        name,
+        "analyze" | "status" | "awake" | "cleanscreen" | "config"
+    );
+    // Start every command on a clean screen, not under the previous output.
+    if ui::interactive() {
+        use crossterm::terminal::{Clear, ClearType};
+        let _ = crossterm::execute!(
+            std::io::stdout(),
+            Clear(ClearType::All),
+            Clear(ClearType::Purge),
+            crossterm::cursor::MoveTo(0, 0)
+        );
+    }
     match name {
         "clean" => clean::run(false, false)?,
         "deepclean" => deepclean::run(false)?,

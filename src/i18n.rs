@@ -4,6 +4,7 @@
 
 use std::collections::HashMap;
 use std::sync::OnceLock;
+use std::sync::atomic::{AtomicU8, Ordering};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Lang {
@@ -65,11 +66,40 @@ pub const LANGS: &[(Lang, &str, &str, &str)] = &[
     ),
 ];
 
-static LANG: OnceLock<Lang> = OnceLock::new();
-static TABLE: OnceLock<HashMap<&'static str, &'static str>> = OnceLock::new();
+/// Index into LANGS; NONE until the first use picks one.
+static LANG: AtomicU8 = AtomicU8::new(NONE);
+const NONE: u8 = u8::MAX;
+/// One parsed table per language, filled on first use.
+static TABLES: [OnceLock<HashMap<&'static str, &'static str>>; 11] =
+    [const { OnceLock::new() }; 11];
+
+fn index(l: Lang) -> usize {
+    LANGS.iter().position(|x| x.0 == l).unwrap_or(0)
+}
 
 pub fn lang() -> Lang {
-    *LANG.get_or_init(detect)
+    let i = LANG.load(Ordering::Relaxed);
+    if i != NONE {
+        return LANGS[i as usize].0;
+    }
+    let l = detect();
+    LANG.store(index(l) as u8, Ordering::Relaxed);
+    l
+}
+
+/// Switch language while kazma runs (`kz config`).
+pub fn set(l: Lang) {
+    LANG.store(index(l) as u8, Ordering::Relaxed);
+}
+
+/// What `auto` means here: the system language, or English.
+pub fn auto() -> Lang {
+    system().unwrap_or(Lang::En)
+}
+
+/// Pick the language again from KAZMA_LANG / config / system.
+pub fn reload() {
+    set(detect());
 }
 
 pub fn code() -> &'static str {
@@ -154,10 +184,8 @@ pub fn from_langid(id: u16) -> Option<Lang> {
 }
 
 fn table() -> &'static HashMap<&'static str, &'static str> {
-    TABLE.get_or_init(|| {
-        let json = LANGS.iter().find(|l| l.0 == lang()).map_or("", |l| l.3);
-        parse_table(json)
-    })
+    let i = index(lang());
+    TABLES[i].get_or_init(|| parse_table(LANGS[i].3))
 }
 
 fn parse_table(json: &str) -> HashMap<&'static str, &'static str> {

@@ -103,7 +103,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz whitelist` | Шляхи, які kazma ніколи не видалить (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Власні правила очищення для `kz clean` (`--edit` відкриває Блокнот) |
 | `kz context install` | «Analyze with kazma» у контекстному меню Провідника (`uninstall` прибирає) |
-| `kz config` | `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | Оновлює саму kazma з GitHub (з перевіркою контрольної суми) |
 | `kz history` | Журнал усього, що зробила kazma |
 | `kz remove` | Видаляє kazma |

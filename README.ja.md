@@ -99,7 +99,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz whitelist` | kazma が絶対に削除しないパス (`--add`、`--remove`、`--edit`) |
 | `kz rules` | `kz clean` 用の独自ルール (`--edit` でメモ帳が開きます) |
 | `kz context install` | エクスプローラーの右クリック メニューに "Analyze with kazma" を追加 (`uninstall` で削除) |
-| `kz config` | `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru)、`kz config theme amber` (green, amber, white, blue) |
+| `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru)、`kz config theme amber` (green, amber, white, blue) |
 | `kz update` | GitHub から kazma 自体を更新 (チェックサム検証あり) |
 | `kz history` | kazma が行ったすべての操作のログ |
 | `kz remove` | kazma をアンインストール |

@@ -2958,8 +2958,14 @@
   "file": "net.rs"
  },
  {
-  "en": "No history yet ({})",
-  "tr": "Henüz geçmiş yok ({})",
+  "en": "history :: what kazma did",
+  "tr": "history :: kazma'nın yaptıkları",
+  "kind": "fmt",
+  "file": "oplog.rs"
+ },
+ {
+  "en": "No history yet.",
+  "tr": "Henüz geçmiş yok.",
   "kind": "fmt",
   "file": "oplog.rs"
  },
@@ -4430,6 +4436,66 @@
  {
   "en": "change:  kz config lang tr    kz config theme amber",
   "tr": "değiştir:  kz config lang en    kz config theme amber",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "LANGUAGE",
+  "tr": "DİL",
+  "kind": "plain",
+  "file": "settings.rs"
+ },
+ {
+  "en": "COLOR THEME",
+  "tr": "RENK TEMASI",
+  "kind": "plain",
+  "file": "settings.rs"
+ },
+ {
+  "en": "automatic",
+  "tr": "otomatik",
+  "kind": "plain",
+  "file": "settings.rs"
+ },
+ {
+  "en": "follows Windows (now: {})",
+  "tr": "Windows'u izler (şu an: {})",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "kazma config :: settings",
+  "tr": "kazma config :: ayarlar",
+  "kind": "plain",
+  "file": "settings.rs"
+ },
+ {
+  "en": "choices are saved at once to {}",
+  "tr": "seçimler hemen {} dosyasına kaydedilir",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "choose",
+  "tr": "seç",
+  "kind": "plain",
+  "file": "settings.rs"
+ },
+ {
+  "en": "done",
+  "tr": "bitti",
+  "kind": "plain",
+  "file": "settings.rs"
+ },
+ {
+  "en": "saved: language = {}",
+  "tr": "kaydedildi: dil = {}",
+  "kind": "fmt",
+  "file": "settings.rs"
+ },
+ {
+  "en": "saved: theme = {t}",
+  "tr": "kaydedildi: tema = {t}",
   "kind": "fmt",
   "file": "settings.rs"
  },

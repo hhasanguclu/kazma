@@ -58,21 +58,23 @@ pub fn record(command: &str, message: &str) {
 }
 
 pub fn show_history(limit: usize) {
+    crate::ui::print_banner(&crate::tr!(
+        "history :: what kazma did",
+        "history :: kazma'nın yaptıkları"
+    ));
     let Some(path) = log_path() else { return };
     match std::fs::read_to_string(&path) {
         Ok(s) => {
             let lines: Vec<&str> = s.lines().collect();
             for l in &lines[lines.len().saturating_sub(limit)..] {
-                println!("{l}");
+                println!("  {l}");
             }
+            println!("\n  {}\n", path.display());
         }
         Err(_) => println!(
-            "{}",
-            crate::tr!(
-                "No history yet ({})",
-                "Henüz geçmiş yok ({})",
-                path.display()
-            )
+            "  {}\n  {}\n",
+            crate::tr!("No history yet.", "Henüz geçmiş yok."),
+            path.display()
         ),
     }
 }

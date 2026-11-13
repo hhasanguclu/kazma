@@ -103,7 +103,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz whitelist` | kazma가 절대 삭제하지 않을 경로 (`--add`, `--remove`, `--edit`) |
 | `kz rules` | `kz clean`에 쓸 나만의 정리 규칙 (`--edit`는 메모장을 엽니다) |
 | `kz context install` | 파일 탐색기 오른쪽 클릭 메뉴에 "Analyze with kazma" 추가 (`uninstall`로 제거) |
-| `kz config` | `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | GitHub에서 kazma 자체 업데이트 (체크섬 확인) |
 | `kz history` | kazma가 한 모든 작업의 기록 |
 | `kz remove` | kazma 제거 |

@@ -26,7 +26,7 @@
 **kazma**, Windows bilgisayarı terminalden temizleyen, inceleyen ve bakımını yapan tek bir
 `kz.exe` dosyasıdır (~2.7 MB). Görünümü eski yeşil ekranlı terminaller gibidir. Kurulum gerektirmez,
 arka planda servis çalıştırmaz, veri toplamaz. Arayüz 11 dilde kullanılabilir (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
-Українська, Русский) ve Windows'un görüntü dilinde açılır; `kz config lang en` ile değiştirebilirsiniz.
+Українська, Русский) ve Windows'un görüntü dilinde açılır; `kz config` ekranından ok tuşlarıyla ya da `kz config lang en` ile değiştirebilirsiniz.
 
 ## Özellikler
 
@@ -103,7 +103,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz whitelist` | kazma'nın asla silmeyeceği yollar (`--add`, `--remove`, `--edit`) |
 | `kz rules` | `kz clean` için kendi temizlik kuralların (`--edit` Not Defteri'nde açar) |
 | `kz context install` | Gezgin sağ tık menüsüne "kazma ile analiz et" ekler (`uninstall` kaldırır) |
-| `kz config` | `kz config lang en` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz config` | Dili ve temayı ok tuşlarıyla seçin; ya da `kz config lang en` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | kazma'yı GitHub'dan günceller (sağlama toplamı doğrulanır) |
 | `kz history` | kazma'nın yaptığı her şeyin kaydı |
 | `kz remove` | kazma'yı kaldırır |

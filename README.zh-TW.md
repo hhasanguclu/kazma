@@ -102,7 +102,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz whitelist` | kazma 絕不刪除的路徑（`--add`、`--remove`、`--edit`） |
 | `kz rules` | 給 `kz clean` 用的自訂清理規則（`--edit` 會開啟記事本） |
 | `kz context install` | 在檔案總管右鍵選單加入「Analyze with kazma」（`uninstall` 可移除） |
-| `kz config` | `kz config lang de`（auto、en、tr、zh-CN、zh-TW、ja、ko、de、fr、pl、uk、ru）、`kz config theme amber`（green、amber、white、blue） |
+| `kz config` | `kz config` ↑↓ enter · `kz config lang de`（auto、en、tr、zh-CN、zh-TW、ja、ko、de、fr、pl、uk、ru）、`kz config theme amber`（green、amber、white、blue） |
 | `kz update` | 從 GitHub 更新 kazma 本身（會驗證總和檢查碼） |
 | `kz history` | kazma 所有操作的記錄 |
 | `kz remove` | 解除安裝 kazma |

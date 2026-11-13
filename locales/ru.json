@@ -383,7 +383,6 @@
  "show passwords: kz net wifi --show": "показать пароли: kz net wifi --show",
  "net :: network tools": "net :: сетевые инструменты",
  "usage: kz net [info | dns | dns set NAME | speed | wifi [--show]]": "использование: kz net [info | dns | dns set NAME | speed | wifi [--show]]",
- "No history yet ({})": "Истории пока нет ({})",
  "none found": "ничего не найдено",
  "Flush DNS cache": "Очистить кэш DNS",
  "Refresh icon cache": "Обновить кэш значков",
@@ -861,5 +860,17 @@
  "whitelist :: paths kazma will never delete": "whitelist :: пути, которые kazma никогда не удалит",
  "delete {} manually": "удалите {} вручную",
  "asking winget for updates (this can take a few seconds)...": "запрос обновлений у winget (может занять несколько секунд)...",
- "Firewall": "Брандмауэр"
+ "Firewall": "Брандмауэр",
+ "LANGUAGE": "ЯЗЫК",
+ "COLOR THEME": "ЦВЕТОВАЯ ТЕМА",
+ "automatic": "автоматически",
+ "follows Windows (now: {})": "как в Windows (сейчас: {})",
+ "kazma config :: settings": "kazma config :: настройки",
+ "choices are saved at once to {}": "выбор сразу сохраняется в {}",
+ "choose": "выбрать",
+ "done": "готово",
+ "saved: language = {}": "сохранено: язык = {}",
+ "saved: theme = {t}": "сохранено: тема = {t}",
+ "history :: what kazma did": "history :: что сделала kazma",
+ "No history yet.": "Истории пока нет."
 }

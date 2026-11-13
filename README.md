@@ -26,7 +26,7 @@
 **kazma** (Turkish for *pickaxe*) is a single ~2.7 MB `kz.exe` that cleans, explores and maintains a
 Windows PC from the terminal, with a retro green-screen look. No installer, no background service,
 no telemetry. The interface is available in 11 languages (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
-Українська, Русский) and starts in your Windows display language; change it with `kz config lang de`.
+Українська, Русский) and starts in your Windows display language; change it in `kz config` (arrow keys) or with `kz config lang de`.
 
 ## Features
 
@@ -103,7 +103,7 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz whitelist` | Paths kazma must never delete (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Your own clean rules for `kz clean` (`--edit` opens Notepad) |
 | `kz context install` | "Analyze with kazma" in Explorer's right-click menu (`uninstall` removes it) |
-| `kz config` | `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz config` | Pick language and theme with the arrow keys; or `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | Update kazma itself from GitHub (checksum verified) |
 | `kz history` | Log of everything kazma did |
 | `kz remove` | Uninstall kazma |

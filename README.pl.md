@@ -103,7 +103,7 @@ Instaluje do `%LOCALAPPDATA%\Programs\kazma` i dodaje `kz` do PATH. Alternatywy:
 | `kz whitelist` | Ścieżki, których kazma nigdy nie usunie (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Własne reguły czyszczenia dla `kz clean` (`--edit` otwiera Notatnik) |
 | `kz context install` | „Analyze with kazma” w menu prawego przycisku Eksploratora plików (`uninstall` usuwa wpis) |
-| `kz config` | `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | Aktualizuje kazma z GitHuba (z weryfikacją sumy kontrolnej) |
 | `kz history` | Dziennik wszystkiego, co zrobiła kazma |
 | `kz remove` | Odinstalowuje kazma |
