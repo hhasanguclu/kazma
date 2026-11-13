@@ -93,6 +93,23 @@ def check_columns(lines, where):
         return max(set(values), key=values.count)
 
     def flush():
+        # compare only lines of the same shape: second column is a number, a bar or text
+        def shape(line):
+            m = GAP.search(line)
+            c = line[m.end() - 1]
+            return "digit" if c.isdigit() else "bar" if c == "[" else "text"
+
+        shapes = {}
+        for n, line in block:
+            shapes.setdefault(shape(line), []).append((n, line))
+        groups = [g for g in shapes.values() if len(g) >= 3]
+        block.clear()
+        for g in groups:
+            block.extend(g)
+            check_block()
+            block.clear()
+
+    def check_block():
         if len(block) >= 3:
             fields = [(n, line, second_field(line)) for n, line in block]
             starts = [f[0] for _, _, f in fields]
