@@ -7,7 +7,7 @@
 ```
 
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
-One ~2.7 MB exe. No installer required, no telemetry.
+One ~5 MB exe. No installer required, no telemetry.
 
 ## What's new in v1.0.2
 

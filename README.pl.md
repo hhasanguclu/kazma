@@ -23,7 +23,7 @@
 
 ---
 
-**kazma** (po turecku *kilof*) to pojedynczy plik `kz.exe` o rozmiarze ok. 2,7 MB, który czyści, przegląda i konserwuje
+**kazma** (po turecku *kilof*) to pojedynczy plik `kz.exe` o rozmiarze ok. 5 MB, który czyści, przegląda i konserwuje
 komputer z Windows z poziomu terminala, w stylu retro zielonego ekranu. Bez instalatora, bez usługi w tle,
 bez telemetrii. Interfejs jest dostępny w 11 językach (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
 Українська, Русский) i uruchamia się w języku wyświetlania Windows; zmienisz go poleceniem `kz config lang pl`.

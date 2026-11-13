@@ -24,7 +24,7 @@
 ---
 
 **kazma**, Windows bilgisayarı terminalden temizleyen, inceleyen ve bakımını yapan tek bir
-`kz.exe` dosyasıdır (~2.7 MB). Görünümü eski yeşil ekranlı terminaller gibidir. Kurulum gerektirmez,
+`kz.exe` dosyasıdır (~5 MB). Görünümü eski yeşil ekranlı terminaller gibidir. Kurulum gerektirmez,
 arka planda servis çalıştırmaz, veri toplamaz. Arayüz 11 dilde kullanılabilir (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
 Українська, Русский) ve Windows'un görüntü dilinde açılır; `kz config` ekranından ok tuşlarıyla ya da `kz config lang en` ile değiştirebilirsiniz.
 
