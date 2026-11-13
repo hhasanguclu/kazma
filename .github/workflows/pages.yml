@@ -3,7 +3,7 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ["site/**", "docs/screenshots/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "docs/screenshots/**", "docs/media/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -23,10 +23,12 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Add screenshots
+      - name: Add screenshots and the demo video
         run: |
           mkdir -p site/screenshots
           cp docs/screenshots/*.png site/screenshots/
+          mkdir -p site/media
+          cp docs/media/kazma-promo.mp4 docs/media/kazma-promo-poster.jpg site/media/
       - uses: actions/configure-pages@v5
         with:
           enablement: true

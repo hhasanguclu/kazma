@@ -8,6 +8,7 @@
 <meta property="og:title" content="kazma - oldschool ASCII system toolkit for Windows">
 <meta property="og:description" content="Clean, explore and maintain Windows from the terminal. One exe, 11 languages, no telemetry.">
 <meta property="og:image" content="https://hhasanguclu.github.io/kazma/screenshots/menu-en.png">
+<meta property="og:video" content="https://hhasanguclu.github.io/kazma/media/kazma-promo.mp4">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%230c0c0c'/%3E%3Ctext x='2' y='13' font-family='monospace' font-size='13' fill='%2316c60c'%3Ek%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -102,7 +103,7 @@ header { padding: 56px 0 24px; }
 .facts b { color: var(--amber); font-weight: 400; }
 
 .hero-shot { margin: 34px 0 0; border: 1px dashed var(--line); }
-.hero-shot img { display: block; width: 100%; height: auto; }
+.hero-shot img, .hero-shot video { display: block; width: 100%; height: auto; background: #000; }
 
 section { padding: 46px 0 8px; }
 h2 {
@@ -198,7 +199,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: 
       <span><b>x64 · ARM64</b></span>
       <span><b>MIT</b> <span data-t="f_lic">open source</span></span>
     </div>
-    <div class="hero-shot"><img src="screenshots/menu-en.png" alt="kazma main menu" width="2088" height="1364"></div>
+    <div class="hero-shot" id="demo"><video src="media/kazma-promo.mp4" poster="media/kazma-promo-poster.jpg" autoplay muted loop playsinline controls preload="metadata" width="1920" height="1080" aria-label="kazma demo video"></video></div>
   </div>
 </header>
 
@@ -350,7 +351,7 @@ document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () =
   });
 }));
 const zoom = document.getElementById("zoom");
-document.querySelectorAll(".shot img, .hero-shot img").forEach(img => img.addEventListener("click", () => {
+document.querySelectorAll(".shot img").forEach(img => img.addEventListener("click", () => {
   zoom.querySelector("img").src = img.src;
   zoom.classList.add("on");
 }));

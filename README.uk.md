@@ -17,7 +17,9 @@
 
 [English](README.md) · [Türkçe](README.tr.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Polski](README.pl.md) · **Українська** · [Русский](README.ru.md)
 
-<img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English"> <img src="docs/screenshots/menu-ja.png" width="49%" alt="kazma main menu in Japanese, blue theme">
+<a href="docs/media/kazma-promo.mp4"><img src="docs/media/kazma-demo.gif" width="100%" alt="kazma demo: main menu, clean, analyze with treemap, switching to Japanese, health report"></a>
+
+<sub>▶ <a href="docs/media/kazma-promo.mp4">kazma-promo.mp4</a> (36 s)</sub>
 
 </div>
 

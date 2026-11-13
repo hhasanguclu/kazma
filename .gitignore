@@ -2,3 +2,4 @@
 *.exe
 site/screenshots/
 __pycache__/
+site/media/
