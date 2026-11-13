@@ -17,7 +17,7 @@
 
 [English](README.md) · [Türkçe](README.tr.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · **한국어** · [Deutsch](README.de.md) · [Français](README.fr.md) · [Polski](README.pl.md) · [Українська](README.uk.md) · [Русский](README.ru.md)
 
-<img src="docs/screenshots/menu-tr.png" width="49%" alt="튀르키예어로 표시된 kazma 메인 메뉴"> <img src="docs/screenshots/menu-en.png" width="49%" alt="영어로 표시된 kazma 메인 메뉴, amber 테마">
+<img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English"> <img src="docs/screenshots/menu-ja.png" width="49%" alt="kazma main menu in Japanese, blue theme">
 
 </div>
 
@@ -148,11 +148,13 @@ cargo build --release --target x86_64-pc-windows-gnu
 
 | | |
 |---|---|
-| **메인 메뉴, 튀르키예어**<br><img src="docs/screenshots/menu-tr.png" alt="메인 메뉴, 튀르키예어"> | **메인 메뉴, 영어, amber 테마**<br><img src="docs/screenshots/menu-en.png" alt="메인 메뉴, 영어, amber 테마"> |
-| **`kz analyze`**<br><img src="docs/screenshots/analyze-tr.png" alt="analyze"> | **`kz analyze` + `b`**: 큰 파일<br><img src="docs/screenshots/analyze-largest.png" alt="큰 파일"> |
-| **`kz analyze` + `t`**: 트리맵<br><img src="docs/screenshots/treemap-tr.png" alt="트리맵"> | **`kz types`**: 파일 유형<br><img src="docs/screenshots/types-en.png" alt="파일 유형"> |
-| **`kz clean`** 선택 화면<br><img src="docs/screenshots/clean-tr.png" alt="clean"> | **`kz purge`**, blue 테마<br><img src="docs/screenshots/purge-en.png" alt="purge"> |
-| Windows에서 실행한 **`kz health`**<br><img src="docs/screenshots/health-windows.png" alt="Windows에서 실행한 상태 보고서"> | Windows에서 실행한 **`kz startup --list`**<br><img src="docs/screenshots/startup-windows.png" alt="Windows에서 실행한 시작 프로그램 목록"> |
+| **`kz`** · English<br><img src="docs/screenshots/menu-en.png" alt="kz main menu, English"> | **`kz`** · 日本語<br><img src="docs/screenshots/menu-ja.png" alt="kz main menu, Japanese, blue theme"> |
+| **`kz`** · Türkçe<br><img src="docs/screenshots/menu-tr.png" alt="kz main menu, Turkish, amber theme"> | **`kz analyze`** · `(i)`<br><img src="docs/screenshots/analyze-tr.png" alt="kz analyze"> |
+| **`kz analyze`** + `b`<br><img src="docs/screenshots/analyze-largest.png" alt="kz analyze, largest files"> | **`kz analyze`** + `t`<br><img src="docs/screenshots/treemap-tr.png" alt="kz analyze, treemap"> |
+| **`kz clean`** · Türkçe<br><img src="docs/screenshots/clean-tr.png" alt="kz clean, Turkish"> | **`kz clean`** · Deutsch<br><img src="docs/screenshots/clean-de.png" alt="kz clean, German, white theme"> |
+| **`kz types`**<br><img src="docs/screenshots/types-en.png" alt="kz types"> | **`kz purge`**<br><img src="docs/screenshots/purge-en.png" alt="kz purge, blue theme"> |
+| **`kz health`** · Windows<br><img src="docs/screenshots/health-windows.png" alt="kz health on Windows"> | **`kz health`** · Windows · 日本語<br><img src="docs/screenshots/health-windows-ja.png" alt="kz health on Windows, Japanese"> |
+| **`kz startup --list`** · Windows<br><img src="docs/screenshots/startup-windows.png" alt="kz startup on Windows"> |  |
 
 <sub>`health`와 `startup`은 실제 Windows 실행 화면(GitHub Actions, Windows Server 2025)을 캡처한 것입니다.
 나머지 화면은 같은 코드를 데모 데이터로 터미널에서 실행한 것이라 경로가

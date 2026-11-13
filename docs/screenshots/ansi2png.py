@@ -6,11 +6,18 @@ Used for the README screenshots:
 """
 import re
 import sys
+import unicodedata
 
 from PIL import Image, ImageDraw, ImageFont
 
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
 FONT_B = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
+# Chinese, Japanese and Korean take two terminal columns and need their own font
+FONT_CJK = "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"
+
+
+def wide(c):
+    return unicodedata.east_asian_width(c) in "WF"
 SCALE = 2
 SIZE = 15 * SCALE
 BG = (12, 12, 12)
@@ -98,9 +105,13 @@ def parse(text):
 def render(rows, out, title):
     font = ImageFont.truetype(FONT, SIZE)
     bold = ImageFont.truetype(FONT_B, SIZE)
+    try:
+        cjk = ImageFont.truetype(FONT_CJK, SIZE)
+    except OSError:
+        cjk = font
     cw = font.getbbox("M")[2]
     ch = int(SIZE * 1.22)
-    cols = max(len(r) for r in rows)
+    cols = max(sum(2 if wide(c) else 1 for c, *_ in r) for r in rows)
     pad = 18 * SCALE
     bar = 34 * SCALE if title else 0
     w, h = cols * cw + 2 * pad, len(rows) * ch + 2 * pad + bar
@@ -111,12 +122,16 @@ def render(rows, out, title):
         tw = font.getbbox(title)[2]
         d.text(((w - tw) // 2, bar // 2 - SIZE // 2 - 2), title, font=font, fill=(160, 160, 160))
     for y, row in enumerate(rows):
-        for x, (c, f, b, bo) in enumerate(row):
+        x = 0
+        for c, f, b, bo in row:
+            n = 2 if wide(c) else 1
             px, py = pad + x * cw, bar + pad + y * ch
             if b is not None:
-                d.rectangle([px, py, px + cw, py + ch], fill=b)
+                d.rectangle([px, py, px + n * cw, py + ch], fill=b)
             if c != " ":
-                d.text((px, py + (ch - SIZE) // 2), c, font=bold if bo else font, fill=f)
+                fnt = cjk if n == 2 else (bold if bo else font)
+                d.text((px, py + (ch - SIZE) // 2), c, font=fnt, fill=f)
+            x += n
     img.save(out, optimize=True)
 
 

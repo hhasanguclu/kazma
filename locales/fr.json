@@ -860,5 +860,6 @@
  "kazma upgrade :: select programs to update": "kazma upgrade :: choisissez les programmes à mettre à jour",
  "whitelist :: paths kazma will never delete": "whitelist :: chemins que kazma ne supprimera jamais",
  "delete {} manually": "supprimez {} manuellement",
- "asking winget for updates (this can take a few seconds)...": "recherche des mises à jour via winget (quelques secondes)..."
+ "asking winget for updates (this can take a few seconds)...": "recherche des mises à jour via winget (quelques secondes)...",
+ "Firewall": "Pare-feu"
 }

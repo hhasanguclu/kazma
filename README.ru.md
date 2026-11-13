@@ -17,7 +17,7 @@
 
 [English](README.md) · [Türkçe](README.tr.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Polski](README.pl.md) · [Українська](README.uk.md) · **Русский**
 
-<img src="docs/screenshots/menu-tr.png" width="49%" alt="kazma main menu in Turkish"> <img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English, amber theme">
+<img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English"> <img src="docs/screenshots/menu-ja.png" width="49%" alt="kazma main menu in Japanese, blue theme">
 
 </div>
 
@@ -148,11 +148,13 @@ cargo build --release --target x86_64-pc-windows-gnu
 
 | | |
 |---|---|
-| **Главное меню, турецкий**<br><img src="docs/screenshots/menu-tr.png" alt="main menu, Turkish"> | **Главное меню, английский, янтарная тема**<br><img src="docs/screenshots/menu-en.png" alt="main menu, English, amber theme"> |
-| **`kz analyze`**<br><img src="docs/screenshots/analyze-tr.png" alt="analyze"> | **`kz analyze` + `b`**: самые большие файлы<br><img src="docs/screenshots/analyze-largest.png" alt="largest files"> |
-| **`kz analyze` + `t`**: карта<br><img src="docs/screenshots/treemap-tr.png" alt="treemap"> | **`kz types`**: типы файлов<br><img src="docs/screenshots/types-en.png" alt="file types"> |
-| Выбор в **`kz clean`**<br><img src="docs/screenshots/clean-tr.png" alt="clean"> | **`kz purge`**, синяя тема<br><img src="docs/screenshots/purge-en.png" alt="purge"> |
-| **`kz health`** в Windows<br><img src="docs/screenshots/health-windows.png" alt="health report on Windows"> | **`kz startup --list`** в Windows<br><img src="docs/screenshots/startup-windows.png" alt="startup list on Windows"> |
+| **`kz`** · English<br><img src="docs/screenshots/menu-en.png" alt="kz main menu, English"> | **`kz`** · 日本語<br><img src="docs/screenshots/menu-ja.png" alt="kz main menu, Japanese, blue theme"> |
+| **`kz`** · Türkçe<br><img src="docs/screenshots/menu-tr.png" alt="kz main menu, Turkish, amber theme"> | **`kz analyze`** · `(i)`<br><img src="docs/screenshots/analyze-tr.png" alt="kz analyze"> |
+| **`kz analyze`** + `b`<br><img src="docs/screenshots/analyze-largest.png" alt="kz analyze, largest files"> | **`kz analyze`** + `t`<br><img src="docs/screenshots/treemap-tr.png" alt="kz analyze, treemap"> |
+| **`kz clean`** · Türkçe<br><img src="docs/screenshots/clean-tr.png" alt="kz clean, Turkish"> | **`kz clean`** · Deutsch<br><img src="docs/screenshots/clean-de.png" alt="kz clean, German, white theme"> |
+| **`kz types`**<br><img src="docs/screenshots/types-en.png" alt="kz types"> | **`kz purge`**<br><img src="docs/screenshots/purge-en.png" alt="kz purge, blue theme"> |
+| **`kz health`** · Windows<br><img src="docs/screenshots/health-windows.png" alt="kz health on Windows"> | **`kz health`** · Windows · 日本語<br><img src="docs/screenshots/health-windows-ja.png" alt="kz health on Windows, Japanese"> |
+| **`kz startup --list`** · Windows<br><img src="docs/screenshots/startup-windows.png" alt="kz startup on Windows"> |  |
 
 <sub>`health` и `startup` сняты при реальном запуске в Windows (GitHub Actions, Windows Server 2025).
 Остальные экраны получены из того же кода, запущенного в терминале с демонстрационными данными, поэтому пути

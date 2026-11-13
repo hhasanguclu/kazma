@@ -118,8 +118,8 @@ try {
 } catch { Add $X 'Defender' (T 'not available (third-party antivirus?)' 'erişilemedi (başka antivirüs?)') 'info' }
 try {
   $fw = Get-NetFirewallProfile -ErrorAction Stop | Where-Object { -not $_.Enabled }
-  if ($fw) { Add $X 'Firewall' ((T 'off for: {0}' 'kapalı: {0}') -f (($fw.Name) -join ', ')) 'bad' }
-  else { Add $X 'Firewall' (T 'on' 'açık') 'ok' }
+  if ($fw) { Add $X (T 'Firewall' 'Güvenlik duvarı') ((T 'off for: {0}' 'kapalı: {0}') -f (($fw.Name) -join ', ')) 'bad' }
+  else { Add $X (T 'Firewall' 'Güvenlik duvarı') (T 'on' 'açık') 'ok' }
 } catch {}
 
 ConvertTo-Json -InputObject @($out) -Compress

@@ -17,7 +17,7 @@
 
 [English](README.md) · [Türkçe](README.tr.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **Deutsch** · [Français](README.fr.md) · [Polski](README.pl.md) · [Українська](README.uk.md) · [Русский](README.ru.md)
 
-<img src="docs/screenshots/menu-tr.png" width="49%" alt="kazma-Hauptmenü auf Türkisch"> <img src="docs/screenshots/menu-en.png" width="49%" alt="kazma-Hauptmenü auf Englisch, Bernstein-Theme">
+<img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English"> <img src="docs/screenshots/menu-ja.png" width="49%" alt="kazma main menu in Japanese, blue theme">
 
 </div>
 
@@ -148,11 +148,13 @@ aktualisiert die Scoop- / winget-Manifeste.
 
 | | |
 |---|---|
-| **Hauptmenü, Türkisch**<br><img src="docs/screenshots/menu-tr.png" alt="Hauptmenü, Türkisch"> | **Hauptmenü, Englisch, Bernstein-Theme**<br><img src="docs/screenshots/menu-en.png" alt="Hauptmenü, Englisch, Bernstein-Theme"> |
-| **`kz analyze`**<br><img src="docs/screenshots/analyze-tr.png" alt="analyze"> | **`kz analyze` + `b`**: größte Dateien<br><img src="docs/screenshots/analyze-largest.png" alt="größte Dateien"> |
-| **`kz analyze` + `t`**: Treemap<br><img src="docs/screenshots/treemap-tr.png" alt="Treemap"> | **`kz types`**: Dateitypen<br><img src="docs/screenshots/types-en.png" alt="Dateitypen"> |
-| **`kz clean`** Auswahl<br><img src="docs/screenshots/clean-tr.png" alt="clean"> | **`kz purge`**, blaues Theme<br><img src="docs/screenshots/purge-en.png" alt="purge"> |
-| **`kz health`** unter Windows<br><img src="docs/screenshots/health-windows.png" alt="Zustandsbericht unter Windows"> | **`kz startup --list`** unter Windows<br><img src="docs/screenshots/startup-windows.png" alt="Autostartliste unter Windows"> |
+| **`kz`** · English<br><img src="docs/screenshots/menu-en.png" alt="kz main menu, English"> | **`kz`** · 日本語<br><img src="docs/screenshots/menu-ja.png" alt="kz main menu, Japanese, blue theme"> |
+| **`kz`** · Türkçe<br><img src="docs/screenshots/menu-tr.png" alt="kz main menu, Turkish, amber theme"> | **`kz analyze`** · `(i)`<br><img src="docs/screenshots/analyze-tr.png" alt="kz analyze"> |
+| **`kz analyze`** + `b`<br><img src="docs/screenshots/analyze-largest.png" alt="kz analyze, largest files"> | **`kz analyze`** + `t`<br><img src="docs/screenshots/treemap-tr.png" alt="kz analyze, treemap"> |
+| **`kz clean`** · Türkçe<br><img src="docs/screenshots/clean-tr.png" alt="kz clean, Turkish"> | **`kz clean`** · Deutsch<br><img src="docs/screenshots/clean-de.png" alt="kz clean, German, white theme"> |
+| **`kz types`**<br><img src="docs/screenshots/types-en.png" alt="kz types"> | **`kz purge`**<br><img src="docs/screenshots/purge-en.png" alt="kz purge, blue theme"> |
+| **`kz health`** · Windows<br><img src="docs/screenshots/health-windows.png" alt="kz health on Windows"> | **`kz health`** · Windows · 日本語<br><img src="docs/screenshots/health-windows-ja.png" alt="kz health on Windows, Japanese"> |
+| **`kz startup --list`** · Windows<br><img src="docs/screenshots/startup-windows.png" alt="kz startup on Windows"> |  |
 
 <sub>`health` und `startup` stammen aus einem echten Windows-Lauf (GitHub Actions, Windows Server 2025).
 Die anderen Bildschirme stammen aus demselben Code, der in einem Terminal mit Demodaten lief; deshalb sehen

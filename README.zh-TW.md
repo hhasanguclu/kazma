@@ -17,7 +17,7 @@
 
 [English](README.md) · [Türkçe](README.tr.md) · [简体中文](README.zh-CN.md) · **繁體中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Polski](README.pl.md) · [Українська](README.uk.md) · [Русский](README.ru.md)
 
-<img src="docs/screenshots/menu-tr.png" width="49%" alt="kazma 主選單（土耳其文）"> <img src="docs/screenshots/menu-en.png" width="49%" alt="kazma 主選單（英文，琥珀色主題）">
+<img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English"> <img src="docs/screenshots/menu-ja.png" width="49%" alt="kazma main menu in Japanese, blue theme">
 
 </div>
 
@@ -146,11 +146,13 @@ cargo build --release --target x86_64-pc-windows-gnu
 
 | | |
 |---|---|
-| **主選單，土耳其文**<br><img src="docs/screenshots/menu-tr.png" alt="主選單，土耳其文"> | **主選單，英文，琥珀色主題**<br><img src="docs/screenshots/menu-en.png" alt="主選單，英文，琥珀色主題"> |
-| **`kz analyze`**<br><img src="docs/screenshots/analyze-tr.png" alt="analyze"> | **`kz analyze` + `b`**：最大檔案<br><img src="docs/screenshots/analyze-largest.png" alt="最大檔案"> |
-| **`kz analyze` + `t`**：樹狀圖<br><img src="docs/screenshots/treemap-tr.png" alt="樹狀圖"> | **`kz types`**：檔案類型<br><img src="docs/screenshots/types-en.png" alt="檔案類型"> |
-| **`kz clean`** 選擇畫面<br><img src="docs/screenshots/clean-tr.png" alt="clean"> | **`kz purge`**，藍色主題<br><img src="docs/screenshots/purge-en.png" alt="purge"> |
-| 在 Windows 上執行的 **`kz health`**<br><img src="docs/screenshots/health-windows.png" alt="Windows 上的健康報告"> | 在 Windows 上執行的 **`kz startup --list`**<br><img src="docs/screenshots/startup-windows.png" alt="Windows 上的啟動清單"> |
+| **`kz`** · English<br><img src="docs/screenshots/menu-en.png" alt="kz main menu, English"> | **`kz`** · 日本語<br><img src="docs/screenshots/menu-ja.png" alt="kz main menu, Japanese, blue theme"> |
+| **`kz`** · Türkçe<br><img src="docs/screenshots/menu-tr.png" alt="kz main menu, Turkish, amber theme"> | **`kz analyze`** · `(i)`<br><img src="docs/screenshots/analyze-tr.png" alt="kz analyze"> |
+| **`kz analyze`** + `b`<br><img src="docs/screenshots/analyze-largest.png" alt="kz analyze, largest files"> | **`kz analyze`** + `t`<br><img src="docs/screenshots/treemap-tr.png" alt="kz analyze, treemap"> |
+| **`kz clean`** · Türkçe<br><img src="docs/screenshots/clean-tr.png" alt="kz clean, Turkish"> | **`kz clean`** · Deutsch<br><img src="docs/screenshots/clean-de.png" alt="kz clean, German, white theme"> |
+| **`kz types`**<br><img src="docs/screenshots/types-en.png" alt="kz types"> | **`kz purge`**<br><img src="docs/screenshots/purge-en.png" alt="kz purge, blue theme"> |
+| **`kz health`** · Windows<br><img src="docs/screenshots/health-windows.png" alt="kz health on Windows"> | **`kz health`** · Windows · 日本語<br><img src="docs/screenshots/health-windows-ja.png" alt="kz health on Windows, Japanese"> |
+| **`kz startup --list`** · Windows<br><img src="docs/screenshots/startup-windows.png" alt="kz startup on Windows"> |  |
 
 <sub>`health` 和 `startup` 是在真實的 Windows 上執行時擷取的（GitHub Actions，Windows Server 2025）。
 其他畫面則是同一份程式碼在終端機中以示範資料執行的結果，所以路徑看起來像 `/home/user/demo`。</sub>

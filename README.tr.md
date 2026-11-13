@@ -17,7 +17,7 @@
 
 [English](README.md) · **Türkçe** · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [Polski](README.pl.md) · [Українська](README.uk.md) · [Русский](README.ru.md)
 
-<img src="docs/screenshots/menu-tr.png" width="49%" alt="kazma main menu in Turkish"> <img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English, amber theme">
+<img src="docs/screenshots/menu-en.png" width="49%" alt="kazma main menu in English"> <img src="docs/screenshots/menu-ja.png" width="49%" alt="kazma main menu in Japanese, blue theme">
 
 </div>
 
@@ -147,11 +147,13 @@ test eder, salt-okunur komutların hepsini gerçekten çalıştırır, sonra `vX
 
 | | |
 |---|---|
-| **Ana menü, Türkçe**<br><img src="docs/screenshots/menu-tr.png" alt="ana menü, Türkçe"> | **Ana menü, İngilizce, amber tema**<br><img src="docs/screenshots/menu-en.png" alt="ana menü, İngilizce"> |
-| **`kz analyze`** disk gezgini<br><img src="docs/screenshots/analyze-tr.png" alt="analyze"> | **`kz analyze` + `b`**: en büyük dosyalar<br><img src="docs/screenshots/analyze-largest.png" alt="en büyük dosyalar"> |
-| **`kz analyze` + `t`**: ağaç haritası<br><img src="docs/screenshots/treemap-tr.png" alt="ağaç haritası"> | **`kz types`**: dosya türleri<br><img src="docs/screenshots/types-en.png" alt="dosya türleri"> |
-| **`kz clean`** seçim ekranı<br><img src="docs/screenshots/clean-tr.png" alt="clean"> | **`kz purge`**, mavi tema<br><img src="docs/screenshots/purge-en.png" alt="purge"> |
-| **`kz health`** Windows'ta<br><img src="docs/screenshots/health-windows.png" alt="sağlık raporu"> | **`kz startup --list`** Windows'ta<br><img src="docs/screenshots/startup-windows.png" alt="başlangıç listesi"> |
+| **`kz`** · English<br><img src="docs/screenshots/menu-en.png" alt="kz main menu, English"> | **`kz`** · 日本語<br><img src="docs/screenshots/menu-ja.png" alt="kz main menu, Japanese, blue theme"> |
+| **`kz`** · Türkçe<br><img src="docs/screenshots/menu-tr.png" alt="kz main menu, Turkish, amber theme"> | **`kz analyze`** · `(i)`<br><img src="docs/screenshots/analyze-tr.png" alt="kz analyze"> |
+| **`kz analyze`** + `b`<br><img src="docs/screenshots/analyze-largest.png" alt="kz analyze, largest files"> | **`kz analyze`** + `t`<br><img src="docs/screenshots/treemap-tr.png" alt="kz analyze, treemap"> |
+| **`kz clean`** · Türkçe<br><img src="docs/screenshots/clean-tr.png" alt="kz clean, Turkish"> | **`kz clean`** · Deutsch<br><img src="docs/screenshots/clean-de.png" alt="kz clean, German, white theme"> |
+| **`kz types`**<br><img src="docs/screenshots/types-en.png" alt="kz types"> | **`kz purge`**<br><img src="docs/screenshots/purge-en.png" alt="kz purge, blue theme"> |
+| **`kz health`** · Windows<br><img src="docs/screenshots/health-windows.png" alt="kz health on Windows"> | **`kz health`** · Windows · 日本語<br><img src="docs/screenshots/health-windows-ja.png" alt="kz health on Windows, Japanese"> |
+| **`kz startup --list`** · Windows<br><img src="docs/screenshots/startup-windows.png" alt="kz startup on Windows"> |  |
 
 <sub>`health` ve `startup` gerçek bir Windows çalıştırmasından (GitHub Actions, Windows Server 2025) alındı.
 Diğerleri aynı kodun demo verilerle terminalde çalıştırılmasından alındı; yollar bu yüzden `/home/user/demo`

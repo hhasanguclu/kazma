@@ -710,10 +710,18 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     let selection: Vec<bool> = if yes || dry || !ui::interactive() {
         measured.iter().map(|(t, _)| t.default_on || yes).collect()
     } else {
+        // the group column fits the longest group name in this language
+        let gw = measured
+            .iter()
+            .map(|(t, _)| ui::width(group_name(t.group)))
+            .max()
+            .unwrap_or(10)
+            .clamp(10, 24)
+            + 2;
         let items = measured
             .iter()
             .map(|(t, s)| ui::CheckItem {
-                label: format!("{:<12}{}", group_name(t.group), t.name),
+                label: format!("{}{}", ui::pad(group_name(t.group), gw), t.name),
                 detail: tr!("{} files", "{} dosya", s.files),
                 size: s.bytes,
                 checked: t.default_on,

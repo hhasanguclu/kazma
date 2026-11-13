@@ -2352,6 +2352,12 @@
   "file": "health.rs"
  },
  {
+  "en": "Firewall",
+  "tr": "Güvenlik duvarı",
+  "kind": "ps",
+  "file": "health.rs"
+ },
+ {
   "en": "off for: {0}",
   "tr": "kapalı: {0}",
   "kind": "ps",
