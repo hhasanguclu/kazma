@@ -385,6 +385,14 @@ pub fn warn(msg: &str) {
     println!("  {} {msg}", "[!!]".with(ct(warn_c())));
 }
 
+/// Columns of the terminal; 120 when there is none (output to a file or pipe).
+pub fn term_width() -> usize {
+    crossterm::terminal::size()
+        .map(|(w, _)| w as usize)
+        .unwrap_or(120)
+        .clamp(60, 240)
+}
+
 pub fn interactive() -> bool {
     std::io::stdin().is_terminal() && std::io::stdout().is_terminal()
 }

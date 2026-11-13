@@ -806,12 +806,15 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
 
     println!("\n  .{}.", "-".repeat(44));
     println!(
-        "  | {:<20}{:>22} |",
-        if dry {
-            ui::t("would free", "kazanılacak")
-        } else {
-            ui::t("freed", "kazanılan")
-        },
+        "  | {}{:>22} |",
+        ui::pad(
+            if dry {
+                ui::t("would free", "kazanılacak")
+            } else {
+                ui::t("freed", "kazanılan")
+            },
+            20
+        ),
         ui::human(total.bytes)
     );
     println!(

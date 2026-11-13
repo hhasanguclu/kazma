@@ -191,7 +191,10 @@ pub fn run(only: Option<String>, dry: bool, no_restore_point: bool) -> anyhow::R
                 "  {:<9} {} {}",
                 f.key,
                 ui::pad(name(f), nw),
-                ui::t(f.detail_en, f.detail_tr)
+                ui::truncate_end(
+                    ui::t(f.detail_en, f.detail_tr),
+                    ui::term_width().saturating_sub(2 + 9 + 1 + nw + 1).max(20)
+                )
             );
         }
         println!(

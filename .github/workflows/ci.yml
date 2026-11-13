@@ -95,9 +95,8 @@ jobs:
           Remove-Item Env:KAZMA_LANG
           if (-not (Test-Path "$env:RUNNER_TEMP\kazma-report.html")) { throw "report was not written" }
       # Layout check in every language on real Windows output: box edges, columns
-      # (CJK counts as two columns), untranslated text. Reported, reviewed before release.
+      # (CJK counts as two columns), line width, untranslated text. Blocks a release.
       - name: Interface check (11 languages)
-        continue-on-error: true
         shell: pwsh
         env:
           KAZMA_NO_OPLOG: "1"

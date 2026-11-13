@@ -74,7 +74,13 @@ fn plans() -> Vec<Plan> {
 }
 
 fn show() {
-    let list = plans();
+    let mut list = plans();
+    // known plans are shown in kazma's language; others keep the name Windows gives them
+    for p in &mut list {
+        if let Some((_, _, en, trn)) = PLANS.iter().find(|(_, g, _, _)| *g == p.guid) {
+            p.name = ui::t(en, trn).to_string();
+        }
+    }
     ui::section(ui::t("Power plans", "Güç planları"));
     let nw = list
         .iter()
