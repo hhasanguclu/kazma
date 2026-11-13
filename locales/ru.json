@@ -182,7 +182,6 @@
  "yes": "да",
  "scanning...": "сканирование...",
  "{} files": "файлов: {}",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  (пропущено)",
  "  ({} in use, left alone)": "  (занято: {}, не тронуто)",
  "Needs administrator": "Нужны права администратора",
  "{}  (run kz from an elevated terminal)": "{}  (запустите kz в терминале от имени администратора)",
@@ -393,10 +392,6 @@
  "never run by kazma": "kazma ещё не запускал",
  "Would run": "Будет выполнено",
  "Running": "Выполнение",
- "{:<34} (skipped)": "{:<34} (пропущено)",
- "{:<34} running...": "{:<34} выполняется...",
- "{:<34} done      ": "{:<34} готово      ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} (запустите kz от имени администратора)",
  "reading connections...": "чтение подключений...",
  "nothing is listening on port {port}": "порт {port} никто не слушает",
  "Close {} (pid {}) that uses port {port}?": "Закрыть {} (pid {}), занимающий порт {port}?",
@@ -872,5 +867,10 @@
  "saved: language = {}": "сохранено: язык = {}",
  "saved: theme = {t}": "сохранено: тема = {t}",
  "history :: what kazma did": "history :: что сделала kazma",
- "No history yet.": "Истории пока нет."
+ "No history yet.": "Истории пока нет.",
+ "{} {:>10}  (skipped)": "{} {:>10}  (пропущено)",
+ "{} (skipped)": "{} (пропущено)",
+ "{} running...": "{} выполняется...",
+ "{} done      ": "{} готово      ",
+ "{} (run kz from an elevated terminal)": "{} (запустите kz от имени администратора)"
 }

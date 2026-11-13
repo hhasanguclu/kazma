@@ -2,8 +2,8 @@
 """Check locales/<code>.json against locales/source.json.
 
 Usage: python tools/i18n_check.py [code ...]   (default: every locale)
-Fails on invalid JSON, placeholders that differ from the English text, and
-unbalanced braces. Missing entries are reported (they fall back to English).
+Fails on invalid JSON, placeholders that differ from the English text,
+unbalanced braces, missing entries and keys whose English text no longer exists.
 """
 
 import json
@@ -57,7 +57,11 @@ def check(code):
             pass  # passed to PowerShell as JSON, quotes are fine
     extra = [k for k in tr if k not in keys]
     print(f"{code}: {len(src) - missing}/{len(src)} translated, {missing} missing, {len(extra)} unknown keys")
-    return ok
+    # every language must be complete: a missing entry shows English, an unknown
+    # key usually means the English text changed and the translation was left behind
+    for k in extra:
+        print(f"{code}: unknown key (English text changed?): {k!r}")
+    return ok and missing == 0 and not extra
 
 
 codes = sys.argv[1:] or sorted(p.stem for p in LOC.glob("*.json") if p.stem != "source")

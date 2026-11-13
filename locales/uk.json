@@ -182,7 +182,6 @@
  "yes": "так",
  "scanning...": "сканування...",
  "{} files": "файлів: {}",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  (пропущено)",
  "  ({} in use, left alone)": "  (зайнято: {}, не чіпаємо)",
  "Needs administrator": "Потрібні права адміністратора",
  "{}  (run kz from an elevated terminal)": "{}  (запустіть kz у терміналі адміністратора)",
@@ -393,10 +392,6 @@
  "never run by kazma": "kazma ще не запускала",
  "Would run": "Буде виконано",
  "Running": "Виконання",
- "{:<34} (skipped)": "{:<34} (пропущено)",
- "{:<34} running...": "{:<34} виконується...",
- "{:<34} done      ": "{:<34} готово        ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} (запустіть kz у терміналі адміністратора)",
  "reading connections...": "читання з’єднань...",
  "nothing is listening on port {port}": "порт {port} ніхто не прослуховує",
  "Close {} (pid {}) that uses port {port}?": "Закрити {} (pid {}), що використовує порт {port}?",
@@ -872,5 +867,10 @@
  "saved: language = {}": "збережено: мова = {}",
  "saved: theme = {t}": "збережено: тема = {t}",
  "history :: what kazma did": "history :: що зробила kazma",
- "No history yet.": "Історії поки немає."
+ "No history yet.": "Історії поки немає.",
+ "{} {:>10}  (skipped)": "{} {:>10}  (пропущено)",
+ "{} (skipped)": "{} (пропущено)",
+ "{} running...": "{} виконується...",
+ "{} done      ": "{} готово        ",
+ "{} (run kz from an elevated terminal)": "{} (запустіть kz у терміналі адміністратора)"
 }

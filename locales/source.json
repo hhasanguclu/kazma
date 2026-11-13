@@ -384,14 +384,14 @@
   "file": "backup.rs"
  },
  {
-  "en": "seq write",
-  "tr": "sıralı yazma",
+  "en": "sequential read",
+  "tr": "sıralı okuma",
   "kind": "plain",
   "file": "bench.rs"
  },
  {
-  "en": "seq read",
-  "tr": "sıralı okuma",
+  "en": "sequential write",
+  "tr": "sıralı yazma",
   "kind": "plain",
   "file": "bench.rs"
  },
@@ -404,6 +404,18 @@
  {
   "en": "4K random write",
   "tr": "4K rastgele yazma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "seq write",
+  "tr": "sıralı yazma",
+  "kind": "plain",
+  "file": "bench.rs"
+ },
+ {
+  "en": "seq read",
+  "tr": "sıralı okuma",
   "kind": "plain",
   "file": "bench.rs"
  },
@@ -423,18 +435,6 @@
   "en": "  file: {}  ({size_mb} MB, deleted afterwards)",
   "tr": "  dosya: {}  ({size_mb} MB, sonra silinir)",
   "kind": "fmt",
-  "file": "bench.rs"
- },
- {
-  "en": "sequential read",
-  "tr": "sıralı okuma",
-  "kind": "plain",
-  "file": "bench.rs"
- },
- {
-  "en": "sequential write",
-  "tr": "sıralı yazma",
-  "kind": "plain",
   "file": "bench.rs"
  },
  {
@@ -1266,8 +1266,8 @@
   "file": "clean.rs"
  },
  {
-  "en": "{:<34} {:>10}  (skipped)",
-  "tr": "{:<34} {:>10}  (atlandı)",
+  "en": "{} {:>10}  (skipped)",
+  "tr": "{} {:>10}  (atlandı)",
   "kind": "fmt",
   "file": "clean.rs"
  },
@@ -2814,6 +2814,12 @@
   "file": "net.rs"
  },
  {
+  "en": "public IP",
+  "tr": "genel IP",
+  "kind": "plain",
+  "file": "net.rs"
+ },
+ {
   "en": "no connected network adapter",
   "tr": "bağlı ağ bağdaştırıcısı yok",
   "kind": "plain",
@@ -2822,12 +2828,6 @@
  {
   "en": "Internet",
   "tr": "İnternet",
-  "kind": "plain",
-  "file": "net.rs"
- },
- {
-  "en": "public IP",
-  "tr": "genel IP",
   "kind": "plain",
   "file": "net.rs"
  },
@@ -3132,26 +3132,26 @@
   "file": "optimize.rs"
  },
  {
-  "en": "{:<34} (skipped)",
-  "tr": "{:<34} (atlandı)",
+  "en": "{} (skipped)",
+  "tr": "{} (atlandı)",
   "kind": "fmt",
   "file": "optimize.rs"
  },
  {
-  "en": "{:<34} running...",
-  "tr": "{:<34} çalışıyor...",
+  "en": "{} running...",
+  "tr": "{} çalışıyor...",
   "kind": "fmt",
   "file": "optimize.rs"
  },
  {
-  "en": "{:<34} done      ",
-  "tr": "{:<34} tamam     ",
+  "en": "{} done      ",
+  "tr": "{} tamam     ",
   "kind": "fmt",
   "file": "optimize.rs"
  },
  {
-  "en": "{:<34} (run kz from an elevated terminal)",
-  "tr": "{:<34} (kz'yi yönetici terminalinde çalıştırın)",
+  "en": "{} (run kz from an elevated terminal)",
+  "tr": "{} (kz'yi yönetici terminalinde çalıştırın)",
   "kind": "fmt",
   "file": "optimize.rs"
  },

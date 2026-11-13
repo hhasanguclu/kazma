@@ -182,7 +182,6 @@
  "yes": "是",
  "scanning...": "正在扫描...",
  "{} files": "{} 个文件",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  （已跳过）",
  "  ({} in use, left alone)": "  （{} 正在使用，未处理）",
  "Needs administrator": "需要管理员权限",
  "{}  (run kz from an elevated terminal)": "{}（请在管理员终端中运行 kz）",
@@ -393,10 +392,6 @@
  "never run by kazma": "kazma 从未运行过",
  "Would run": "将运行",
  "Running": "正在运行",
- "{:<34} (skipped)": "{:<34} （已跳过）",
- "{:<34} running...": "{:<34} 正在运行...",
- "{:<34} done      ": "{:<34} 完成      ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} （请在管理员终端中运行 kz）",
  "reading connections...": "正在读取连接...",
  "nothing is listening on port {port}": "没有程序在监听端口 {port}",
  "Close {} (pid {}) that uses port {port}?": "关闭占用端口 {port} 的 {}（pid {}）？",
@@ -872,5 +867,10 @@
  "saved: language = {}": "已保存：语言 = {}",
  "saved: theme = {t}": "已保存：主题 = {t}",
  "history :: what kazma did": "history :: kazma 的操作记录",
- "No history yet.": "暂无记录。"
+ "No history yet.": "暂无记录。",
+ "{} {:>10}  (skipped)": "{} {:>10}  （已跳过）",
+ "{} (skipped)": "{} （已跳过）",
+ "{} running...": "{} 正在运行...",
+ "{} done      ": "{} 完成      ",
+ "{} (run kz from an elevated terminal)": "{} （请在管理员终端中运行 kz）"
 }

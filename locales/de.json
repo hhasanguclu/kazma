@@ -182,7 +182,6 @@
  "yes": "ja",
  "scanning...": "wird gescannt...",
  "{} files": "{} Dateien",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  (übersprungen)",
  "  ({} in use, left alone)": "  ({} in Verwendung, ausgelassen)",
  "Needs administrator": "Administrator erforderlich",
  "{}  (run kz from an elevated terminal)": "{}  (kz in einem Terminal mit Adminrechten ausführen)",
@@ -393,10 +392,6 @@
  "never run by kazma": "nie von kazma ausgeführt",
  "Would run": "Würde ausführen",
  "Running": "Wird ausgeführt",
- "{:<34} (skipped)": "{:<34} (übersprungen)",
- "{:<34} running...": "{:<34} läuft...",
- "{:<34} done      ": "{:<34} fertig    ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} (kz in einem Terminal mit Adminrechten ausführen)",
  "reading connections...": "Verbindungen werden gelesen...",
  "nothing is listening on port {port}": "an Port {port} lauscht nichts",
  "Close {} (pid {}) that uses port {port}?": "{} (PID {}) schließen, das Port {port} nutzt?",
@@ -872,5 +867,10 @@
  "saved: language = {}": "gespeichert: Sprache = {}",
  "saved: theme = {t}": "gespeichert: Farbschema = {t}",
  "history :: what kazma did": "history :: was kazma getan hat",
- "No history yet.": "Noch kein Verlauf."
+ "No history yet.": "Noch kein Verlauf.",
+ "{} {:>10}  (skipped)": "{} {:>10}  (übersprungen)",
+ "{} (skipped)": "{} (übersprungen)",
+ "{} running...": "{} läuft...",
+ "{} done      ": "{} fertig    ",
+ "{} (run kz from an elevated terminal)": "{} (kz in einem Terminal mit Adminrechten ausführen)"
 }

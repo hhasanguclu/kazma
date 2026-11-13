@@ -182,7 +182,6 @@
  "yes": "tak",
  "scanning...": "skanowanie...",
  "{} files": "pliki: {}",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  (pominięto)",
  "  ({} in use, left alone)": "  ({} w użyciu, pominięto)",
  "Needs administrator": "Wymaga administratora",
  "{}  (run kz from an elevated terminal)": "{}  (uruchom kz w terminalu administratora)",
@@ -393,10 +392,6 @@
  "never run by kazma": "kazma jeszcze tego nie uruchamiała",
  "Would run": "Zostanie uruchomione",
  "Running": "Uruchamianie",
- "{:<34} (skipped)": "{:<34} (pominięto)",
- "{:<34} running...": "{:<34} w toku...",
- "{:<34} done      ": "{:<34} gotowe      ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} (uruchom kz w terminalu administratora)",
  "reading connections...": "odczyt połączeń...",
  "nothing is listening on port {port}": "nic nie nasłuchuje na porcie {port}",
  "Close {} (pid {}) that uses port {port}?": "Zamknąć {} (pid {}), który używa portu {port}?",
@@ -872,5 +867,10 @@
  "saved: language = {}": "zapisano: język = {}",
  "saved: theme = {t}": "zapisano: motyw = {t}",
  "history :: what kazma did": "history :: co zrobiła kazma",
- "No history yet.": "Brak historii."
+ "No history yet.": "Brak historii.",
+ "{} {:>10}  (skipped)": "{} {:>10}  (pominięto)",
+ "{} (skipped)": "{} (pominięto)",
+ "{} running...": "{} w toku...",
+ "{} done      ": "{} gotowe      ",
+ "{} (run kz from an elevated terminal)": "{} (uruchom kz w terminalu administratora)"
 }

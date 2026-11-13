@@ -182,7 +182,6 @@
  "yes": "はい",
  "scanning...": "スキャン中...",
  "{} files": "{} ファイル",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  (スキップ)",
  "  ({} in use, left alone)": "  ({} 個は使用中のため除外)",
  "Needs administrator": "管理者権限が必要",
  "{}  (run kz from an elevated terminal)": "{}  (管理者ターミナルで kz を実行してください)",
@@ -393,10 +392,6 @@
  "never run by kazma": "kazma で未実行",
  "Would run": "実行予定",
  "Running": "実行中",
- "{:<34} (skipped)": "{:<34} (スキップ)",
- "{:<34} running...": "{:<34} 実行中...",
- "{:<34} done      ": "{:<34} 完了      ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} (管理者ターミナルで kz を実行してください)",
  "reading connections...": "接続を読み込み中...",
  "nothing is listening on port {port}": "ポート {port} で待ち受けているものはありません",
  "Close {} (pid {}) that uses port {port}?": "ポート {port} を使用中の {} (pid {}) を終了しますか?",
@@ -872,5 +867,10 @@
  "saved: language = {}": "保存しました: 言語 = {}",
  "saved: theme = {t}": "保存しました: テーマ = {t}",
  "history :: what kazma did": "history :: kazma の操作履歴",
- "No history yet.": "履歴はまだありません。"
+ "No history yet.": "履歴はまだありません。",
+ "{} {:>10}  (skipped)": "{} {:>10}  (スキップ)",
+ "{} (skipped)": "{} (スキップ)",
+ "{} running...": "{} 実行中...",
+ "{} done      ": "{} 完了      ",
+ "{} (run kz from an elevated terminal)": "{} (管理者ターミナルで kz を実行してください)"
 }

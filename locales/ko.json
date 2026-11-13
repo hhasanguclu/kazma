@@ -182,7 +182,6 @@
  "yes": "예",
  "scanning...": "스캔 중...",
  "{} files": "파일 {}개",
- "{:<34} {:>10}  (skipped)": "{:<34} {:>10}  (건너뜀)",
  "  ({} in use, left alone)": "  ({}개 사용 중, 그대로 둠)",
  "Needs administrator": "관리자 권한 필요",
  "{}  (run kz from an elevated terminal)": "{}  (관리자 터미널에서 kz를 실행하세요)",
@@ -393,10 +392,6 @@
  "never run by kazma": "kazma로 실행한 적 없음",
  "Would run": "실행 예정",
  "Running": "실행 중",
- "{:<34} (skipped)": "{:<34} (건너뜀)",
- "{:<34} running...": "{:<34} 실행 중...",
- "{:<34} done      ": "{:<34} 완료      ",
- "{:<34} (run kz from an elevated terminal)": "{:<34} (관리자 터미널에서 kz를 실행하세요)",
  "reading connections...": "연결 읽는 중...",
  "nothing is listening on port {port}": "{port} 포트에서 대기 중인 프로그램이 없습니다",
  "Close {} (pid {}) that uses port {port}?": "{port} 포트를 쓰는 {} (pid {})을(를) 종료할까요?",
@@ -872,5 +867,10 @@
  "saved: language = {}": "저장됨: 언어 = {}",
  "saved: theme = {t}": "저장됨: 테마 = {t}",
  "history :: what kazma did": "history :: kazma 작업 기록",
- "No history yet.": "아직 기록이 없습니다."
+ "No history yet.": "아직 기록이 없습니다.",
+ "{} {:>10}  (skipped)": "{} {:>10}  (건너뜀)",
+ "{} (skipped)": "{} (건너뜀)",
+ "{} running...": "{} 실행 중...",
+ "{} done      ": "{} 완료      ",
+ "{} (run kz from an elevated terminal)": "{} (관리자 터미널에서 kz를 실행하세요)"
 }
