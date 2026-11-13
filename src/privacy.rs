@@ -368,11 +368,17 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         }
         .as_str(),
     );
+    let nw = all
+        .iter()
+        .map(|i| ui::width(&i.name))
+        .max()
+        .unwrap_or(0)
+        .max(44);
     for (i, on) in all.iter().zip(selection) {
         if !on {
             ui::skip(&format!(
                 "{} {}",
-                ui::pad(&i.name, 44),
+                ui::pad(&i.name, nw),
                 tr!("(skipped)", "(atlandı)")
             ));
             continue;
@@ -380,7 +386,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         if let Some(p) = running(i.blocked_by) {
             ui::warn(&format!(
                 "{} {}",
-                ui::pad(&i.name, 44),
+                ui::pad(&i.name, nw),
                 tr!(
                     "({p} is running, close it first)",
                     "({p} açık, önce kapatın)"
@@ -399,10 +405,10 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
                 } else {
                     String::new()
                 };
-                ui::ok(&format!("{}{note}", ui::pad(&i.name, 44)));
+                ui::ok(&format!("{}{note}", ui::pad(&i.name, nw)));
                 oplog::record("privacy", &i.name);
             }
-            Err(e) => ui::warn(&format!("{} {e}", ui::pad(&i.name, 44))),
+            Err(e) => ui::warn(&format!("{} {e}", ui::pad(&i.name, nw))),
         }
     }
     println!();

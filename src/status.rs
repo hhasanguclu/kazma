@@ -421,7 +421,14 @@ pub fn run() -> anyhow::Result<()> {
                     let area = f.area();
                     let w = area.width.saturating_sub(8).min(100);
                     // long values (paths, command lines) wrap under the value column
-                    let room = (w as usize).saturating_sub(2 + 17).max(10);
+                    let kw = lines
+                        .iter()
+                        .map(|(k, _)| ui::width(k))
+                        .max()
+                        .unwrap_or(0)
+                        .max(15)
+                        + 1;
+                    let room = (w as usize).saturating_sub(3 + kw).max(10);
                     let why = ui::t("why", "neden");
                     let mut text: Vec<Line> = vec![];
                     for (k, v) in lines {
@@ -432,9 +439,9 @@ pub fn run() -> anyhow::Result<()> {
                         };
                         for (i, part) in ui::wrap(v, room).into_iter().enumerate() {
                             let label = if i == 0 {
-                                ui::pad(k, 16)
+                                ui::pad(k, kw)
                             } else {
-                                " ".repeat(16)
+                                " ".repeat(kw)
                             };
                             text.push(Line::from(vec![
                                 Span::styled(format!(" {label}"), Style::new().fg(ui::dim())),

@@ -9,7 +9,21 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~2.7 MB exe. No installer required, no telemetry.
 
-## What's new in v1.0.1
+## What's new in v1.0.2
+
+Interface audit in all 11 languages: every command and screen was captured at 100x32 and 80x24
+and checked automatically (box edges, column alignment with CJK counted as two columns, leftover
+English, overflow). Fixed:
+
+- Text columns line up in every language: labels are measured by display width, and tables size
+  their name column to the longest name (optimize, clean, privacy, deepclean, repair, restore,
+  power, startup, net, bench, types, status)
+- Treemap: Chinese / Japanese / Korean file names no longer push the box edges out of line
+- status: long paths and command lines in "why is this running?" wrap under the value column
+- Yes/no questions accept "yes" in every language (ja, oui, tak, да, так, 是, はい, 네...)
+- CI now runs the read-only commands on Windows in all 11 languages and checks their layout
+
+## v1.0.1
 
 - **`kz config` is now a screen**: pick the language and the color theme with the arrow keys
   (or a mouse click). A choice is saved at once and the screen switches to it right away.

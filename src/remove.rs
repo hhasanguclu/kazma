@@ -39,21 +39,6 @@ pub fn is_yes(answer: &str) -> bool {
     )
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn yes_in_every_language() {
-        for a in [
-            "y", "Yes", "evet", "Ja", "oui", "tak", "да", "так", "是", "はい", "네",
-        ] {
-            assert!(super::is_yes(a), "{a}");
-        }
-        for a in ["", "n", "no", "hayır", "nein", "нет"] {
-            assert!(!super::is_yes(a), "{a}");
-        }
-    }
-}
-
 /// Is `dir` in the user's PATH? Compared case-insensitively, ignoring trailing slashes.
 fn same_dir(a: &str, b: &Path) -> bool {
     let norm = |s: &str| s.trim().trim_end_matches(['\\', '/']).to_lowercase();
@@ -237,4 +222,19 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         )
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn yes_in_every_language() {
+        for a in [
+            "y", "Yes", "evet", "Ja", "oui", "tak", "да", "так", "是", "はい", "네",
+        ] {
+            assert!(super::is_yes(a), "{a}");
+        }
+        for a in ["", "n", "no", "hayır", "nein", "нет"] {
+            assert!(!super::is_yes(a), "{a}");
+        }
+    }
 }

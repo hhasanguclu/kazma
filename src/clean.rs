@@ -744,6 +744,12 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
 
     let mut total = Stats::default();
     let mut group = "";
+    let nw = measured
+        .iter()
+        .map(|(t, _)| ui::width(t.name))
+        .max()
+        .unwrap_or(0)
+        .max(34);
     for ((t, s), on) in measured.iter().zip(selection) {
         if t.group != group {
             group = t.group;
@@ -753,7 +759,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             ui::skip(&tr!(
                 "{} {:>10}  (skipped)",
                 "{} {:>10}  (atlandı)",
-                ui::pad(t.name, 34),
+                ui::pad(t.name, nw),
                 ui::human(s.bytes)
             ));
             continue;
@@ -770,7 +776,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         };
         ui::ok(&format!(
             "{} {:>10}{note}",
-            ui::pad(t.name, 34),
+            ui::pad(t.name, nw),
             ui::human(r.bytes)
         ));
         total.bytes += r.bytes;

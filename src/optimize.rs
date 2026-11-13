@@ -320,6 +320,14 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         }
     };
 
+    // the name column fits the longest task name in this language
+    let nw = runnable
+        .iter()
+        .chain(need_admin.iter())
+        .map(|t| ui::width(t.name))
+        .max()
+        .unwrap_or(0)
+        .max(34);
     ui::section(if dry {
         ui::t("Would run", "Çalıştırılacaklar")
     } else {
@@ -327,28 +335,28 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     });
     for (t, on) in runnable.iter().zip(selection) {
         if !on {
-            ui::skip(&tr!("{} (skipped)", "{} (atlandı)", ui::pad(t.name, 34)));
+            ui::skip(&tr!("{} (skipped)", "{} (atlandı)", ui::pad(t.name, nw)));
             continue;
         }
         if dry {
-            ui::ok(&format!("{} {}", ui::pad(t.name, 34), t.detail));
+            ui::ok(&format!("{} {}", ui::pad(t.name, nw), t.detail));
             continue;
         }
         ps::working(&tr!(
             "{} running...",
             "{} çalışıyor...",
-            ui::pad(t.name, 34)
+            ui::pad(t.name, nw)
         ));
         match execute(&t.action) {
             Ok(()) => {
                 if let Some((key, _)) = due_key(&t.action) {
                     mark_done(key);
                 }
-                ui::ok(&tr!("{} done      ", "{} tamam     ", ui::pad(t.name, 34)));
+                ui::ok(&tr!("{} done      ", "{} tamam     ", ui::pad(t.name, nw)));
                 oplog::record("optimize", t.name);
             }
             Err(e) => {
-                ui::warn(&format!("{} {e}", ui::pad(t.name, 34)));
+                ui::warn(&format!("{} {e}", ui::pad(t.name, nw)));
                 oplog::record("optimize", &format!("{} FAILED {e}", t.name));
             }
         }
@@ -359,7 +367,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             ui::skip(&tr!(
                 "{} (run kz from an elevated terminal)",
                 "{} (kz'yi yönetici terminalinde çalıştırın)",
-                ui::pad(t.name, 34)
+                ui::pad(t.name, nw)
             ));
         }
     }

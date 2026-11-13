@@ -180,11 +180,17 @@ pub fn run(only: Option<String>, dry: bool, no_restore_point: bool) -> anyhow::R
     };
     if dry {
         ui::section(ui::t("Available fixes", "Kullanılabilir düzeltmeler"));
+        let nw = chosen
+            .iter()
+            .map(|f| ui::width(name(f)))
+            .max()
+            .unwrap_or(0)
+            .max(46);
         for f in &chosen {
             println!(
                 "  {:<9} {} {}",
                 f.key,
-                ui::pad(name(f), 46),
+                ui::pad(name(f), nw),
                 ui::t(f.detail_en, f.detail_tr)
             );
         }
