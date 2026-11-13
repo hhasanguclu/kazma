@@ -339,7 +339,14 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             continue;
         }
         if dry {
-            ui::ok(&format!("{} {}", ui::pad(t.name, nw), t.detail));
+            ui::ok(&format!(
+                "{} {}",
+                ui::pad(t.name, nw),
+                ui::truncate_end(
+                    t.detail,
+                    ui::term_width().saturating_sub(7 + nw + 1).max(20)
+                )
+            ));
             continue;
         }
         ps::working(&tr!(

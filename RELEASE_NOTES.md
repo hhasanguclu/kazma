@@ -9,7 +9,17 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~5 MB exe. No installer required, no telemetry.
 
-## What's new in v1.0.2
+## What's new in v1.0.3
+
+Found by the new interface check on real Windows, in all 11 languages:
+
+- `clean`: the "would free" summary box keeps its right edge in Chinese, Japanese and Korean
+- `power`: known power plans are shown in your language, not only in the language of Windows
+- `startup --list`, `optimize`, `repair`, `health`: long command lines and descriptions are cut to
+  the terminal width instead of wrapping (`COLUMNS` sets a fixed width for scripts)
+- The interface check now blocks a release if any language has a layout problem
+
+## v1.0.2
 
 Interface audit in all 11 languages: every command and screen was captured at 100x32 and 80x24
 and checked automatically (box edges, column alignment with CJK counted as two columns, leftover

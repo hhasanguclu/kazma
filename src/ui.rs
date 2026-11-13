@@ -387,8 +387,11 @@ pub fn warn(msg: &str) {
 
 /// Columns of the terminal; 120 when there is none (output to a file or pipe).
 pub fn term_width() -> usize {
-    crossterm::terminal::size()
-        .map(|(w, _)| w as usize)
+    // COLUMNS wins, so a script or CI can ask for a fixed width
+    std::env::var("COLUMNS")
+        .ok()
+        .and_then(|c| c.trim().parse::<usize>().ok())
+        .or_else(|| crossterm::terminal::size().ok().map(|(w, _)| w as usize))
         .unwrap_or(120)
         .clamp(60, 240)
 }
