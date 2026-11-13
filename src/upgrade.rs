@@ -225,8 +225,8 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     let (mut ok, mut fail) = (0, 0);
     for (p, on) in pkgs.iter().zip(selection) {
         let line = format!(
-            "{:<36} {:>14} -> {:<14}",
-            ui::truncate(&p.name, 36),
+            "{} {:>14} -> {:<14}",
+            ui::pad(&ui::truncate(&p.name, 36), 36),
             ui::truncate(&p.version, 14),
             ui::truncate(&p.available, 14)
         );

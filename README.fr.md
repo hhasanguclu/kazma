@@ -23,7 +23,7 @@
 
 ---
 
-**kazma** (« pioche » en turc) est un unique `kz.exe` d'environ 2,7 MB qui nettoie, explore et entretient
+**kazma** (« pioche » en turc) est un unique `kz.exe` d'environ 5 MB qui nettoie, explore et entretient
 un PC Windows depuis le terminal, avec un look rétro d'écran vert. Pas d'installateur, pas de service en
 arrière-plan, pas de télémétrie. L'interface est disponible en 11 langues (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
 Українська, Русский) et démarre dans la langue d'affichage de Windows ; changez-la avec `kz config lang de`.

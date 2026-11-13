@@ -24,7 +24,7 @@ fn level_color(pct: f64) -> Color {
 
 fn meter(label: &str, pct: f64, extra: String, width: u16) -> Line<'static> {
     let bar_w = (width as usize)
-        .saturating_sub(label.len() + extra.len() + 12)
+        .saturating_sub(ui::width(label) + ui::width(&extra) + 12)
         .clamp(5, 60);
     Line::from(
         vec![Span::styled(
@@ -420,29 +420,44 @@ pub fn run() -> anyhow::Result<()> {
                 if let Some(lines) = &detail {
                     let area = f.area();
                     let w = area.width.saturating_sub(8).min(100);
-                    let h = (lines.len() as u16 + 4).min(area.height.saturating_sub(2));
+                    // long values (paths, command lines) wrap under the value column
+                    let kw = lines
+                        .iter()
+                        .map(|(k, _)| ui::width(k))
+                        .max()
+                        .unwrap_or(0)
+                        .max(15)
+                        + 1;
+                    let room = (w as usize).saturating_sub(3 + kw).max(10);
+                    let why = ui::t("why", "neden");
+                    let mut text: Vec<Line> = vec![];
+                    for (k, v) in lines {
+                        let color = if k.is_empty() || k == why {
+                            ui::hi()
+                        } else {
+                            ui::fg()
+                        };
+                        for (i, part) in ui::wrap(v, room).into_iter().enumerate() {
+                            let label = if i == 0 {
+                                ui::pad(k, kw)
+                            } else {
+                                " ".repeat(kw)
+                            };
+                            text.push(Line::from(vec![
+                                Span::styled(format!(" {label}"), Style::new().fg(ui::dim())),
+                                Span::styled(part, Style::new().fg(color)),
+                            ]));
+                        }
+                    }
+                    let h = (text.len() as u16 + 4).min(area.height.saturating_sub(2));
                     let r = Rect {
                         x: area.x + (area.width - w) / 2,
                         y: area.y + (area.height - h) / 2,
                         width: w,
                         height: h,
                     };
-                    let why = ui::t("why", "neden");
-                    let text: Vec<Line> = lines
-                        .iter()
-                        .map(|(k, v)| {
-                            Line::from(vec![
-                                Span::styled(format!(" {k:<16}"), Style::new().fg(ui::dim())),
-                                Span::styled(
-                                    v.clone(),
-                                    Style::new().fg(if k.is_empty() || k == why {
-                                        ui::hi()
-                                    } else {
-                                        ui::fg()
-                                    }),
-                                ),
-                            ])
-                        })
+                    let text: Vec<Line> = text
+                        .into_iter()
                         .chain([
                             Line::default(),
                             ui::keys(&[
@@ -453,12 +468,10 @@ pub fn run() -> anyhow::Result<()> {
                         .collect();
                     f.render_widget(ratatui::widgets::Clear, r);
                     f.render_widget(
-                        Paragraph::new(text)
-                            .wrap(ratatui::widgets::Wrap { trim: false })
-                            .block(ui::block(ui::t(
-                                "why is this running?",
-                                "bu neden çalışıyor?",
-                            ))),
+                        Paragraph::new(text).block(ui::block(ui::t(
+                            "why is this running?",
+                            "bu neden çalışıyor?",
+                        ))),
                         r,
                     );
                 }

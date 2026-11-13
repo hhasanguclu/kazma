@@ -76,13 +76,19 @@ fn plans() -> Vec<Plan> {
 fn show() {
     let list = plans();
     ui::section(ui::t("Power plans", "Güç planları"));
+    let nw = list
+        .iter()
+        .map(|p| ui::width(&p.name))
+        .max()
+        .unwrap_or(0)
+        .max(28);
     for p in &list {
         let key = PLANS
             .iter()
             .find(|(_, g, _, _)| *g == p.guid)
             .map(|(k, _, _, _)| *k)
             .unwrap_or("");
-        let line = format!("{:<28} {:<10} {}", p.name, key, p.guid);
+        let line = format!("{} {:<10} {}", ui::pad(&p.name, nw), key, p.guid);
         if p.active {
             ui::ok(&format!("{line}  <- {}", ui::t("active", "etkin")))
         } else {

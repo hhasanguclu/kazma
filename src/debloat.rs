@@ -360,7 +360,7 @@ pub fn run(dry: bool, restore: bool) -> anyhow::Result<()> {
     if dry || !ui::interactive() {
         ui::section(&tr!("Would change", "Değiştirilecekler"));
         for (_, _, label, detail, def) in &rows {
-            let line = format!("{label:<52} {detail}");
+            let line = format!("{} {detail}", ui::pad(label, 52));
             if *def { ui::ok(&line) } else { ui::skip(&line) }
         }
         println!();

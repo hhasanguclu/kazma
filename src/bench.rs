@@ -125,10 +125,26 @@ impl Rng {
     }
 }
 
+/// Width of the label column: the longest test name in the current language.
+fn label_w() -> usize {
+    [
+        ui::t("sequential read", "sıralı okuma"),
+        ui::t("sequential write", "sıralı yazma"),
+        ui::t("4K random read", "4K rastgele okuma"),
+        ui::t("4K random write", "4K rastgele yazma"),
+    ]
+    .iter()
+    .map(|l| ui::width(l))
+    .max()
+    .unwrap_or(16)
+    .max(16)
+}
+
 fn progress(label: &str, done: u64, total: u64, t: Instant) {
     let mbs = done as f64 / 1_048_576.0 / t.elapsed().as_secs_f64().max(0.001);
     print!(
-        "\r  {label:<16} {} {:>8.1} MB/s ",
+        "\r  {} {} {:>8.1} MB/s ",
+        ui::pad(label, label_w()),
         ui::cbar(done as f64 / total.max(1) as f64, 24),
         mbs
     );
@@ -202,7 +218,7 @@ pub fn measure(file: &Path, size_mb: u64, show: bool) -> std::io::Result<Result4
     if show {
         println!(
             "  {} {:>8.0} IOPS",
-            ui::pad(ui::t("4K random read", "4K rastgele okuma"), 16),
+            ui::pad(ui::t("4K random read", "4K rastgele okuma"), label_w()),
             rnd_read_iops
         );
     }
@@ -222,7 +238,7 @@ pub fn measure(file: &Path, size_mb: u64, show: bool) -> std::io::Result<Result4
     if show {
         println!(
             "  {} {:>8.0} IOPS",
-            ui::pad(ui::t("4K random write", "4K rastgele yazma"), 16),
+            ui::pad(ui::t("4K random write", "4K rastgele yazma"), label_w()),
             rnd_write_iops
         );
     }
@@ -298,7 +314,8 @@ pub fn run(dir: Option<PathBuf>, size_mb: u64) -> anyhow::Result<()> {
     ui::section(ui::t("Result", "Sonuç"));
     for (name, mbs, extra) in &rows {
         println!(
-            "  {name:<20} {:>9.1} MB/s  {}  {extra}",
+            "  {} {:>9.1} MB/s  {}  {extra}",
+            ui::pad(name, label_w() + 4),
             mbs,
             ui::cbar(mbs / top, 30)
         );

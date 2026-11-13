@@ -148,8 +148,18 @@ pub fn render(
             let inner = bw - 2;
             let mut put = |line: usize, text: &str| {
                 if y0 + line < y1 - 1 {
-                    for (k, ch) in text.chars().take(inner).enumerate() {
-                        grid[y0 + line][x0 + 1 + k] = (ch, idx);
+                    // a CJK character takes two cells; the second one is a '\0' placeholder
+                    let mut col = 0;
+                    for ch in text.chars() {
+                        let w = ui::width(ch.encode_utf8(&mut [0; 4])).max(1);
+                        if col + w > inner {
+                            break;
+                        }
+                        grid[y0 + line][x0 + 1 + col] = (ch, idx);
+                        if w == 2 {
+                            grid[y0 + line][x0 + 2 + col] = ('\0', idx);
+                        }
+                        col += w;
                     }
                 }
             };
@@ -182,7 +192,9 @@ pub fn render(
                     flush(&mut spans, &mut cur, cur_owner);
                     cur_owner = owner;
                 }
-                cur.push(c);
+                if c != '\0' {
+                    cur.push(c);
+                }
             }
             flush(&mut spans, &mut cur, cur_owner);
             Line::from(spans)
@@ -193,6 +205,21 @@ pub fn render(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Wide (CJK) names must not push the box edges out of line.
+    #[test]
+    fn wide_names_keep_rows_the_same_width() {
+        let items = vec![
+            ("写真フォルダー".to_string(), 600),
+            ("ドキュメント".to_string(), 300),
+            ("x".to_string(), 100),
+        ];
+        let lines = render(&items, None, 40, 10);
+        for l in &lines {
+            let text: String = l.spans.iter().map(|s| s.content.as_ref()).collect();
+            assert_eq!(ui::width(&text), 40, "{text}");
+        }
+    }
 
     #[test]
     fn layout_covers_area_proportionally() {

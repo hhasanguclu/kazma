@@ -272,6 +272,15 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
             "{} başlangıç kaydı",
             entries.len()
         ));
+        let sw = ui::width(&tr!("on ", "açık"))
+            .max(ui::width(&tr!("off", "kapalı")))
+            .max(6);
+        let srcw = entries
+            .iter()
+            .map(|e| ui::width(&e.source()))
+            .max()
+            .unwrap_or(0)
+            .max(18);
         for e in &entries {
             let state = if e.enabled {
                 tr!("on ", "açık")
@@ -284,9 +293,10 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
                 ""
             };
             let line = format!(
-                "{state:<6} {:<32} {:<18} {}{broken}",
-                ui::truncate(&e.name, 32),
-                e.source(),
+                "{} {} {} {}{broken}",
+                ui::pad(&state, sw),
+                ui::pad(&ui::truncate(&e.name, 32), 32),
+                ui::pad(&e.source(), srcw),
                 ui::truncate(&e.command, 60)
             );
             if !broken.is_empty() {

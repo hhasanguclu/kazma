@@ -159,6 +159,13 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
         )
     );
     ui::section(ui::t("By type", "Türe göre"));
+    // the name column fits the longest category name in this language
+    let name_w = order
+        .iter()
+        .map(|&i| ui::width(category_name(i)))
+        .max()
+        .unwrap_or(0)
+        .max(28);
     for i in order {
         let (b, c) = cats[i];
         let pct = if total > 0 {
@@ -167,8 +174,8 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
             0.0
         };
         println!(
-            "  {:<28} {:>10} {:>5.1}%  {}  {}",
-            category_name(i),
+            "  {} {:>10} {:>5.1}%  {}  {}",
+            ui::pad(category_name(i), name_w),
             ui::human(b),
             pct,
             ui::cbar(b as f64 / top as f64, 24),
@@ -185,8 +192,8 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
             format!(".{ext}")
         };
         println!(
-            "  {:<12} {:>10}  {:>8}  {}",
-            name,
+            "  {} {:>10}  {:>8}  {}",
+            ui::pad(&name, 12),
             ui::human(*b),
             c,
             ui::cbar(*b as f64 / top as f64, 24)

@@ -23,7 +23,7 @@
 
 ---
 
-**kazma** (Turkish for *pickaxe*) is a single ~2.7 MB `kz.exe` that cleans, explores and maintains a
+**kazma** (Turkish for *pickaxe*) is a single ~5 MB `kz.exe` that cleans, explores and maintains a
 Windows PC from the terminal, with a retro green-screen look. No installer, no background service,
 no telemetry. The interface is available in 11 languages (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
 Українська, Русский) and starts in your Windows display language; change it in `kz config` (arrow keys) or with `kz config lang de`.

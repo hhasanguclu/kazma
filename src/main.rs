@@ -547,7 +547,7 @@ fn menu_row(i: usize, width: usize, tr_mode: bool) -> ListItem<'static> {
         } else {
             desc.to_uppercase()
         };
-        let rule = width.saturating_sub(title.chars().count() + 4);
+        let rule = width.saturating_sub(ui::width(&title) + 4);
         return ListItem::new(Line::from(vec![
             Span::styled(
                 format!("  {title} "),

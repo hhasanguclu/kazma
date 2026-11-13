@@ -155,18 +155,29 @@ fn info() -> anyhow::Result<()> {
     let adapters: Vec<Adapter> = ps::powershell_json(INFO, &[])?;
     let public = ps::text(PUBLIC_IP, &[]).unwrap_or_default();
     println!("{:60}", "");
+    // one label column for the whole screen, as wide as its longest label
+    let lw = [
+        ui::t("gateway", "ağ geçidi"),
+        ui::t("link speed", "bağlantı"),
+        ui::t("public IP", "genel IP"),
+    ]
+    .iter()
+    .map(|l| ui::width(l))
+    .max()
+    .unwrap_or(0)
+    .max(12);
     for a in &adapters {
         ui::section(&format!("{}  ({})", a.name, a.desc));
-        println!("  {:<12} {}", "IP", a.ip);
+        println!("  {} {}", ui::pad("IP", lw), a.ip);
         println!(
             "  {} {}",
-            ui::pad(ui::t("gateway", "ağ geçidi"), 12),
+            ui::pad(ui::t("gateway", "ağ geçidi"), lw),
             a.gateway
         );
-        println!("  {:<12} {}", "DNS", a.dns);
+        println!("  {} {}", ui::pad("DNS", lw), a.dns);
         println!(
             "  {} {}",
-            ui::pad(ui::t("link speed", "bağlantı"), 12),
+            ui::pad(ui::t("link speed", "bağlantı"), lw),
             a.speed
         );
     }
@@ -179,7 +190,7 @@ fn info() -> anyhow::Result<()> {
     ui::section(ui::t("Internet", "İnternet"));
     println!(
         "  {} {}",
-        ui::pad(ui::t("public IP", "genel IP"), 12),
+        ui::pad(ui::t("public IP", "genel IP"), lw),
         if public.trim().is_empty() {
             "?"
         } else {
@@ -189,8 +200,8 @@ fn info() -> anyhow::Result<()> {
     for (name, ip) in [("Cloudflare", "1.1.1.1"), ("Google", "8.8.8.8")] {
         match tcp_latency(ip, 3) {
             Some(ms) => println!(
-                "  {:<12} {:>6.1} ms  {}",
-                name,
+                "  {} {:>6.1} ms  {}",
+                ui::pad(name, 12),
                 ms,
                 ui::cbar((ms / 200.0).min(1.0), 20)
             ),
@@ -258,8 +269,8 @@ fn dns_bench() -> anyhow::Result<()> {
             String::new()
         };
         let line = format!(
-            "{:<22} {:<16} {ms}  {}{fails}",
-            r.name,
+            "{} {:<16} {ms}  {}{fails}",
+            ui::pad(&r.name, 22),
             r.server,
             ui::cbar(r.ms.max(0.0) / worst, 20)
         );
@@ -409,7 +420,11 @@ fn wifi(show: bool) -> anyhow::Result<()> {
         } else {
             "********".into()
         };
-        println!("  {:<32} {:<14} {pw}", ui::truncate(name, 32), auth);
+        println!(
+            "  {} {} {pw}",
+            ui::pad(&ui::truncate(name, 32), 32),
+            ui::pad(auth, 14)
+        );
     }
     if !show {
         println!(

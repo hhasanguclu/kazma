@@ -292,12 +292,23 @@ pub fn run(dry: bool) -> anyhow::Result<()> {
         return Ok(());
     }
     let admin = sys::is_admin();
+    let nw = list
+        .iter()
+        .map(|i| ui::width(i.name))
+        .max()
+        .unwrap_or(0)
+        .max(46);
     if dry || !admin || !ui::interactive() {
         ui::section(ui::t("Found", "Bulunanlar"));
         let mut total = 0;
         for i in &list {
             total += i.size;
-            let line = format!("{:<46} {:>10}  {}", i.name, ui::human(i.size), i.detail);
+            let line = format!(
+                "{} {:>10}  {}",
+                ui::pad(i.name, nw),
+                ui::human(i.size),
+                i.detail
+            );
             if i.default_on {
                 ui::ok(&line)
             } else {
@@ -352,10 +363,10 @@ pub fn run(dry: bool) -> anyhow::Result<()> {
         ps::working(&tr!("{} ...", "{} ...", i.name));
         match apply(&i.action) {
             Ok(r) => {
-                ui::ok(&format!("{} {r}          ", ui::pad(i.name, 46)));
+                ui::ok(&format!("{} {r}          ", ui::pad(i.name, nw)));
                 oplog::record("deepclean", &format!("{} ({r})", i.name));
             }
-            Err(e) => ui::warn(&format!("{} {e}", ui::pad(i.name, 46))),
+            Err(e) => ui::warn(&format!("{} {e}", ui::pad(i.name, nw))),
         }
     }
     println!();

@@ -181,11 +181,11 @@ fn list_installed() -> anyhow::Result<()> {
         let age = age_years(&d.date);
         let age_s = age.map(|a| format!("{a}y")).unwrap_or_else(|| "?".into());
         let line = format!(
-            "{:<10} {:<5} {:<38} {:<18} {}",
+            "{:<10} {:<5} {} {} {}",
             d.date,
             age_s,
-            ui::truncate(&d.device, 38),
-            ui::truncate(&d.version, 18),
+            ui::pad(&ui::truncate(&d.device, 38), 38),
+            ui::pad(&ui::truncate(&d.version, 18), 18),
             ui::truncate(&d.provider, 24)
         );
         if age.unwrap_or(0) >= 4 {

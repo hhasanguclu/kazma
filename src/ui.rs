@@ -321,6 +321,43 @@ pub fn pad(s: &str, n: usize) -> String {
     format!("{s}{}", " ".repeat(n.saturating_sub(width(s))))
 }
 
+/// Break text into lines of at most `max` columns (CJK-aware), at spaces when it can.
+pub fn wrap(text: &str, max: usize) -> Vec<String> {
+    let max = max.max(4);
+    let mut out = vec![];
+    let mut line = String::new();
+    for word in text.split_inclusive(' ') {
+        if width(&line) + width(word.trim_end()) > max && !line.is_empty() {
+            out.push(line.trim_end().to_string());
+            line.clear();
+        }
+        // a word longer than a line: cut it
+        let mut w = word;
+        while width(w.trim_end()) > max {
+            let cut = truncate_end_raw(w, max);
+            out.push(cut.to_string());
+            w = &w[cut.len()..];
+        }
+        line.push_str(w);
+    }
+    if !line.trim().is_empty() || out.is_empty() {
+        out.push(line.trim_end().to_string());
+    }
+    out
+}
+
+/// The longest prefix of `s` that fits in `max` columns.
+fn truncate_end_raw(s: &str, max: usize) -> &str {
+    let mut w = 0;
+    for (i, c) in s.char_indices() {
+        w += cw(c);
+        if w > max {
+            return &s[..i];
+        }
+    }
+    s
+}
+
 /// Cut to `max` columns and pad with spaces to exactly `max` columns.
 pub fn fit(s: &str, max: usize) -> String {
     let t = truncate_end(s, max);
@@ -659,6 +696,16 @@ pub fn truncate(s: &str, max: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn wraps_by_display_width() {
+        assert_eq!(wrap("aaa bbb ccc", 7), vec!["aaa bbb", "ccc"]);
+        assert_eq!(wrap("/very/long/path/without/spaces", 10).len(), 3);
+        for l in wrap("中文字符很长的一段文本没有空格", 9) {
+            assert!(width(&l) <= 9, "{l}");
+        }
+        assert_eq!(wrap("", 10), vec![""]);
+    }
 
     #[test]
     fn search_box() {

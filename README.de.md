@@ -23,7 +23,7 @@
 
 ---
 
-**kazma** (türkisch für *Spitzhacke*) ist eine einzelne, ca. 2,7 MB große `kz.exe`, die einen Windows-PC
+**kazma** (türkisch für *Spitzhacke*) ist eine einzelne, ca. 5 MB große `kz.exe`, die einen Windows-PC
 vom Terminal aus bereinigt, durchleuchtet und wartet – im Retro-Look eines grünen Monitors. Kein Installer,
 kein Hintergrunddienst, keine Telemetrie. Die Oberfläche gibt es in 11 Sprachen (English, Türkçe, 简体中文, 繁體中文, 日本語, 한국어, Deutsch, Français, Polski,
 Українська, Русский); sie startet in der Anzeigesprache von Windows und lässt sich mit `kz config lang de` ändern.
