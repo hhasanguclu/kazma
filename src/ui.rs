@@ -138,7 +138,7 @@ pub fn keys(pairs: &[(&str, &str)]) -> Line<'static> {
     Line::from(spans)
 }
 
-fn ct(c: Color) -> crossterm::style::Color {
+pub fn ct(c: Color) -> crossterm::style::Color {
     use crossterm::style::Color as C;
     match c {
         Color::Green => C::Green,

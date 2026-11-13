@@ -3,6 +3,7 @@
 //! and every change can be undone from here or from Task Manager.
 
 use crate::{oplog, ps, tr, ui};
+use crossterm::style::Stylize;
 use serde::Deserialize;
 use std::path::PathBuf;
 
@@ -292,21 +293,23 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
             } else {
                 ""
             };
+            // the command gets what is left of the terminal width
+            let room = ui::term_width().saturating_sub(7 + sw + 1 + 32 + 1 + srcw + 1);
             let line = format!(
-                "{} {} {} {}{broken}",
+                "{} {} {} {}",
                 ui::pad(&state, sw),
                 ui::pad(&ui::truncate(&e.name, 32), 32),
                 ui::pad(&e.source(), srcw),
-                // the command gets what is left of the terminal width
-                ui::truncate(
-                    &e.command,
-                    ui::term_width()
-                        .saturating_sub(7 + sw + 1 + 32 + 1 + srcw + 1 + ui::width(broken))
-                        .max(20)
-                )
+                ui::truncate(&e.command, room.max(10))
             );
             if !broken.is_empty() {
-                ui::warn(&line)
+                ui::warn(&line);
+                // why it is flagged, on its own line under the name
+                println!(
+                    "  {}{}",
+                    " ".repeat(5 + sw + 1),
+                    broken.trim_start().with(ui::ct(ui::warn_c()))
+                );
             } else if e.enabled {
                 ui::ok(&line)
             } else {
