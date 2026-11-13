@@ -1,3 +1,4 @@
 /target
 *.exe
 site/screenshots/
+__pycache__/
