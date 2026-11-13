@@ -82,7 +82,7 @@ fn show() {
             .find(|(_, g, _, _)| *g == p.guid)
             .map(|(k, _, _, _)| *k)
             .unwrap_or("");
-        let line = format!("{:<28} {:<10} {}", p.name, key, p.guid);
+        let line = format!("{} {:<10} {}", ui::pad(&p.name, 28), key, p.guid);
         if p.active {
             ui::ok(&format!("{line}  <- {}", ui::t("active", "etkin")))
         } else {

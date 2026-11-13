@@ -587,7 +587,7 @@ fn draw(f: &mut ratatui::Frame, app: &mut App) {
                 ui::truncate(&name, name_w)
             };
             let mut spans = vec![Span::styled(
-                format!(" {:<name_w$}", shown_name),
+                format!(" {}", ui::pad(&shown_name, name_w)),
                 name_style,
             )];
             match e.size {

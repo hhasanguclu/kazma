@@ -370,13 +370,17 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     );
     for (i, on) in all.iter().zip(selection) {
         if !on {
-            ui::skip(&format!("{:<44} {}", i.name, tr!("(skipped)", "(atlandı)")));
+            ui::skip(&format!(
+                "{} {}",
+                ui::pad(&i.name, 44),
+                tr!("(skipped)", "(atlandı)")
+            ));
             continue;
         }
         if let Some(p) = running(i.blocked_by) {
             ui::warn(&format!(
-                "{:<44} {}",
-                i.name,
+                "{} {}",
+                ui::pad(&i.name, 44),
                 tr!(
                     "({p} is running, close it first)",
                     "({p} açık, önce kapatın)"

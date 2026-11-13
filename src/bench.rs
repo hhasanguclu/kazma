@@ -128,7 +128,8 @@ impl Rng {
 fn progress(label: &str, done: u64, total: u64, t: Instant) {
     let mbs = done as f64 / 1_048_576.0 / t.elapsed().as_secs_f64().max(0.001);
     print!(
-        "\r  {label:<16} {} {:>8.1} MB/s ",
+        "\r  {} {} {:>8.1} MB/s ",
+        ui::pad(label, 16),
         ui::cbar(done as f64 / total.max(1) as f64, 24),
         mbs
     );
@@ -298,7 +299,8 @@ pub fn run(dir: Option<PathBuf>, size_mb: u64) -> anyhow::Result<()> {
     ui::section(ui::t("Result", "Sonuç"));
     for (name, mbs, extra) in &rows {
         println!(
-            "  {name:<20} {:>9.1} MB/s  {}  {extra}",
+            "  {} {:>9.1} MB/s  {}  {extra}",
+            ui::pad(name, 20),
             mbs,
             ui::cbar(mbs / top, 30)
         );

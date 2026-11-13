@@ -596,8 +596,8 @@ pub fn run(dry: bool, quiet: bool) -> anyhow::Result<()> {
         ));
         for p in &progs {
             println!(
-                "  {:<44} {:<16} {:>10}  {}",
-                ui::truncate(&p.name, 44),
+                "  {} {:<16} {:>10}  {}",
+                ui::pad(&ui::truncate(&p.name, 44), 44),
                 ui::truncate(&p.version, 16),
                 if p.size_kb > 0 {
                     ui::human(p.size_kb as u64 * 1024)

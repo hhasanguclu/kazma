@@ -90,7 +90,7 @@ pub fn run(key: Option<String>, value: Option<String>) -> anyhow::Result<()> {
             let m = load();
             for (k, hint) in KEYS {
                 let v = m.get(k).cloned().unwrap_or_else(|| "auto".into());
-                println!("  {k:<8} = {v:<8}  ({hint})");
+                println!("  {k:<8} = {}  ({hint})", ui::pad(&v, 8));
             }
             println!();
             println!(

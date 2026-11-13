@@ -284,9 +284,10 @@ pub fn run(list_only: bool) -> anyhow::Result<()> {
                 ""
             };
             let line = format!(
-                "{state:<6} {:<32} {:<18} {}{broken}",
-                ui::truncate(&e.name, 32),
-                e.source(),
+                "{} {} {} {}{broken}",
+                ui::pad(&state, 6),
+                ui::pad(&ui::truncate(&e.name, 32), 32),
+                ui::pad(&e.source(), 18),
                 ui::truncate(&e.command, 60)
             );
             if !broken.is_empty() {

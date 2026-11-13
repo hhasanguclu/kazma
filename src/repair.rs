@@ -182,9 +182,9 @@ pub fn run(only: Option<String>, dry: bool, no_restore_point: bool) -> anyhow::R
         ui::section(ui::t("Available fixes", "Kullanılabilir düzeltmeler"));
         for f in &chosen {
             println!(
-                "  {:<9} {:<46} {}",
+                "  {:<9} {} {}",
                 f.key,
-                name(f),
+                ui::pad(name(f), 46),
                 ui::t(f.detail_en, f.detail_tr)
             );
         }

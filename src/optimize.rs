@@ -327,24 +327,28 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     });
     for (t, on) in runnable.iter().zip(selection) {
         if !on {
-            ui::skip(&tr!("{:<34} (skipped)", "{:<34} (atlandı)", t.name));
+            ui::skip(&tr!("{} (skipped)", "{} (atlandı)", ui::pad(t.name, 34)));
             continue;
         }
         if dry {
-            ui::ok(&format!("{:<34} {}", t.name, t.detail));
+            ui::ok(&format!("{} {}", ui::pad(t.name, 34), t.detail));
             continue;
         }
-        ps::working(&tr!("{:<34} running...", "{:<34} çalışıyor...", t.name));
+        ps::working(&tr!(
+            "{} running...",
+            "{} çalışıyor...",
+            ui::pad(t.name, 34)
+        ));
         match execute(&t.action) {
             Ok(()) => {
                 if let Some((key, _)) = due_key(&t.action) {
                     mark_done(key);
                 }
-                ui::ok(&tr!("{:<34} done      ", "{:<34} tamam     ", t.name));
+                ui::ok(&tr!("{} done      ", "{} tamam     ", ui::pad(t.name, 34)));
                 oplog::record("optimize", t.name);
             }
             Err(e) => {
-                ui::warn(&format!("{:<34} {e}", t.name));
+                ui::warn(&format!("{} {e}", ui::pad(t.name, 34)));
                 oplog::record("optimize", &format!("{} FAILED {e}", t.name));
             }
         }
@@ -353,9 +357,9 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         ui::section(ui::t("Needs administrator", "Yönetici gerekli"));
         for t in &need_admin {
             ui::skip(&tr!(
-                "{:<34} (run kz from an elevated terminal)",
-                "{:<34} (kz'yi yönetici terminalinde çalıştırın)",
-                t.name
+                "{} (run kz from an elevated terminal)",
+                "{} (kz'yi yönetici terminalinde çalıştırın)",
+                ui::pad(t.name, 34)
             ));
         }
     }

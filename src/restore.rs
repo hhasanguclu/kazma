@@ -96,10 +96,10 @@ pub fn run(action: Option<String>, desc: Option<String>) -> anyhow::Result<()> {
                 ));
                 for p in &points {
                     println!(
-                        "  {:>4}  {}  {:<18} {}",
+                        "  {:>4}  {}  {} {}",
                         p.seq,
                         p.when,
-                        kind_name(p.kind),
+                        ui::pad(kind_name(p.kind), 18),
                         p.desc
                     );
                 }

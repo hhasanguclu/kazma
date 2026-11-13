@@ -167,8 +167,8 @@ fn show(rows: &[(String, u64, u64)], method: &str, secs: f64) {
             0.0
         };
         println!(
-            "  {:<28} {:>10} {:>5.1}%  {}  {}",
-            category_name(i),
+            "  {} {:>10} {:>5.1}%  {}  {}",
+            ui::pad(category_name(i), 28),
             ui::human(b),
             pct,
             ui::cbar(b as f64 / top as f64, 24),

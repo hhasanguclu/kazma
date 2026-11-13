@@ -24,7 +24,7 @@ fn level_color(pct: f64) -> Color {
 
 fn meter(label: &str, pct: f64, extra: String, width: u16) -> Line<'static> {
     let bar_w = (width as usize)
-        .saturating_sub(label.len() + extra.len() + 12)
+        .saturating_sub(ui::width(label) + ui::width(&extra) + 12)
         .clamp(5, 60);
     Line::from(
         vec![Span::styled(
@@ -432,7 +432,10 @@ pub fn run() -> anyhow::Result<()> {
                         .iter()
                         .map(|(k, v)| {
                             Line::from(vec![
-                                Span::styled(format!(" {k:<16}"), Style::new().fg(ui::dim())),
+                                Span::styled(
+                                    format!(" {}", ui::pad(k, 16)),
+                                    Style::new().fg(ui::dim()),
+                                ),
                                 Span::styled(
                                     v.clone(),
                                     Style::new().fg(if k.is_empty() || k == why {

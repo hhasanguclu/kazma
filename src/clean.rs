@@ -202,7 +202,7 @@ pub fn rules(edit: bool) -> anyhow::Result<()> {
         let age = hours
             .map(|h| tr!("  older than {h} h", "  {h} saatten eski"))
             .unwrap_or_default();
-        let line = format!("{name:<24} {}{age}", path.display());
+        let line = format!("{} {}{age}", ui::pad(&name, 24), path.display());
         if !path.is_dir() {
             ui::warn(&tr!("{line}  (folder not found)", "{line}  (klasör yok)"));
         } else if !fsutil::is_safe_target(&path) {
@@ -751,9 +751,9 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         }
         if !on {
             ui::skip(&tr!(
-                "{:<34} {:>10}  (skipped)",
-                "{:<34} {:>10}  (atlandı)",
-                t.name,
+                "{} {:>10}  (skipped)",
+                "{} {:>10}  (atlandı)",
+                ui::pad(t.name, 34),
                 ui::human(s.bytes)
             ));
             continue;
