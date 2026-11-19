@@ -1362,7 +1362,7 @@ function KzDelKey($p) {
   if (-not (Test-Path -LiteralPath $p)) { return }
   Remove-Item -LiteralPath $p -Recurse -Force
   # the parent kazma created along with it, if nothing else is in it
-  $up = Get-Item -LiteralPath (Split-Path -LiteralPath $p -Parent) -ErrorAction SilentlyContinue
+  $up = Get-Item -LiteralPath $p.Substring(0, $p.LastIndexOf('\')) -ErrorAction SilentlyContinue
   if ($up -and $up.SubKeyCount -eq 0 -and $up.ValueCount -eq 0) { Remove-Item -LiteralPath $up.PSPath -Force }
 }
 function KzTaskOff($t) {
