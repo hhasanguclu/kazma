@@ -147,11 +147,13 @@ kz installer             old setup files in Downloads / Desktop
 kz dupes [paths]         duplicate files
 kz empty [paths]         empty folders, broken shortcuts, 0-byte files
 kz privacy               usage traces
+kz privacy keep          pick the sites whose cookies stay
 kz uninstall             remove programs + leftovers
 kz upgrade               update installed programs (winget)
 kz drivers               driver updates from Windows Update
 kz startup               startup programs on / off
 kz debloat               promo apps and Windows ads
+kz tweak                 Windows settings on / off (privacy, AI, Edge, Explorer...), reversible
 kz backup [folder]       new-PC kit;  kz backup restore FOLDER
 kz health                system health report
 kz status                live monitor + process manager
@@ -164,12 +166,17 @@ kz bench [path]          disk speed test
 kz schedule weekly       automatic cleaning
 kz net                   ip, latency, dns, speed test, wifi
 kz ports [filter]        who listens on which port
+kz lock <path>           which program has a file open
+kz awake [minutes]       keep the PC awake
+kz cleanscreen [sec]     black screen for wiping the display
 kz rules                 your own clean rules
+kz winapp2 update        cleaning rules for 4,000+ programs (winapp2.ini)
 kz context install       Explorer right-click menu
 kz config lang tr        language / theme
 kz update                update kazma
 kz whitelist             paths kazma must never delete
 kz history               what kazma has done
+kz remove                uninstall kazma
 ```
 
 Every command that deletes or installs supports `--dry-run` (`-n`) to preview first.
@@ -197,4 +204,6 @@ If you only downloaded `kz.exe`, just delete it (and `%LOCALAPPDATA%\kazma`, whi
 - Drive roots, your profile, `Windows`, `Program Files` and `AppData` are hard-blocked.
 - `installer`, `uninstall` leftovers and `analyze` send files to the Recycle Bin.
 - Drivers only come from Windows Update, never from third-party sites.
+- `tweak` saves every registry value before changing it; `kz tweak undo` writes exactly that value back.
+- winapp2.ini is downloaded only on request; its registry rules are not used and no rule may empty a top-level folder.
 - Paths in the whitelist are never touched. Every action is logged (`kz history`).
