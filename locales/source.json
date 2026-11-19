@@ -1296,6 +1296,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "{} winapp2 entries  (run kz from an elevated terminal)",
+  "tr": "{} winapp2 kaydı  (kz'yi yönetici terminalinde çalıştırın)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
   "en": "would free",
   "tr": "kazanılacak",
   "kind": "plain",

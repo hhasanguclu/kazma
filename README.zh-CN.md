@@ -34,7 +34,7 @@ Windows 电脑，带有复古的绿屏风格。无需安装程序，没有后台
 
 | | |
 |---|---|
-| **清理** | 100 多种缓存、临时文件、日志和回收站，包括 AI 工具、游戏启动器和显卡驱动残留（`clean`）· Windows.old、升级文件、内存转储、休眠文件、旧的还原点（`deepclean`）· 带树状图和最大文件视图的磁盘浏览器（`analyze`）· 文件类型（`types`）· 项目构建产物（`purge`）· 旧安装包（`installer`）· 重复文件（`dupes`）· 空文件夹和失效快捷方式（`empty`）· 使用痕迹（`privacy`） |
+| **清理** | 100 多种缓存、临时文件、日志和回收站，包括 AI 工具、游戏启动器和显卡驱动残留（`clean`）· 来自 winapp2.ini 的 4,000 多个程序的额外规则（`winapp2`）· Windows.old、升级文件、内存转储、休眠文件、旧的还原点（`deepclean`）· 带树状图和最大文件视图的磁盘浏览器（`analyze`）· 文件类型（`types`）· 项目构建产物（`purge`）· 旧安装包（`installer`）· 重复文件（`dupes`）· 空文件夹和失效快捷方式（`empty`）· 使用痕迹（`privacy`） |
 | **程序和驱动** | 卸载程序及其残留（`uninstall`）· 用 winget 更新程序（`upgrade`）· 来自 Windows 更新的驱动更新（`drivers`）· 启动程序（`startup`）· 推广应用和 Windows 广告（`debloat`）· 隐私、AI、Edge、资源管理器、任务栏和更新相关的 Windows 设置（`tweak`）· 换新电脑备份（`backup`） |
 | **系统** | 健康报告（`health`）· 含 GPU 和电池信息的实时监视，以及能解释进程为何运行的进程管理器（`status`）· 维护：DNS、图标缓存、SSD TRIM、DISM、SFC（`optimize`）· 修复：网络、Windows 更新、应用商店、系统文件（`repair`）· 电源计划和电池（`power`）· 还原点（`restore`）· HTML 报告（`report`）· 磁盘速度测试（`bench`）· 自动清理（`schedule`） |
 | **网络** | IP、延迟、DNS 基准测试与切换、测速、已保存的 Wi-Fi（`net`）· 哪个程序占用哪个端口（`ports`） |

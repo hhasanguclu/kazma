@@ -34,7 +34,7 @@ Windows 電腦，帶著復古的綠色螢幕風格。不需安裝程式、沒有
 
 | | |
 |---|---|
-| **清理** | 100 多種快取、暫存檔、記錄檔與資源回收筒，包括 AI 工具、遊戲啟動器與顯示卡驅動程式殘留檔案（`clean`）· Windows.old、升級檔、記憶體傾印、休眠檔、舊的還原點（`deepclean`）· 附樹狀圖與最大檔案檢視的磁碟探索器（`analyze`）· 檔案類型（`types`）· 專案建置產物（`purge`）· 舊安裝檔（`installer`）· 重複檔案（`dupes`）· 空資料夾與失效捷徑（`empty`）· 使用痕跡（`privacy`） |
+| **清理** | 100 多種快取、暫存檔、記錄檔與資源回收筒，包括 AI 工具、遊戲啟動器與顯示卡驅動程式殘留檔案（`clean`）· 來自 winapp2.ini 的 4,000 多個程式的額外規則（`winapp2`）· Windows.old、升級檔、記憶體傾印、休眠檔、舊的還原點（`deepclean`）· 附樹狀圖與最大檔案檢視的磁碟探索器（`analyze`）· 檔案類型（`types`）· 專案建置產物（`purge`）· 舊安裝檔（`installer`）· 重複檔案（`dupes`）· 空資料夾與失效捷徑（`empty`）· 使用痕跡（`privacy`） |
 | **程式與驅動程式** | 解除安裝程式及其殘留檔案（`uninstall`）· 用 winget 更新程式（`upgrade`）· 從 Windows Update 更新驅動程式（`drivers`）· 啟動應用程式（`startup`）· 推廣應用程式與 Windows 廣告（`debloat`）· 隱私權、AI、Edge、檔案總管、工作列與更新相關的 Windows 設定（`tweak`）· 搬到新電腦的備份（`backup`） |
 | **系統** | 健康報告（`health`）· 含 GPU 與電池的即時監控，以及會說明處理程序為何在執行的處理程序管理員（`status`）· 維護：DNS、圖示快取、SSD TRIM、DISM、SFC（`optimize`）· 修復：網路、Windows Update、Store、系統檔案（`repair`）· 電源計劃與電池（`power`）· 還原點（`restore`）· HTML 報告（`report`）· 磁碟速度測試（`bench`）· 自動清理（`schedule`） |
 | **網路** | IP、延遲、DNS 效能比較與切換、測速、已儲存的 Wi-Fi（`net`）· 哪個程式使用哪個連接埠（`ports`） |

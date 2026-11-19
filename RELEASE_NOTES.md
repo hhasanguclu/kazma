@@ -9,7 +9,24 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~5 MB exe. No installer required, no telemetry.
 
-## What's new in v1.0.3
+## What's new in v1.1.0
+
+- **`kz tweak`**: 62 Windows settings as switches, in 10 groups: privacy (telemetry, crash
+  reports, activity history, location...), ads, AI (Copilot, Recall, Click to Do, AI in Notepad,
+  Paint and Edge), Edge, File Explorer (file extensions, classic right-click menu...), taskbar,
+  look and feel, gaming, system and Windows Update. Before a change kazma saves the values that
+  were there, and `kz tweak undo` puts exactly those back. Settings that need administrator rights
+  get a restore point first. `kz tweak list`, `apply ID`, `undo ID`, `undo all`.
+- **winapp2.ini**: `kz winapp2 update` downloads the community rules for 4,000+ programs
+  (github.com/MoscaDotTo/Winapp2); `kz clean` then lists the ones found on this PC and remembers
+  what you pick. Only file rules are used, and no rule may empty a top-level folder.
+- **Cookies to keep**: `kz privacy keep` picks the sites whose cookies stay (or
+  `kz privacy keep add github.com`). `kz privacy` then removes all other cookies and keeps you
+  signed in there. Works for Chrome, Edge, Brave, Vivaldi and Firefox, through the SQLite that
+  ships with Windows.
+- Checklists can show a longer explanation of the selected row
+
+## v1.0.3
 
 Found by the new interface check on real Windows, in all 11 languages:
 

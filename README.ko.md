@@ -34,7 +34,7 @@
 
 | | |
 |---|---|
-| **정리** | AI 도구, 게임 런처, GPU 드라이버 잔여 파일을 포함한 100가지 이상의 캐시, 임시 파일, 로그와 휴지통 (`clean`) · Windows.old, 업그레이드 파일, 메모리 덤프, 최대 절전 모드 파일, 오래된 복원 지점 (`deepclean`) · 트리맵과 큰 파일 보기를 갖춘 디스크 탐색기 (`analyze`) · 파일 유형 (`types`) · 프로젝트 빌드 결과물 (`purge`) · 오래된 설치 파일 (`installer`) · 중복 파일 (`dupes`) · 빈 폴더와 깨진 바로 가기 (`empty`) · 사용 흔적 (`privacy`) |
+| **정리** | AI 도구, 게임 런처, GPU 드라이버 잔여 파일을 포함한 100가지 이상의 캐시, 임시 파일, 로그와 휴지통 (`clean`) · winapp2.ini의 4,000개 이상 프로그램용 추가 규칙 (`winapp2`) · Windows.old, 업그레이드 파일, 메모리 덤프, 최대 절전 모드 파일, 오래된 복원 지점 (`deepclean`) · 트리맵과 큰 파일 보기를 갖춘 디스크 탐색기 (`analyze`) · 파일 유형 (`types`) · 프로젝트 빌드 결과물 (`purge`) · 오래된 설치 파일 (`installer`) · 중복 파일 (`dupes`) · 빈 폴더와 깨진 바로 가기 (`empty`) · 사용 흔적 (`privacy`) |
 | **프로그램 및 드라이버** | 프로그램과 남은 파일 제거 (`uninstall`) · winget으로 프로그램 업데이트 (`upgrade`) · Windows 업데이트의 드라이버 업데이트 (`drivers`) · 시작 프로그램 (`startup`) · 홍보 앱과 Windows 광고 (`debloat`) · 개인 정보, AI, Edge, 파일 탐색기, 작업 표시줄, 업데이트 관련 Windows 설정 (`tweak`) · 새 PC 이사용 백업 (`backup`) |
 | **시스템** | 상태 보고서 (`health`) · GPU와 배터리까지 보여주는 실시간 모니터, 프로세스가 왜 실행 중인지 알려주는 프로세스 관리자 (`status`) · 유지 관리: DNS, 아이콘 캐시, SSD TRIM, DISM, SFC (`optimize`) · 복구: 네트워크, Windows 업데이트, Store, 시스템 파일 (`repair`) · 전원 관리 옵션과 배터리 (`power`) · 복원 지점 (`restore`) · HTML 보고서 (`report`) · 디스크 속도 테스트 (`bench`) · 자동 정리 (`schedule`) |
 | **네트워크** | IP, 지연 시간, DNS 벤치마크 및 변경, 속도 테스트, 저장된 Wi-Fi (`net`) · 어떤 포트를 누가 쓰는지 (`ports`) |
