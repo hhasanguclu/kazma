@@ -527,8 +527,27 @@ pub fn checklist(title: &str, items: Vec<CheckItem>) -> anyhow::Result<Option<Ve
 /// Checklist; `show_size` hides the size column for items without a size (programs, drivers).
 pub fn checklist_opts(
     title: &str,
+    items: Vec<CheckItem>,
+    show_size: bool,
+) -> anyhow::Result<Option<Vec<bool>>> {
+    checklist_inner(title, items, show_size, None)
+}
+
+/// Checklist without sizes that shows `notes[i]`, a longer explanation of the
+/// selected item, in the footer.
+pub fn checklist_explained(
+    title: &str,
+    items: Vec<CheckItem>,
+    notes: &[String],
+) -> anyhow::Result<Option<Vec<bool>>> {
+    checklist_inner(title, items, false, Some(notes))
+}
+
+fn checklist_inner(
+    title: &str,
     mut items: Vec<CheckItem>,
     show_size: bool,
+    notes: Option<&[String]>,
 ) -> anyhow::Result<Option<Vec<bool>>> {
     if items.is_empty() {
         return Ok(Some(vec![]));
@@ -553,9 +572,18 @@ pub fn checklist_opts(
         }
         let total: u64 = items.iter().filter(|i| i.checked).map(|i| i.size).sum();
         let count = items.iter().filter(|i| i.checked).count();
+        let note = notes.map(|n| {
+            state
+                .selected()
+                .and_then(|s| visible.get(s))
+                .and_then(|&i| n.get(i))
+                .cloned()
+                .unwrap_or_default()
+        });
         terminal.draw(|f| {
+            let foot_h = if note.is_some() { 5 } else { 4 };
             let [main, foot] =
-                Layout::vertical([Constraint::Min(3), Constraint::Length(4)]).areas(f.area());
+                Layout::vertical([Constraint::Min(3), Constraint::Length(foot_h)]).areas(f.area());
             list_area = main;
             let w = main.width.saturating_sub(4) as usize;
             let rows: Vec<ListItem> = visible
@@ -630,8 +658,18 @@ pub fn checklist_opts(
                     ("q", t("cancel", "iptal")),
                 ]),
             };
+            let mut lines = vec![];
+            if let Some(n) = &note {
+                let room = foot.width.saturating_sub(4) as usize;
+                lines.push(Line::from(Span::styled(
+                    format!(" {}", truncate_end(n, room)),
+                    Style::new().fg(fg()),
+                )));
+            }
+            lines.push(Line::from(summary));
+            lines.push(second);
             f.render_widget(
-                Paragraph::new(vec![Line::from(summary), second]).block(block(t("keys", "tuşlar"))),
+                Paragraph::new(lines).block(block(t("keys", "tuşlar"))),
                 foot,
             );
         })?;

@@ -41,6 +41,7 @@ mod startup;
 mod status;
 mod sys;
 mod treemap;
+mod tweak;
 mod types;
 mod ui;
 mod uninstall;
@@ -180,6 +181,18 @@ enum Cmd {
         /// Turn the ad / suggestion settings back on
         #[arg(long)]
         restore: bool,
+    },
+    /// Windows settings: privacy, AI, Edge, Explorer, taskbar, gaming, updates (reversible)
+    Tweak {
+        /// list | apply | undo (no action: pick from the list)
+        action: Option<String>,
+        /// Setting ids or categories (privacy, ai, edge...); `undo all` undoes every change
+        ids: Vec<String>,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        /// Do not create a system restore point first
+        #[arg(long)]
+        no_restore_point: bool,
     },
     /// Clear usage traces: recent files, Run history, browser history / cookies
     Privacy {
@@ -410,6 +423,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "debloat",
         "remove promo apps, turn off ads",
         "tanıtım uygulamalarını kaldır, reklamları kapat",
+    ),
+    (
+        'T',
+        "tweak",
+        "privacy, AI, Explorer, taskbar settings",
+        "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
     ),
     (
         'a',
@@ -832,6 +851,7 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "drivers" => drivers::run(false, false, false, false)?,
         "startup" => startup::run(false)?,
         "debloat" => debloat::run(false, false)?,
+        "tweak" => tweak::run(None, vec![], false, false)?,
         "backup" => backup::create(None, false)?,
         "health" => health::run()?,
         "status" => status::run()?,
@@ -905,6 +925,12 @@ fn main() -> anyhow::Result<()> {
             dry_run,
         }) => dupes::run(paths, min_mb, dry_run),
         Some(Cmd::Debloat { dry_run, restore }) => debloat::run(dry_run, restore),
+        Some(Cmd::Tweak {
+            action,
+            ids,
+            dry_run,
+            no_restore_point,
+        }) => tweak::run(action, ids, dry_run, no_restore_point),
         Some(Cmd::Privacy { dry_run, yes }) => privacy::run(dry_run, yes),
         Some(Cmd::Schedule { frequency, time }) => schedule::run(frequency, time),
         Some(Cmd::Update { check }) => update::run(check),

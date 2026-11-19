@@ -35,7 +35,7 @@ kein Hintergrunddienst, keine Telemetrie. Die Oberfläche gibt es in 11 Sprachen
 | | |
 |---|---|
 | **Aufräumen** | über 100 Arten von Caches, temporären Dateien, Protokollen und der Papierkorb, inklusive KI-Tools, Spiele-Launchern und Resten von GPU-Treibern (`clean`) · Windows.old, Upgradedateien, Speicherabbilder, Ruhezustandsdatei, alte Wiederherstellungspunkte (`deepclean`) · Datenträger-Explorer mit Treemap und Ansicht der größten Dateien (`analyze`) · Dateitypen (`types`) · Build-Artefakte von Projekten (`purge`) · alte Installer (`installer`) · doppelte Dateien (`dupes`) · leere Ordner und defekte Verknüpfungen (`empty`) · Nutzungsspuren (`privacy`) |
-| **Programme & Treiber** | Programme samt Resten deinstallieren (`uninstall`) · Programme per winget aktualisieren (`upgrade`) · Treiberupdates über Windows Update (`drivers`) · Autostart-Apps (`startup`) · Werbe-Apps und Windows-Werbung (`debloat`) · Sicherung für den Umzug auf einen neuen PC (`backup`) |
+| **Programme & Treiber** | Programme samt Resten deinstallieren (`uninstall`) · Programme per winget aktualisieren (`upgrade`) · Treiberupdates über Windows Update (`drivers`) · Autostart-Apps (`startup`) · Werbe-Apps und Windows-Werbung (`debloat`) · Windows-Einstellungen für Datenschutz, KI, Edge, Explorer, Taskleiste und Updates (`tweak`) · Sicherung für den Umzug auf einen neuen PC (`backup`) |
 | **System** | Zustandsbericht (`health`) · Live-Monitor mit GPU und Akku, Prozessmanager, der erklärt, warum ein Prozess läuft (`status`) · Wartung: DNS, Symbolcache, SSD-TRIM, DISM, SFC (`optimize`) · Reparaturen: Netzwerk, Windows Update, Store, Systemdateien (`repair`) · Energiesparpläne und Akku (`power`) · Wiederherstellungspunkte (`restore`) · HTML-Bericht (`report`) · Datenträger-Geschwindigkeitstest (`bench`) · automatische Bereinigung (`schedule`) |
 | **Netzwerk** | IP, Latenz, DNS-Benchmark und -Wechsel, Speedtest, gespeicherte WLANs (`net`) · wer welchen Port nutzt (`ports`) |
 | **Praktisch** | welches Programm eine Datei geöffnet hält (`lock`) · Bildschirm wach halten (`awake`) · Modus zum Abwischen des Bildschirms (`cleanscreen`) |
@@ -87,6 +87,7 @@ Das installiert nach `%LOCALAPPDATA%\Programs\kazma` und fügt `kz` zum PATH hin
 | `kz drivers` | Treiberupdates über Windows Update; `--installed` listet Drittanbieter-Treiber nach Alter |
 | `kz startup` | Autostart-Apps ein-/ausschalten (dieselben Schalter wie im Task-Manager, vollständig umkehrbar) |
 | `kz debloat` | Vorinstallierte Werbe-Apps aus einer festen Liste entfernen, Werbung abschalten; `--restore` macht es rückgängig |
+| `kz tweak` | Rund 60 Windows-Einstellungen als Schalter: Telemetrie, Copilot / Recall, Edge, Explorer, Taskleiste, Gaming, Updates; `list`, `apply ID`, `undo ID`, `undo all` |
 | `kz backup [folder]` | Umzugspaket für den neuen PC: winget-App-Liste, Treiber, Programmliste, kazma-Einstellungen; `kz backup restore FOLDER` installiert neu |
 | `kz health` | SMART der Datenträger, Akkuverschleiß, Bluescreens, Fehler, Updates, Defender, Firewall |
 | `kz status` | Live-Werte für CPU, GPU, Speicher, Datenträger, Netzwerk, Akku; `enter` erklärt, warum ein Prozess läuft, `x` beendet ihn, `m` sortiert nach Speicher |
@@ -123,6 +124,7 @@ Wartungsaufgaben mit Adminrechten auszuführen und die Caches von Windows Update
 - `dupes` behält immer mindestens eine Datei jeder Gruppe.
 - `drivers` installiert nur Treiber, die **Windows Update** anbietet, und erstellt vorher einen **Wiederherstellungspunkt**.
 - `startup` schaltet nur die Ein/Aus-Schalter des Task-Managers um; `debloat` entfernt nur Apps aus einer festen Liste, und `--restore` macht seine Einstellungen rückgängig.
+- `tweak` speichert die Registrierungswerte, die es ändert, zuerst in `%LOCALAPPDATA%\kazma\tweaks.json`, und `kz tweak undo` schreibt genau diese Werte zurück.
 - `update` prüft den Download gegen die `SHA256SUMS.txt` des Release.
 - `deepclean` entfernt Windows.old und Upgradedateien über die Windows-eigene Datenträgerbereinigung und behält immer den neuesten Wiederherstellungspunkt.
 - `repair` benennt die Windows Update-Ordner um, statt sie zu löschen, und bietet vorher einen Wiederherstellungspunkt an.

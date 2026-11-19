@@ -35,7 +35,7 @@
 | | |
 |---|---|
 | **정리** | AI 도구, 게임 런처, GPU 드라이버 잔여 파일을 포함한 100가지 이상의 캐시, 임시 파일, 로그와 휴지통 (`clean`) · Windows.old, 업그레이드 파일, 메모리 덤프, 최대 절전 모드 파일, 오래된 복원 지점 (`deepclean`) · 트리맵과 큰 파일 보기를 갖춘 디스크 탐색기 (`analyze`) · 파일 유형 (`types`) · 프로젝트 빌드 결과물 (`purge`) · 오래된 설치 파일 (`installer`) · 중복 파일 (`dupes`) · 빈 폴더와 깨진 바로 가기 (`empty`) · 사용 흔적 (`privacy`) |
-| **프로그램 및 드라이버** | 프로그램과 남은 파일 제거 (`uninstall`) · winget으로 프로그램 업데이트 (`upgrade`) · Windows 업데이트의 드라이버 업데이트 (`drivers`) · 시작 프로그램 (`startup`) · 홍보 앱과 Windows 광고 (`debloat`) · 새 PC 이사용 백업 (`backup`) |
+| **프로그램 및 드라이버** | 프로그램과 남은 파일 제거 (`uninstall`) · winget으로 프로그램 업데이트 (`upgrade`) · Windows 업데이트의 드라이버 업데이트 (`drivers`) · 시작 프로그램 (`startup`) · 홍보 앱과 Windows 광고 (`debloat`) · 개인 정보, AI, Edge, 파일 탐색기, 작업 표시줄, 업데이트 관련 Windows 설정 (`tweak`) · 새 PC 이사용 백업 (`backup`) |
 | **시스템** | 상태 보고서 (`health`) · GPU와 배터리까지 보여주는 실시간 모니터, 프로세스가 왜 실행 중인지 알려주는 프로세스 관리자 (`status`) · 유지 관리: DNS, 아이콘 캐시, SSD TRIM, DISM, SFC (`optimize`) · 복구: 네트워크, Windows 업데이트, Store, 시스템 파일 (`repair`) · 전원 관리 옵션과 배터리 (`power`) · 복원 지점 (`restore`) · HTML 보고서 (`report`) · 디스크 속도 테스트 (`bench`) · 자동 정리 (`schedule`) |
 | **네트워크** | IP, 지연 시간, DNS 벤치마크 및 변경, 속도 테스트, 저장된 Wi-Fi (`net`) · 어떤 포트를 누가 쓰는지 (`ports`) |
 | **편의 기능** | 파일을 열고 있는 프로그램 찾기 (`lock`) · 화면 켜두기 (`awake`) · 화면 닦기 모드 (`cleanscreen`) |
@@ -87,6 +87,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz drivers` | Windows 업데이트의 드라이버 업데이트; `--installed`는 타사 드라이버를 오래된 순으로 보여줍니다 |
 | `kz startup` | 시작 프로그램 켜기/끄기 (작업 관리자와 같은 플래그, 언제든 되돌릴 수 있음) |
 | `kz debloat` | 정해진 목록에 있는 기본 설치 홍보 앱 제거, 광고 끄기; `--restore`로 되돌리기 |
+| `kz tweak` | 약 60개의 Windows 설정을 스위치로: 원격 분석, Copilot / Recall, Edge, 파일 탐색기, 작업 표시줄, 게임, 업데이트; `list`, `apply ID`, `undo ID`, `undo all` |
 | `kz backup [folder]` | 새 PC 키트: winget 앱 목록, 드라이버, 프로그램 목록, kazma 설정; `kz backup restore FOLDER`로 다시 설치 |
 | `kz health` | 디스크 SMART, 배터리 마모도, 블루스크린, 오류, 업데이트, Defender, 방화벽 |
 | `kz status` | 실시간 CPU, GPU, 메모리, 디스크, 네트워크, 배터리; `enter`는 프로세스가 실행 중인 이유를 설명하고, `x`는 종료, `m`은 메모리순 정렬 |
@@ -123,6 +124,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `dupes`는 그룹마다 항상 파일을 하나 이상 남깁니다.
 - `drivers`는 **Windows 업데이트**가 제공하는 드라이버만 설치하며, 먼저 **복원 지점**을 만듭니다.
 - `startup`은 작업 관리자의 켜기/끄기 플래그만 바꿉니다. `debloat`는 정해진 목록의 앱만 제거하며, `--restore`로 설정을 되돌릴 수 있습니다.
+- `tweak`은 바꾸는 레지스트리 값을 먼저 `%LOCALAPPDATA%\kazma\tweaks.json`에 저장하고, `kz tweak undo`는 바로 그 값을 되돌려 씁니다.
 - `update`는 다운로드한 파일을 릴리스의 `SHA256SUMS.txt`로 검증합니다.
 - `deepclean`은 Windows.old와 업그레이드 파일을 Windows의 디스크 정리로 제거하며, 가장 최근 복원 지점은 항상 남깁니다.
 - `repair`는 Windows 업데이트 폴더를 삭제하지 않고 이름을 바꾸며, 먼저 복원 지점 생성을 제안합니다.

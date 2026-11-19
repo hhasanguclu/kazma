@@ -63,6 +63,8 @@ jobs:
             @('startup', '--list'),
             @('health'),
             @('debloat', '--dry-run'),
+            @('tweak', 'list'),
+            @('tweak', 'apply', 'privacy', 'dark-mode', '--dry-run'),
             @('privacy', '--dry-run'),
             @('schedule', 'status'),
             @('whitelist'),
@@ -85,6 +87,15 @@ jobs:
             & $kz @args_
             if ($LASTEXITCODE -ne 0) { throw "kz $($args_ -join ' ') failed with $LASTEXITCODE" }
           }
+          # kz tweak for real: apply, check, undo, check that the earlier value is back
+          Set-ItemProperty 'HKCU:\Control Panel\Desktop' MenuShowDelay '250'
+          & $kz tweak apply menu-delay classic-menu --no-restore-point
+          if ($LASTEXITCODE -ne 0) { throw 'kz tweak apply failed' }
+          if ((Get-ItemProperty 'HKCU:\Control Panel\Desktop').MenuShowDelay -ne '100') { throw 'kz tweak apply did not write the value' }
+          & $kz tweak undo menu-delay classic-menu
+          if ($LASTEXITCODE -ne 0) { throw 'kz tweak undo failed' }
+          if ((Get-ItemProperty 'HKCU:\Control Panel\Desktop').MenuShowDelay -ne '250') { throw 'kz tweak undo did not restore the earlier value' }
+          if (Test-Path -LiteralPath 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}') { throw 'kz tweak undo left the classic menu key behind' }
           foreach ($l in 'tr', 'de', 'ja', 'zh-TW', 'ru') {
             $env:KAZMA_LANG = $l
             & $kz health
@@ -109,7 +120,7 @@ jobs:
           New-Item -ItemType Directory -Force $out | Out-Null
           $cmds = [ordered]@{
             health = @('health'); startup = @('startup', '--list'); clean = @('clean', '--dry-run')
-            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run')
+            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run'); tweak = @('tweak', 'list')
             privacy = @('privacy', '--dry-run'); power = @('power'); ports = @('ports'); schedule = @('schedule', 'status')
             whitelist = @('whitelist'); config = @('config'); drivers = @('drivers', '--installed'); deepclean = @('deepclean', '--dry-run')
             repair = @('repair', '--dry-run'); backup = @('backup', '--dry-run'); context = @('context', 'status')

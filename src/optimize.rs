@@ -90,7 +90,7 @@ Get-Volume | Where-Object { $_.DriveLetter -and $_.DriveType -eq 'Fixed' -and $_
 if ($ok -eq 0) { throw 'no SSD volumes could be trimmed' }
 "#;
 
-const RESTART_EXPLORER: &str = r#"
+pub(crate) const RESTART_EXPLORER: &str = r#"
 Stop-Process -Name explorer -Force
 Start-Sleep -Seconds 1
 if (-not (Get-Process explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }

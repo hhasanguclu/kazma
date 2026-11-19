@@ -35,7 +35,7 @@ arka planda servis çalıştırmaz, veri toplamaz. Arayüz 11 dilde kullanılabi
 | | |
 |---|---|
 | **Temizlik** | yapay zekâ araçları, oyun başlatıcıları ve ekran kartı sürücü artıkları dahil 100+ tür önbellek, geçici dosya, log ve Geri Dönüşüm Kutusu (`clean`) · Windows.old, yükseltme dosyaları, bellek dökümleri, hazırda bekletme dosyası, eski geri yükleme noktaları (`deepclean`) · ağaç haritalı ve en büyük dosyalar görünümlü disk gezgini (`analyze`) · dosya türleri (`types`) · proje derleme çıktıları (`purge`) · eski kurulum dosyaları (`installer`) · yinelenen dosyalar (`dupes`) · boş klasörler ve bozuk kısayollar (`empty`) · kullanım izleri (`privacy`) |
-| **Programlar ve sürücüler** | program ve kalıntılarını kaldırma (`uninstall`) · winget ile program güncelleme (`upgrade`) · Windows Update'ten sürücü güncelleme (`drivers`) · başlangıç programları (`startup`) · tanıtım uygulamaları ve Windows reklamları (`debloat`) · yeni bilgisayara taşıma yedeği (`backup`) |
+| **Programlar ve sürücüler** | program ve kalıntılarını kaldırma (`uninstall`) · winget ile program güncelleme (`upgrade`) · Windows Update'ten sürücü güncelleme (`drivers`) · başlangıç programları (`startup`) · tanıtım uygulamaları ve Windows reklamları (`debloat`) · gizlilik, yapay zekâ, Edge, Gezgin, görev çubuğu ve güncelleme ayarları (`tweak`) · yeni bilgisayara taşıma yedeği (`backup`) |
 | **Sistem** | sağlık raporu (`health`) · GPU ve pil dahil canlı izleme, bir sürecin neden çalıştığını açıklayan süreç yöneticisi (`status`) · bakım: DNS, ikon önbelleği, SSD TRIM, DISM, SFC (`optimize`) · onarım: ağ, Windows Update, Store, sistem dosyaları (`repair`) · güç planı ve pil (`power`) · geri yükleme noktaları (`restore`) · HTML rapor (`report`) · disk hız testi (`bench`) · otomatik temizlik (`schedule`) |
 | **Ağ** | IP, gecikme, DNS karşılaştırma ve değiştirme, hız testi, kayıtlı Wi-Fi (`net`) · hangi port hangi programda (`ports`) |
 | **Pratik** | dosyayı hangi programın açık tuttuğu (`lock`) · ekranı açık tutma (`awake`) · ekran silme modu (`cleanscreen`) |
@@ -87,6 +87,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz drivers` | Windows Update'ten sürücü güncellemeleri; `--installed` üçüncü taraf sürücüleri yaşına göre listeler |
 | `kz startup` | Başlangıç programlarını açar / kapatır (Görev Yöneticisi ile aynı ayar, geri alınabilir) |
 | `kz debloat` | Sabit bir listedeki tanıtım uygulamalarını kaldırır, reklamları kapatır; `--restore` geri alır |
+| `kz tweak` | Anahtar olarak 60'a yakın Windows ayarı: telemetri, Copilot / Recall, Edge, Gezgin, görev çubuğu, oyun, güncellemeler; `list`, `apply ID`, `undo ID`, `undo all` |
 | `kz backup [klasör]` | Yeni bilgisayar paketi: winget program listesi, sürücüler, program listesi, kazma ayarları; `kz backup restore KLASÖR` geri kurar |
 | `kz health` | Disk sağlığı, pil yıpranması, mavi ekranlar, hatalar, güncellemeler, Defender, güvenlik duvarı |
 | `kz status` | Canlı CPU, GPU, bellek, disk, ağ, pil; `enter` sürecin neden çalıştığını açıklar, `x` sonlandırır, `m` belleğe göre sıralar |
@@ -123,6 +124,7 @@ dosyalarını temizlemek için terminali **yönetici olarak** açın.
 - `dupes` her gruptan en az bir dosyayı her zaman tutar.
 - `drivers` yalnızca **Windows Update**'in sunduğu sürücüleri kurar ve önce **geri yükleme noktası** oluşturur.
 - `startup` yalnızca Görev Yöneticisi'nin açık / kapalı ayarını değiştirir; `debloat` yalnızca listedeki uygulamaları kaldırır, ayarlarını `--restore` geri alır.
+- `tweak` değiştirdiği kayıt defteri değerlerini önce `%LOCALAPPDATA%\kazma\tweaks.json` dosyasına kaydeder; `kz tweak undo` tam olarak o değerleri geri yazar.
 - `update` indirilen dosyayı release'teki `SHA256SUMS.txt` ile doğrular.
 - `deepclean`, Windows.old ve yükseltme dosyalarını Windows'un kendi Disk Temizleme aracıyla kaldırır; en yeni geri yükleme noktası her zaman kalır.
 - `repair`, Windows Update klasörlerini silmez, yeniden adlandırır; önce geri yükleme noktası önerir.

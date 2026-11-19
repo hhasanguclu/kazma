@@ -35,7 +35,7 @@ Windows 電腦，帶著復古的綠色螢幕風格。不需安裝程式、沒有
 | | |
 |---|---|
 | **清理** | 100 多種快取、暫存檔、記錄檔與資源回收筒，包括 AI 工具、遊戲啟動器與顯示卡驅動程式殘留檔案（`clean`）· Windows.old、升級檔、記憶體傾印、休眠檔、舊的還原點（`deepclean`）· 附樹狀圖與最大檔案檢視的磁碟探索器（`analyze`）· 檔案類型（`types`）· 專案建置產物（`purge`）· 舊安裝檔（`installer`）· 重複檔案（`dupes`）· 空資料夾與失效捷徑（`empty`）· 使用痕跡（`privacy`） |
-| **程式與驅動程式** | 解除安裝程式及其殘留檔案（`uninstall`）· 用 winget 更新程式（`upgrade`）· 從 Windows Update 更新驅動程式（`drivers`）· 啟動應用程式（`startup`）· 推廣應用程式與 Windows 廣告（`debloat`）· 搬到新電腦的備份（`backup`） |
+| **程式與驅動程式** | 解除安裝程式及其殘留檔案（`uninstall`）· 用 winget 更新程式（`upgrade`）· 從 Windows Update 更新驅動程式（`drivers`）· 啟動應用程式（`startup`）· 推廣應用程式與 Windows 廣告（`debloat`）· 隱私權、AI、Edge、檔案總管、工作列與更新相關的 Windows 設定（`tweak`）· 搬到新電腦的備份（`backup`） |
 | **系統** | 健康報告（`health`）· 含 GPU 與電池的即時監控，以及會說明處理程序為何在執行的處理程序管理員（`status`）· 維護：DNS、圖示快取、SSD TRIM、DISM、SFC（`optimize`）· 修復：網路、Windows Update、Store、系統檔案（`repair`）· 電源計劃與電池（`power`）· 還原點（`restore`）· HTML 報告（`report`）· 磁碟速度測試（`bench`）· 自動清理（`schedule`） |
 | **網路** | IP、延遲、DNS 效能比較與切換、測速、已儲存的 Wi-Fi（`net`）· 哪個程式使用哪個連接埠（`ports`） |
 | **實用工具** | 哪個程式開著某個檔案（`lock`）· 讓螢幕保持開啟（`awake`）· 擦拭螢幕模式（`cleanscreen`） |
@@ -86,6 +86,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz drivers` | 從 Windows Update 更新驅動程式；`--installed` 依年份列出第三方驅動程式 |
 | `kz startup` | 開啟/關閉啟動應用程式（與工作管理員使用相同旗標，完全可復原） |
 | `kz debloat` | 依固定清單移除預先安裝的推廣應用程式，並關閉廣告；`--restore` 可復原 |
+| `kz tweak` | 約 60 項 Windows 設定，以開關呈現：遙測、Copilot / Recall、Edge、檔案總管、工作列、遊戲、更新；`list`、`apply ID`、`undo ID`、`undo all` |
 | `kz backup [folder]` | 新電腦套件：winget 應用程式清單、驅動程式、程式清單、kazma 設定；`kz backup restore FOLDER` 重新安裝 |
 | `kz health` | 磁碟 SMART、電池耗損、藍色畫面、錯誤、更新、Defender、防火牆 |
 | `kz status` | 即時 CPU、GPU、記憶體、磁碟、網路、電池；`enter` 說明處理程序為何在執行，`x` 結束它，`m` 依記憶體排序 |
@@ -122,6 +123,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `dupes` 每一組至少會保留一個檔案。
 - `drivers` 只安裝 **Windows Update** 提供的驅動程式，並會先建立**還原點**。
 - `startup` 只切換工作管理員的開/關旗標；`debloat` 只移除固定清單中的應用程式，`--restore` 可復原其設定。
+- `tweak` 會先把要修改的登錄值儲存到 `%LOCALAPPDATA%\kazma\tweaks.json`，`kz tweak undo` 會原樣寫回這些值。
 - `update` 會用發行版本的 `SHA256SUMS.txt` 驗證下載的檔案。
 - `deepclean` 透過 Windows 內建的磁碟清理移除 Windows.old 與升級檔，並一律保留最新的還原點。
 - `repair` 會將 Windows Update 資料夾改名而非刪除，並先提供建立還原點。
