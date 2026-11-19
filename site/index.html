@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>kazma - oldschool ASCII system toolkit for Windows</title>
-<meta name="description" content="kazma (kz) cleans, explores and maintains a Windows PC from the terminal: 100+ cache rules, disk explorer with treemap, uninstaller, drivers, updates, health report. One ~5 MB exe, 11 languages, no telemetry.">
+<meta name="description" content="kazma (kz) cleans, explores and maintains a Windows PC from the terminal: 100+ cache rules (4,000+ with winapp2.ini), disk explorer with treemap, uninstaller, reversible Windows tweaks, drivers, updates, health report. One ~5 MB exe, 11 languages, no telemetry.">
 <meta property="og:title" content="kazma - oldschool ASCII system toolkit for Windows">
 <meta property="og:description" content="Clean, explore and maintain Windows from the terminal. One exe, 11 languages, no telemetry.">
 <meta property="og:image" content="https://hhasanguclu.github.io/kazma/screenshots/menu-en.png">
@@ -256,6 +256,8 @@ scoop install kazma</pre></div>
     <li data-t="k5">Drivers only from Windows Update, with a restore point first</li>
     <li data-t="k6">Self-update is verified against SHA-256 checksums</li>
     <li data-t="k7">Your whitelist is never touched; every action is logged</li>
+    <li data-t="k9">Every setting <code>tweak</code> changes is saved first and can be put back exactly</li>
+    <li data-t="k10">Cookies of the sites you choose are kept</li>
     <li data-t="k8">No telemetry, no background service, no account</li>
   </ul>
 </section>
@@ -320,6 +322,8 @@ const TR = {
   k6: "Kendi güncellemesi SHA-256 sağlama toplamıyla doğrulanır",
   k7: "Beyaz listeniz asla silinmez; her işlem kaydedilir",
   k8: "Veri toplama, arka plan servisi ya da hesap yok",
+  k9: "<code>tweak</code>'in değiştirdiği her ayar önce kaydedilir ve aynen geri alınabilir",
+  k10: "Seçtiğiniz sitelerin çerezleri saklanır",
   h_langs: "11 dil", l_note: "kazma, Windows'un görüntü dilinde açılır. README her dilde mevcut:",
   foot: "macOS için <a href=\"https://github.com/tw93/Mole\">Mole</a>'dan esinlenildi · sıfırdan Rust ile yazıldı",
 };
