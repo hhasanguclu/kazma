@@ -63,7 +63,11 @@ jobs:
             @('startup', '--list'),
             @('health'),
             @('debloat', '--dry-run'),
+            @('tweak', 'list'),
+            @('tweak', 'apply', 'privacy', 'dark-mode', '--dry-run'),
             @('privacy', '--dry-run'),
+            @('privacy', 'keep'),
+            @('winapp2'),
             @('schedule', 'status'),
             @('whitelist'),
             @('config'),
@@ -85,6 +89,31 @@ jobs:
             & $kz @args_
             if ($LASTEXITCODE -ne 0) { throw "kz $($args_ -join ' ') failed with $LASTEXITCODE" }
           }
+          # kz tweak for real: apply, check, undo, check that the earlier value is back
+          Set-ItemProperty 'HKCU:\Control Panel\Desktop' MenuShowDelay '250'
+          & $kz tweak apply menu-delay classic-menu --no-restore-point
+          if ($LASTEXITCODE -ne 0) { throw 'kz tweak apply failed' }
+          if ((Get-ItemProperty 'HKCU:\Control Panel\Desktop').MenuShowDelay -ne '100') { throw 'kz tweak apply did not write the value' }
+          & $kz tweak undo menu-delay classic-menu
+          if ($LASTEXITCODE -ne 0) { throw 'kz tweak undo failed' }
+          if ((Get-ItemProperty 'HKCU:\Control Panel\Desktop').MenuShowDelay -ne '250') { throw 'kz tweak undo did not restore the earlier value' }
+          if (Test-Path -LiteralPath 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}') { throw 'kz tweak undo left the classic menu key behind' }
+          # cookie keep list: add, list, remove
+          & $kz privacy keep add github.com
+          if ($LASTEXITCODE -ne 0) { throw 'kz privacy keep add failed' }
+          if (-not (Select-String -Quiet -Pattern '^github\.com$' "$env:LOCALAPPDATA\kazma\cookies-keep.txt")) { throw 'keep list was not written' }
+          & $kz privacy --dry-run
+          if ($LASTEXITCODE -ne 0) { throw 'kz privacy with a keep list failed' }
+          & $kz privacy keep remove github.com
+          if ($LASTEXITCODE -ne 0) { throw 'kz privacy keep remove failed' }
+          # winapp2.ini: download, detect, measure (a network hiccup only warns)
+          & $kz winapp2 update
+          if ($LASTEXITCODE -eq 0) {
+            foreach ($a in @(@('winapp2'), @('winapp2', 'list'), @('clean', '--dry-run'))) {
+              & $kz @a
+              if ($LASTEXITCODE -ne 0) { throw "kz $($a -join ' ') with winapp2.ini failed" }
+            }
+          } else { Write-Warning 'winapp2.ini could not be downloaded, skipped' }
           foreach ($l in 'tr', 'de', 'ja', 'zh-TW', 'ru') {
             $env:KAZMA_LANG = $l
             & $kz health
@@ -105,11 +134,13 @@ jobs:
           COLUMNS: "120"
         run: |
           $kz = (Resolve-Path target/release/kz.exe).Path
+          # only kazma's own text: program names from winapp2.ini (smoke test) are not UI text
+          & $kz winapp2 remove | Out-Null
           $out = Join-Path $env:RUNNER_TEMP 'ui'
           New-Item -ItemType Directory -Force $out | Out-Null
           $cmds = [ordered]@{
             health = @('health'); startup = @('startup', '--list'); clean = @('clean', '--dry-run')
-            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run')
+            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run'); tweak = @('tweak', 'list'); keep = @('privacy', 'keep'); winapp2 = @('winapp2')
             privacy = @('privacy', '--dry-run'); power = @('power'); ports = @('ports'); schedule = @('schedule', 'status')
             whitelist = @('whitelist'); config = @('config'); drivers = @('drivers', '--installed'); deepclean = @('deepclean', '--dry-run')
             repair = @('repair', '--dry-run'); backup = @('backup', '--dry-run'); context = @('context', 'status')

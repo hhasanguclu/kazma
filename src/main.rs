@@ -8,6 +8,7 @@ mod bench;
 mod catalog;
 mod clean;
 mod context;
+mod cookies;
 mod debloat;
 mod deepclean;
 mod drivers;
@@ -37,16 +38,19 @@ mod restore;
 mod schedule;
 mod screen;
 mod settings;
+mod sqlite;
 mod startup;
 mod status;
 mod sys;
 mod treemap;
+mod tweak;
 mod types;
 mod ui;
 mod uninstall;
 mod update;
 mod upgrade;
 mod whitelist;
+mod winapp2;
 
 use clap::{Parser, Subcommand};
 use crossterm::event::{self, Event, KeyCode};
@@ -181,8 +185,29 @@ enum Cmd {
         #[arg(long)]
         restore: bool,
     },
+    /// Windows settings: privacy, AI, Edge, Explorer, taskbar, gaming, updates (reversible)
+    Tweak {
+        /// list | apply | undo (no action: pick from the list)
+        action: Option<String>,
+        /// Setting ids or categories (privacy, ai, edge...); `undo all` undoes every change
+        ids: Vec<String>,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+        /// Do not create a system restore point first
+        #[arg(long)]
+        no_restore_point: bool,
+    },
+    /// winapp2.ini cleaning rules for thousands of programs: status | list | update | use FILE | remove
+    Winapp2 {
+        action: Option<String>,
+        /// URL for update, file for use
+        arg: Option<String>,
+    },
     /// Clear usage traces: recent files, Run history, browser history / cookies
     Privacy {
+        /// keep: pick the sites whose cookies stay (keep add SITE / keep remove SITE)
+        action: Option<String>,
+        args: Vec<String>,
         #[arg(long, short = 'n')]
         dry_run: bool,
         #[arg(long, short)]
@@ -412,6 +437,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "tanıtım uygulamalarını kaldır, reklamları kapat",
     ),
     (
+        'T',
+        "tweak",
+        "privacy, AI, Explorer, taskbar settings",
+        "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
+    ),
+    (
         'a',
         "backup",
         "move-to-a-new-PC kit: apps, drivers, settings",
@@ -493,6 +524,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "whitelist",
         "paths kazma must never delete",
         "kazma'nın asla silmeyeceği yollar",
+    ),
+    (
+        'W',
+        "winapp2",
+        "cleaning rules for 4,000+ programs",
+        "4.000'den fazla program için temizlik kuralları",
     ),
     (
         'l',
@@ -832,6 +869,7 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "drivers" => drivers::run(false, false, false, false)?,
         "startup" => startup::run(false)?,
         "debloat" => debloat::run(false, false)?,
+        "tweak" => tweak::run(None, vec![], false, false)?,
         "backup" => backup::create(None, false)?,
         "health" => health::run()?,
         "status" => status::run()?,
@@ -845,6 +883,7 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "ports" => ports::run(None, None)?,
         "whitelist" => whitelist::run(vec![], vec![], false)?,
         "rules" => clean::rules(false)?,
+        "winapp2" => winapp2::command(None, None)?,
         "context" => context::run(None)?,
         "config" => settings::run(None, None)?,
         "history" => oplog::show_history(50),
@@ -905,7 +944,22 @@ fn main() -> anyhow::Result<()> {
             dry_run,
         }) => dupes::run(paths, min_mb, dry_run),
         Some(Cmd::Debloat { dry_run, restore }) => debloat::run(dry_run, restore),
-        Some(Cmd::Privacy { dry_run, yes }) => privacy::run(dry_run, yes),
+        Some(Cmd::Tweak {
+            action,
+            ids,
+            dry_run,
+            no_restore_point,
+        }) => tweak::run(action, ids, dry_run, no_restore_point),
+        Some(Cmd::Privacy {
+            action,
+            args,
+            dry_run,
+            yes,
+        }) => match action.as_deref() {
+            None => privacy::run(dry_run, yes),
+            Some("keep") => cookies::command(args),
+            Some(other) => anyhow::bail!("kz privacy [keep]: {other}?"),
+        },
         Some(Cmd::Schedule { frequency, time }) => schedule::run(frequency, time),
         Some(Cmd::Update { check }) => update::run(check),
         Some(Cmd::Config { key, value }) => settings::run(key, value),
@@ -938,6 +992,7 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Context { action }) => context::run(action),
         Some(Cmd::Bench { path, size_mb }) => bench::run(path, size_mb),
         Some(Cmd::Rules { edit }) => clean::rules(edit),
+        Some(Cmd::Winapp2 { action, arg }) => winapp2::command(action, arg),
         Some(Cmd::Lock { path }) => locks::run(path),
         Some(Cmd::Awake { minutes }) => screen::awake(minutes),
         Some(Cmd::Cleanscreen { seconds }) => screen::cleanscreen(seconds),

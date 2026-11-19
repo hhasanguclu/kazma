@@ -1200,6 +1200,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "Programs (winapp2)",
+  "tr": "Programlar (winapp2)",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
   "en": "System",
   "tr": "Sistem",
   "kind": "plain",
@@ -1290,6 +1296,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "{} winapp2 entries  (run kz from an elevated terminal)",
+  "tr": "{} winapp2 kaydı  (kz'yi yönetici terminalinde çalıştırın)",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
   "en": "would free",
   "tr": "kazanılacak",
   "kind": "plain",
@@ -1305,6 +1317,12 @@
   "en": "files",
   "tr": "dosya",
   "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "tip: kz winapp2 update adds cleaning rules for 4,000+ programs",
+  "tr": "ipucu: kz winapp2 update, 4.000'den fazla program için temizlik kuralı ekler",
+  "kind": "fmt",
   "file": "clean.rs"
  },
  {
@@ -1366,6 +1384,96 @@
   "tr": "bilinmeyen: {other}. install | uninstall | status kullanın",
   "kind": "fmt",
   "file": "context.rs"
+ },
+ {
+  "en": "privacy :: cookies to keep",
+  "tr": "privacy :: saklanacak çerezler",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "not a site name: {s}",
+  "tr": "site adı değil: {s}",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "keeping cookies of {d}",
+  "tr": "{d} çerezleri saklanacak",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "no longer keeping {d}",
+  "tr": "{d} artık saklanmayacak",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "unknown action: {other}. use kz privacy keep [add | remove] SITE",
+  "tr": "bilinmeyen işlem: {other}. kz privacy keep [add | remove] SITE kullanın",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "no sites yet: kz privacy deletes every cookie it is asked to",
+  "tr": "henüz site yok: kz privacy istenen tüm çerezleri siler",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "add: kz privacy keep add github.com   remove: kz privacy keep remove github.com",
+  "tr": "ekle: kz privacy keep add github.com   çıkar: kz privacy keep remove github.com",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "file: {}",
+  "tr": "dosya: {}",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "reading cookies...",
+  "tr": "çerezler okunuyor...",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "{b}: cookies could not be read, close it and try again",
+  "tr": "{b}: çerezler okunamadı, tarayıcıyı kapatıp yeniden deneyin",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "{n} cookies  {}",
+  "tr": "{n} çerez  {}",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "on your list",
+  "tr": "listenizde",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "No cookies found.",
+  "tr": "Çerez bulunamadı.",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "kazma privacy :: [x] = keep these cookies",
+  "tr": "kazma privacy :: [x] = bu çerezleri sakla",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "keeping cookies of {} sites",
+  "tr": "{} sitenin çerezleri saklanacak",
+  "kind": "fmt",
+  "file": "cookies.rs"
  },
  {
   "en": "Start menu suggestions & ads",
@@ -2646,6 +2754,12 @@
   "file": "main.rs"
  },
  {
+  "en": "privacy, AI, Explorer, taskbar settings",
+  "tr": "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
   "en": "move-to-a-new-PC kit: apps, drivers, settings",
   "tr": "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
   "kind": "plain",
@@ -2750,6 +2864,12 @@
  {
   "en": "paths kazma must never delete",
   "tr": "kazma'nın asla silmeyeceği yollar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "cleaning rules for 4,000+ programs",
+  "tr": "4.000'den fazla program için temizlik kuralları",
   "kind": "plain",
   "file": "main.rs"
  },
@@ -3372,6 +3492,18 @@
   "file": "power.rs"
  },
  {
+  "en": "signs you out of websites",
+  "tr": "sitelerden çıkış yaparsınız",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "keeps {} sites (kz privacy keep)",
+  "tr": "{} site saklanır (kz privacy keep)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
   "en": "Recent files list & jump lists",
   "tr": "Son kullanılan dosyalar ve atlama listeleri",
   "kind": "fmt",
@@ -3428,12 +3560,6 @@
  {
   "en": "{name} cookies",
   "tr": "{name} çerezleri",
-  "kind": "fmt",
-  "file": "privacy.rs"
- },
- {
-  "en": "signs you out of websites",
-  "tr": "sitelerden çıkış yaparsınız",
   "kind": "fmt",
   "file": "privacy.rs"
  },
@@ -3500,6 +3626,12 @@
  {
   "en": "  ({} in use)",
   "tr": "  ({} kullanımda)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "  ({} cookies removed)",
+  "tr": "  ({} çerez silindi)",
   "kind": "fmt",
   "file": "privacy.rs"
  },
@@ -4734,6 +4866,924 @@
   "file": "status.rs"
  },
  {
+  "en": "Send the least diagnostic data",
+  "tr": "En az tanılama verisi gönder",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "telemetry policy, DiagTrack service and data collection tasks off",
+  "tr": "telemetri ilkesi, DiagTrack hizmeti ve veri toplama görevleri kapalı",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Never ask for feedback",
+  "tr": "Asla geri bildirim isteme",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no \"how likely are you to recommend Windows\" pop-ups",
+  "tr": "\"Windows'u tavsiye eder misiniz\" pencereleri çıkmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not send crash reports",
+  "tr": "Çökme raporlarını gönderme",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Windows Error Reporting stops uploading crash data to Microsoft",
+  "tr": "Windows Hata Bildirimi çökme verisini Microsoft'a göndermez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not keep an activity history",
+  "tr": "Etkinlik geçmişi tutma",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Windows stops recording which apps and files you used",
+  "tr": "Windows hangi uygulama ve dosyaları kullandığınızı kaydetmez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not track app launches",
+  "tr": "Uygulama açılışlarını izleme",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Start and search stop ranking apps by how often you open them",
+  "tr": "Başlat ve arama, uygulamaları açılma sıklığına göre sıralamaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Apps may not use your location",
+  "tr": "Uygulamalar konumu kullanamasın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the \"let apps access your location\" switch, for this user",
+  "tr": "bu kullanıcı için \"uygulamalar konuma erişebilir\" anahtarı",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Find My Device",
+  "tr": "Cihazımı Bul'u kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "stops reporting where this PC is; you can no longer locate it if stolen",
+  "tr": "bilgisayarın konumu bildirilmez; çalınırsa artık bulunamaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off online speech recognition",
+  "tr": "Çevrimiçi konuşma tanımayı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "your voice is no longer sent to Microsoft; dictation works offline only",
+  "tr": "sesiniz Microsoft'a gönderilmez; dikte yalnızca çevrimdışı çalışır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not learn from typing and inking",
+  "tr": "Yazma ve kalem verisinden öğrenme",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Windows stops building a dictionary from what you type, write and your contacts",
+  "tr": "Windows yazdıklarınızdan ve kişilerinizden sözlük oluşturmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide your language list from websites",
+  "tr": "Dil listesini web sitelerinden gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "sites no longer get your installed languages to tailor content",
+  "tr": "siteler içeriği uyarlamak için yüklü dillerinizi göremez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not download device icons and info",
+  "tr": "Aygıt simgesi ve bilgisi indirme",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "new hardware shows a generic icon; drivers are not affected",
+  "tr": "yeni donanım genel bir simgeyle görünür; sürücüler etkilenmez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not install sponsored apps",
+  "tr": "Sponsorlu uygulamaları kurma",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "stops Windows adding promoted Store apps and games for new users",
+  "tr": "Windows yeni kullanıcılara tanıtım uygulaması ve oyun eklemez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "No \"finish setting up your PC\" screen",
+  "tr": "\"Bilgisayarınızı kurmayı bitirin\" ekranı yok",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the full-screen Microsoft 365 / OneDrive offer after updates",
+  "tr": "güncellemelerden sonraki tam ekran Microsoft 365 / OneDrive teklifi",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "No welcome screen after updates",
+  "tr": "Güncellemelerden sonra karşılama ekranı yok",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "skips the \"what's new\" pages Windows shows after a feature update",
+  "tr": "özellik güncellemesinden sonraki \"yenilikler\" sayfaları atlanır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Windows Spotlight on the lock screen",
+  "tr": "Kilit ekranında Windows Spotlight'ı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "a fixed picture instead of Bing images with captions and links",
+  "tr": "açıklamalı ve bağlantılı Bing resimleri yerine sabit bir resim",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Windows Copilot",
+  "tr": "Windows Copilot'ı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "removes the Copilot button and blocks the Win+C shortcut",
+  "tr": "Copilot düğmesi kalkar, Win+C kısayolu engellenir",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Recall",
+  "tr": "Recall'u kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no screen snapshots on Copilot+ PCs, and Recall cannot be turned on",
+  "tr": "Copilot+ bilgisayarlarda ekran görüntüsü alınmaz, Recall açılamaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Click to Do",
+  "tr": "Click to Do'yu kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no AI actions on whatever is on screen when you Win+click",
+  "tr": "Win+tık ile ekrandaki içerik için yapay zekâ eylemleri çıkmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off AI in Notepad",
+  "tr": "Not Defteri'nde yapay zekâyı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "removes Rewrite and Summarize, so no text is sent away",
+  "tr": "Yeniden Yaz ve Özetle kalkar, hiçbir metin dışarı gönderilmez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off AI in Paint",
+  "tr": "Paint'te yapay zekâyı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "removes Cocreator, Image Creator, generative fill / erase, remove background",
+  "tr": "Cocreator, Image Creator, üretken doldurma / silme, arka plan kaldırma kalkar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Copilot in Edge",
+  "tr": "Edge'de Copilot'ı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no Copilot icon, no page content sent to it, no AI history search",
+  "tr": "Copilot simgesi yok, sayfa içeriği gönderilmez, yapay zekâ geçmiş araması yok",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Start the Windows AI service on demand",
+  "tr": "Windows yapay zekâ hizmetini gerektiğinde başlat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "WSAIFabricSvc no longer starts with Windows; features that need it still work",
+  "tr": "WSAIFabricSvc Windows ile başlamaz; ona ihtiyaç duyan özellikler çalışır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Edge does not run in the background",
+  "tr": "Edge arka planda çalışmasın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "turns off Startup Boost and background mode; Edge closes when you close it",
+  "tr": "Başlangıç Hızlandırma ve arka plan modu kapanır; Edge kapatınca kapanır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off Edge shopping",
+  "tr": "Edge alışveriş özelliğini kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no price comparison, coupons or cashback pop-ups",
+  "tr": "fiyat karşılaştırma, kupon ve para iadesi pencereleri çıkmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide the Edge sidebar",
+  "tr": "Edge kenar çubuğunu gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "removes the app bar on the right side of Edge",
+  "tr": "Edge'in sağındaki uygulama çubuğu kalkar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Skip the Edge welcome pages",
+  "tr": "Edge karşılama sayfalarını atla",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no first-run setup and import prompts after Edge updates",
+  "tr": "Edge güncellemesinden sonra ilk kurulum ve içe aktarma soruları çıkmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Edge stops asking to be the default",
+  "tr": "Edge varsayılan olmak için sormasın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no \"make Edge your default browser\" bar",
+  "tr": "\"Edge'i varsayılan tarayıcı yap\" çubuğu çıkmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Plain new tab page in Edge",
+  "tr": "Edge'de sade yeni sekme sayfası",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no MSN news feed, sponsored links or default tiles",
+  "tr": "MSN haber akışı, sponsorlu bağlantılar ve varsayılan kutucuklar yok",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Show file extensions",
+  "tr": "Dosya uzantılarını göster",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "so invoice.pdf.exe shows up as the program it is",
+  "tr": "fatura.pdf.exe gerçekte olduğu gibi program olarak görünür",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Show hidden files",
+  "tr": "Gizli dosyaları göster",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "protected system files stay hidden",
+  "tr": "korumalı sistem dosyaları gizli kalır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Open File Explorer on This PC",
+  "tr": "Dosya Gezgini Bu Bilgisayar'da açılsın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "drives first, instead of Home / Quick access",
+  "tr": "Giriş / Hızlı erişim yerine önce sürücüler",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Classic right-click menu",
+  "tr": "Klasik sağ tık menüsü",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the full menu right away, without \"show more options\"",
+  "tr": "\"diğer seçenekleri göster\" olmadan doğrudan tam menü",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Compact view in File Explorer",
+  "tr": "Dosya Gezgini'nde sıkı görünüm",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "less space between rows, more files on screen",
+  "tr": "satırlar arası boşluk azalır, ekrana daha çok dosya sığar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide Gallery in the navigation pane",
+  "tr": "Gezinti bölmesinde Galeri'yi gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "only the shortcut goes; your photos stay where they are",
+  "tr": "yalnızca kısayol kalkar; fotoğraflarınız yerinde kalır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide Home in the navigation pane",
+  "tr": "Gezinti bölmesinde Giriş'i gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the page of recent and recommended files",
+  "tr": "son kullanılan ve önerilen dosyalar sayfası",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide OneDrive in the navigation pane",
+  "tr": "Gezinti bölmesinde OneDrive'ı gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "nothing is unlinked or deleted, the entry is only unpinned",
+  "tr": "hiçbir şey silinmez ya da bağlantısı kesilmez, yalnızca sabitleme kalkar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Taskbar icons on the left",
+  "tr": "Görev çubuğu simgeleri solda",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the Start button back in the corner, as in Windows 10",
+  "tr": "Başlat düğmesi Windows 10'daki gibi köşeye döner",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "\"End task\" in the taskbar menu",
+  "tr": "Görev çubuğu menüsünde \"Görevi sonlandır\"",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "right-click a frozen app's button to close it",
+  "tr": "donan uygulamayı düğmesine sağ tıklayarak kapatın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Search as an icon only",
+  "tr": "Arama yalnızca simge olsun",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the wide search box shrinks to a button; Win+S still works",
+  "tr": "geniş arama kutusu düğmeye dönüşür; Win+S çalışmaya devam eder",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide the Task View button",
+  "tr": "Görev Görünümü düğmesini gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Win+Tab still opens it",
+  "tr": "Win+Tab ile yine açılır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off widgets and the news feed",
+  "tr": "Pencere öğelerini ve haber akışını kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the weather / news panel on the taskbar and its background process",
+  "tr": "görev çubuğundaki hava durumu / haber paneli ve arka plan işlemi",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Show seconds in the clock",
+  "tr": "Saatte saniyeleri göster",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the taskbar clock shows seconds",
+  "tr": "görev çubuğu saati saniyeleri gösterir",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Click opens the last used window",
+  "tr": "Tıklama son kullanılan pencereyi açsın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "for apps with several windows, instead of the thumbnail row",
+  "tr": "birden çok pencereli uygulamalarda küçük resim satırı yerine",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Hide the Meet Now button",
+  "tr": "Şimdi Toplantı Yap düğmesini gizle",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the Skype video call icon next to the clock",
+  "tr": "saatin yanındaki Skype görüntülü arama simgesi",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Show all tray icons",
+  "tr": "Tüm bildirim simgelerini göster",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no icons hidden behind the ^ arrow",
+  "tr": "^ okunun arkasına gizlenen simge kalmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Dark mode",
+  "tr": "Koyu mod",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Windows and apps use the dark colours",
+  "tr": "Windows ve uygulamalar koyu renkleri kullanır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off transparency",
+  "tr": "Saydamlığı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "solid taskbar and Start menu; a little less work for weak graphics",
+  "tr": "düz görev çubuğu ve Başlat menüsü; zayıf ekran kartına daha az yük",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off window animations",
+  "tr": "Pencere animasyonlarını kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "windows and taskbar buttons appear at once instead of sliding",
+  "tr": "pencereler ve görev çubuğu düğmeleri kaymadan hemen görünür",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Faster menus",
+  "tr": "Daha hızlı menüler",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "submenus open after 100 ms instead of 400 ms",
+  "tr": "alt menüler 400 ms yerine 100 ms sonra açılır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off background game recording",
+  "tr": "Arka planda oyun kaydını kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Game DVR stops recording the last minutes of play; Game Mode stays",
+  "tr": "Game DVR son dakikaları kaydetmez; Oyun Modu yerinde kalır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Quiet Game Bar",
+  "tr": "Sessiz Game Bar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no pop-up when a game starts, and a controller's Xbox button does not open it",
+  "tr": "oyun başlarken pencere çıkmaz, oyun kumandasının Xbox düğmesi onu açmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off mouse acceleration",
+  "tr": "Fare ivmesini kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "\"enhance pointer precision\" off: the same move, the same distance",
+  "tr": "\"işaretçi hassasiyetini artır\" kapalı: aynı hareket, aynı mesafe",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "No Sticky Keys prompt",
+  "tr": "Yapışkan Tuşlar sorusu çıkmasın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "pressing Shift five times no longer interrupts a game",
+  "tr": "Shift'e beş kez basmak artık oyunu bölmez",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Turn off power throttling",
+  "tr": "Güç kısıtlamayı kapat",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "background programs get the full CPU speed; costs battery on laptops",
+  "tr": "arka plan programları tam işlemci hızı alır; dizüstünde pil harcar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Show details on blue screens",
+  "tr": "Mavi ekranda ayrıntıları göster",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "the stop code and its parameters instead of the sad face",
+  "tr": "üzgün yüz yerine durma kodu ve parametreleri",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Detailed startup and shutdown messages",
+  "tr": "Ayrıntılı açılış ve kapanış iletileri",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "shows what Windows waits for instead of \"please wait\"",
+  "tr": "\"lütfen bekleyin\" yerine Windows'un neyi beklediği görünür",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Allow long file paths",
+  "tr": "Uzun dosya yollarına izin ver",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "lifts the 260 character limit for programs that support it",
+  "tr": "destekleyen programlar için 260 karakter sınırı kalkar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Store apps do not run in the background",
+  "tr": "Store uygulamaları arka planda çalışmasın",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "saves memory and battery; their notifications may arrive late",
+  "tr": "bellek ve pil tasarrufu; bildirimleri gecikebilir",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "No automatic restart while signed in",
+  "tr": "Oturum açıkken otomatik yeniden başlatma yok",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "updates wait for you to restart, open work is never lost",
+  "tr": "güncellemeler yeniden başlatmanızı bekler, açık işler kaybolmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Download updates only from Microsoft",
+  "tr": "Güncellemeleri yalnızca Microsoft'tan indir",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no sharing update parts with other PCs over the internet",
+  "tr": "güncelleme parçaları internetteki başka bilgisayarlarla paylaşılmaz",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Do not get updates early",
+  "tr": "Güncellemeleri erken alma",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "turns off \"get the latest updates as soon as they're available\"",
+  "tr": "\"en son güncellemeleri hazır olur olmaz al\" kapanır",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Allow pausing updates longer",
+  "tr": "Güncellemeleri daha uzun duraklatmaya izin ver",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Settings offers longer pauses than five weeks",
+  "tr": "Ayarlar beş haftadan uzun duraklatma seçenekleri sunar",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "unknown setting: {a} (see kz tweak list)",
+  "tr": "bilinmeyen ayar: {a} (bkz. kz tweak list)",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "[ok] on   [..] partly on   [--] off",
+  "tr": "[ok] açık   [..] kısmen açık   [--] kapalı",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "* needs an elevated terminal (Run as administrator)",
+  "tr": "* yönetici terminali gerekir (Yönetici olarak çalıştır)",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "change with: kz tweak apply ID   kz tweak undo ID   (or just kz tweak)",
+  "tr": "değiştirmek için: kz tweak apply ID   kz tweak undo ID   (ya da yalnızca kz tweak)",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "tweak :: Windows settings, every change reversible",
+  "tr": "tweak :: Windows ayarları, her değişiklik geri alınabilir",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "kz tweak works on Windows only.",
+  "tr": "kz tweak yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "reading settings...",
+  "tr": "ayarlar okunuyor...",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "unknown action: {other}. use list | apply | undo",
+  "tr": "bilinmeyen işlem: {other}. list | apply | undo kullanın",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": " (admin)",
+  "tr": " (yönetici)",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "kazma tweak :: [x] = on, enter applies the changes",
+  "tr": "kazma tweak :: [x] = açık, enter değişiklikleri uygular",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Nothing to change.",
+  "tr": "Değiştirilecek bir şey yok.",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "[on] ",
+  "tr": "[aç] ",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Skipped: these need an elevated terminal",
+  "tr": "Atlandı: bunlar için yönetici terminali gerekir",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Restart Explorer now so the changes show?",
+  "tr": "Değişikliklerin görünmesi için Gezgin şimdi yeniden başlatılsın mı?",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Explorer restarted",
+  "tr": "Gezgin yeniden başlatıldı",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "could not restart Explorer, sign out and back in instead",
+  "tr": "Gezgin yeniden başlatılamadı, oturumu kapatıp açın",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "some changes show after Explorer restarts or you sign in again.",
+  "tr": "bazı değişiklikler Gezgin yeniden başlayınca ya da oturum yeniden açılınca görünür.",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "sign out and back in for every change to take effect.",
+  "tr": "tüm değişikliklerin geçerli olması için oturumu kapatıp açın.",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "restart Windows for every change to take effect.",
+  "tr": "tüm değişikliklerin geçerli olması için Windows'u yeniden başlatın.",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "undo any time: kz tweak undo ID   (kz tweak undo all)",
+  "tr": "geri almak için: kz tweak undo ID   (kz tweak undo all)",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Privacy",
+  "tr": "Gizlilik",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Ads and suggestions",
+  "tr": "Reklam ve öneriler",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "AI features",
+  "tr": "Yapay zekâ özellikleri",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Microsoft Edge",
+  "tr": "Microsoft Edge",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "File Explorer",
+  "tr": "Dosya Gezgini",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Taskbar",
+  "tr": "Görev çubuğu",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Look and feel",
+  "tr": "Görünüm",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Gaming and input",
+  "tr": "Oyun ve giriş aygıtları",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "Windows Update",
+  "tr": "Windows Update",
+  "kind": "plain",
+  "file": "tweak.rs"
+ },
+ {
   "en": "Other",
   "tr": "Diğer",
   "kind": "plain",
@@ -5242,5 +6292,125 @@
   "tr": "düzenle:",
   "kind": "plain",
   "file": "whitelist.rs"
+ },
+ {
+  "en": "this does not look like a winapp2.ini file",
+  "tr": "bu bir winapp2.ini dosyasına benzemiyor",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini is not installed.",
+  "tr": "winapp2.ini kurulu değil.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz winapp2 update   downloads it (about 2 MB) from the winapp2 project",
+  "tr": "kz winapp2 update   winapp2 projesinden indirir (yaklaşık 2 MB)",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz winapp2 use FILE uses a winapp2.ini you already have",
+  "tr": "kz winapp2 use FILE elinizdeki bir winapp2.ini dosyasını kullanır",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "looking for the programs on this PC...",
+  "tr": "bu bilgisayardaki programlar aranıyor...",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "file",
+  "tr": "dosya",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "version",
+  "tr": "sürüm",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "entries",
+  "tr": "kayıt",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "on this PC",
+  "tr": "bu bilgisayarda",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz clean lists these entries; the ones you pick are remembered.",
+  "tr": "kz clean bu kayıtları listeler; seçtikleriniz hatırlanır.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "only file rules are used, registry rules are skipped.",
+  "tr": "yalnızca dosya kuralları kullanılır, kayıt defteri kuralları atlanır.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini: github.com/MoscaDotTo/Winapp2 (CC BY-SA 4.0)",
+  "tr": "winapp2.ini: github.com/MoscaDotTo/Winapp2 (CC BY-SA 4.0)",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2 :: cleaning rules for thousands of programs",
+  "tr": "winapp2 :: binlerce program için temizlik kuralları",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "no entries for this PC (install with: kz winapp2 update)",
+  "tr": "bu bilgisayar için kayıt yok (kurmak için: kz winapp2 update)",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "use an https:// address",
+  "tr": "https:// adresi kullanın",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "downloading winapp2.ini...",
+  "tr": "winapp2.ini indiriliyor...",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini {} installed: {} entries",
+  "tr": "winapp2.ini {} kuruldu: {} kayıt",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz clean now lists the programs found on this PC.",
+  "tr": "kz clean artık bu bilgisayarda bulunan programları listeler.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini removed.",
+  "tr": "winapp2.ini kaldırıldı.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "unknown action: {other}. use status | list | update | use FILE | remove",
+  "tr": "bilinmeyen işlem: {other}. status | list | update | use FILE | remove kullanın",
+  "kind": "fmt",
+  "file": "winapp2.rs"
  }
 ]

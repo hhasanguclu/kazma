@@ -32,8 +32,8 @@
 
 | | |
 |---|---|
-| **クリーンアップ** | 100 種類以上のキャッシュ、一時ファイル、ログ、ごみ箱。AI ツール、ゲーム ランチャー、GPU ドライバーの残りファイルも対象 (`clean`) · Windows.old、アップグレード ファイル、メモリ ダンプ、休止状態ファイル、古い復元ポイント (`deepclean`) · ツリーマップと最大ファイル表示付きのディスク エクスプローラー (`analyze`) · ファイルの種類 (`types`) · プロジェクトのビルド成果物 (`purge`) · 古いインストーラー (`installer`) · 重複ファイル (`dupes`) · 空のフォルダーと壊れたショートカット (`empty`) · 使用履歴 (`privacy`) |
-| **プログラムとドライバー** | プログラムとその残りファイルをアンインストール (`uninstall`) · winget でプログラムを更新 (`upgrade`) · Windows Update からのドライバー更新 (`drivers`) · スタートアップ アプリ (`startup`) · 宣伝アプリと Windows の広告 (`debloat`) · 新しい PC への引っ越し用バックアップ (`backup`) |
+| **クリーンアップ** | 100 種類以上のキャッシュ、一時ファイル、ログ、ごみ箱。AI ツール、ゲーム ランチャー、GPU ドライバーの残りファイルも対象 (`clean`) · winapp2.ini による 4,000 以上のプログラムの追加ルール (`winapp2`) · Windows.old、アップグレード ファイル、メモリ ダンプ、休止状態ファイル、古い復元ポイント (`deepclean`) · ツリーマップと最大ファイル表示付きのディスク エクスプローラー (`analyze`) · ファイルの種類 (`types`) · プロジェクトのビルド成果物 (`purge`) · 古いインストーラー (`installer`) · 重複ファイル (`dupes`) · 空のフォルダーと壊れたショートカット (`empty`) · 使用履歴 (`privacy`) |
+| **プログラムとドライバー** | プログラムとその残りファイルをアンインストール (`uninstall`) · winget でプログラムを更新 (`upgrade`) · Windows Update からのドライバー更新 (`drivers`) · スタートアップ アプリ (`startup`) · 宣伝アプリと Windows の広告 (`debloat`) · プライバシー、AI、Edge、エクスプローラー、タスク バー、更新の Windows 設定 (`tweak`) · 新しい PC への引っ越し用バックアップ (`backup`) |
 | **システム** | 正常性レポート (`health`) · GPU とバッテリーも表示するライブ モニター、プロセスが動いている理由を説明するプロセス マネージャー (`status`) · メンテナンス: DNS、アイコン キャッシュ、SSD TRIM、DISM、SFC (`optimize`) · 修復: ネットワーク、Windows Update、Store、システム ファイル (`repair`) · 電源プランとバッテリー (`power`) · 復元ポイント (`restore`) · HTML レポート (`report`) · ディスク速度テスト (`bench`) · 自動クリーンアップ (`schedule`) |
 | **ネットワーク** | IP、遅延、DNS ベンチマークと切り替え、速度テスト、保存済み Wi-Fi (`net`) · どのプログラムがどのポートを使っているか (`ports`) |
 | **便利ツール** | ファイルを開いたままのプログラムを特定 (`lock`) · 画面をスリープさせない (`awake`) · 画面拭きモード (`cleanscreen`) |
@@ -77,12 +77,13 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | ダウンロードとデスクトップにある古いセットアップ ファイル (`.exe`、`.msi`、`.msix`、`.iso`) |
 | `kz dupes [paths...]` | 重複ファイル (サイズ -> 部分ハッシュ -> BLAKE3、すべて並列) |
 | `kz empty [paths...]` | 空のフォルダー、壊れたショートカット、0 バイトのファイル (ごみ箱へ) |
-| `kz privacy` | 最近使ったファイル、ファイル名を指定して実行 / エクスプローラーの履歴、クリップボード、ブラウザーの履歴と Cookie (選択制) |
+| `kz privacy` | 最近使ったファイル、ファイル名を指定して実行 / エクスプローラーの履歴、クリップボード、ブラウザーの履歴と Cookie (選択制)。`keep` で Cookie を残すサイトを選択 |
 | `kz uninstall` | クラシック アプリ、Microsoft Store アプリ、Scoop アプリを削除し、残ったフォルダーとレジストリ キーも削除 (事前にバックアップ)。`--leftovers` で別の方法で削除したアプリの残骸を検出 |
 | `kz upgrade` | winget でインストール済みプログラムを更新 |
 | `kz drivers` | Windows Update からのドライバー更新。`--installed` でサードパーティ製ドライバーを古い順に一覧表示 |
 | `kz startup` | スタートアップ アプリのオン/オフ (タスク マネージャーと同じフラグ、完全に元に戻せます) |
 | `kz debloat` | 固定リストにあるプリインストールの宣伝アプリを削除し、広告をオフ。`--restore` で元に戻す |
+| `kz tweak` | 約 60 の Windows 設定をスイッチで切り替え: テレメトリ、Copilot / Recall、Edge、エクスプローラー、タスク バー、ゲーム、更新。`list`、`apply ID`、`undo ID`、`undo all` |
 | `kz backup [folder]` | 新しい PC 用キット: winget のアプリ一覧、ドライバー、プログラム一覧、kazma の設定。`kz backup restore FOLDER` で再インストール |
 | `kz health` | ディスクの SMART、バッテリーの劣化、ブルースクリーン、エラー、更新、Defender、ファイアウォール |
 | `kz status` | CPU、GPU、メモリ、ディスク、ネットワーク、バッテリーをリアルタイム表示。`enter` でプロセスが動いている理由を説明、`x` で終了、`m` でメモリ順に並べ替え |
@@ -100,6 +101,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz cleanscreen [seconds]` | 入力を無視する黒い画面。ディスプレイを拭くときに |
 | `kz whitelist` | kazma が絶対に削除しないパス (`--add`、`--remove`、`--edit`) |
 | `kz rules` | `kz clean` 用の独自ルール (`--edit` でメモ帳が開きます) |
+| `kz winapp2` | [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) による 4,000 以上のプログラムのクリーンアップ ルール。`update` でダウンロードすると、`kz clean` がこの PC で見つかったプログラムを表示します。`list`、`use FILE`、`remove` |
 | `kz context install` | エクスプローラーの右クリック メニューに "Analyze with kazma" を追加 (`uninstall` で削除) |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru)、`kz config theme amber` (green, amber, white, blue) |
 | `kz update` | GitHub から kazma 自体を更新 (チェックサム検証あり) |
@@ -118,6 +120,8 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `dupes` は各グループで必ず 1 つ以上のファイルを残します。
 - `drivers` は **Windows Update** が提供するドライバーだけをインストールし、先に**復元ポイント**を作成します。
 - `startup` はタスク マネージャーのオン/オフ フラグを切り替えるだけです。`debloat` は固定リストにあるアプリだけを削除し、`--restore` で設定を元に戻せます。
+- `tweak` は変更するレジストリ値を先に `%LOCALAPPDATA%\kazma\tweaks.json` に保存し、`kz tweak undo` はその値をそのまま書き戻します。
+- winapp2.ini は同梱されていません。`kz winapp2 update` で必要なときにダウンロードします。kazma はファイルのルールだけを使い (レジストリのルールは使いません)、最上位のフォルダー (ドライブ、Windows、プロファイル、ドキュメントなど) を空にするルールは拒否します。
 - `update` はダウンロードしたファイルをリリースの `SHA256SUMS.txt` で検証します。
 - `deepclean` は Windows 標準のディスク クリーンアップを使って Windows.old とアップグレード ファイルを削除し、最新の復元ポイントは必ず残します。
 - `repair` は Windows Update のフォルダーを削除せずに名前を変更し、先に復元ポイントの作成を提案します。

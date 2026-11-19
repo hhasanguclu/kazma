@@ -13,6 +13,8 @@ enum Kind {
     /// Delete these individual files.
     Files(Vec<PathBuf>),
     RecycleBin,
+    /// A winapp2.ini entry found on this PC.
+    Winapp2(std::sync::Arc<crate::winapp2::Found>),
 }
 
 #[derive(Clone)]
@@ -25,6 +27,8 @@ struct Target {
     admin: bool,
     /// Pre-selected in the checklist.
     default_on: bool,
+    /// Cleaned by `--yes` (winapp2 entries only when picked before).
+    in_yes: bool,
 }
 
 fn existing(paths: impl IntoIterator<Item = Option<PathBuf>>) -> Vec<PathBuf> {
@@ -125,6 +129,7 @@ fn catalog_targets() -> Vec<Target> {
                 min_age_h: rule.min_age_h,
                 admin: rule.admin,
                 default_on: rule.on,
+                in_yes: true,
             }
         })
         .collect()
@@ -157,6 +162,7 @@ fn custom_targets() -> Vec<Target> {
             min_age_h: hours,
             admin: false,
             default_on: true,
+            in_yes: true,
         })
         .collect()
 }
@@ -265,6 +271,7 @@ fn targets() -> Vec<Target> {
         min_age_h,
         admin,
         default_on,
+        in_yes: true,
     };
     use Kind::*;
     let builtin = vec![
@@ -558,11 +565,50 @@ fn targets() -> Vec<Target> {
         .chain(catalog_targets())
         .chain(custom_targets())
         .collect();
-    dedupe(all)
+    let mut out: Vec<Target> = dedupe(all)
         .into_iter()
         .filter(|t| match &t.kind {
             Dirs(v) | Files(v) => !v.is_empty(),
             RecycleBin => cfg!(windows),
+            Winapp2(_) => true,
+        })
+        .collect();
+    out.extend(winapp2_targets(&out));
+    out
+}
+
+/// winapp2.ini entries on this PC, minus those kazma already cleans itself.
+fn winapp2_targets(known: &[Target]) -> Vec<Target> {
+    let covered: Vec<String> = known
+        .iter()
+        .flat_map(|t| match &t.kind {
+            Kind::Dirs(v) => v.clone(),
+            _ => vec![],
+        })
+        .map(|p| p.to_string_lossy().to_lowercase())
+        .collect();
+    let inside = |p: &Path| {
+        let p = p.to_string_lossy().to_lowercase();
+        covered
+            .iter()
+            .any(|c| p == *c || p.starts_with(&format!("{c}{}", std::path::MAIN_SEPARATOR)))
+    };
+    let picked = crate::winapp2::remembered();
+    crate::winapp2::installed()
+        .into_iter()
+        .filter(|f| !f.rules.iter().all(|r| inside(&r.dir)))
+        .map(|f| {
+            let on = f.warning.is_none() && picked.contains(&f.name);
+            Target {
+                group: "Winapp2",
+                // targets live for the whole run; leaking a few short strings is fine
+                name: Box::leak(f.name.clone().into_boxed_str()),
+                admin: f.admin,
+                kind: Kind::Winapp2(std::sync::Arc::new(f)),
+                min_age_h: None,
+                default_on: on,
+                in_yes: on,
+            }
         })
         .collect()
 }
@@ -587,6 +633,7 @@ fn measure(t: &Target) -> Stats {
             files: v.len() as u64,
             failed: 0,
         },
+        Kind::Winapp2(f) => crate::winapp2::run(f, true),
         Kind::RecycleBin => sys::recycle_bin_size()
             .map(|(b, n)| Stats {
                 bytes: b,
@@ -616,6 +663,7 @@ fn run_target(t: &Target, dry: bool) -> Stats {
                     failed: a.failed + b.failed,
                 })
         }
+        Kind::Winapp2(f) => crate::winapp2::run(f, dry),
         Kind::RecycleBin => {
             let before = measure(t);
             if !dry && !sys::empty_recycle_bin() {
@@ -639,6 +687,7 @@ fn group_name(group: &str) -> &'static str {
         "AI" => ui::t("AI tools", "Yapay zekâ araçları"),
         "Games" => ui::t("Games", "Oyunlar"),
         "GPU" => ui::t("Graphics drivers", "Ekran kartı sürücüleri"),
+        "Winapp2" => ui::t("Programs (winapp2)", "Programlar (winapp2)"),
         _ => ui::t("System", "Sistem"),
     }
 }
@@ -686,7 +735,7 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         .collect();
     measured.sort_by_key(|(t, _)| {
         [
-            "User", "Browser", "Apps", "AI", "Games", "GPU", "Dev", "Custom", "System",
+            "User", "Browser", "Apps", "AI", "Games", "GPU", "Dev", "Winapp2", "Custom", "System",
         ]
         .iter()
         .position(|g| *g == t.group)
@@ -708,7 +757,10 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         return Ok(());
     }
     let selection: Vec<bool> = if yes || dry || !ui::interactive() {
-        measured.iter().map(|(t, _)| t.default_on || yes).collect()
+        measured
+            .iter()
+            .map(|(t, _)| t.default_on || (yes && t.in_yes))
+            .collect()
     } else {
         // the group column fits the longest group name in this language
         let gw = measured
@@ -720,11 +772,19 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             + 2;
         let items = measured
             .iter()
-            .map(|(t, s)| ui::CheckItem {
-                label: format!("{}{}", ui::pad(group_name(t.group), gw), t.name),
-                detail: tr!("{} files", "{} dosya", s.files),
-                size: s.bytes,
-                checked: t.default_on,
+            .map(|(t, s)| {
+                let mut detail = tr!("{} files", "{} dosya", s.files);
+                if let Kind::Winapp2(f) = &t.kind
+                    && let Some(w) = &f.warning
+                {
+                    detail = format!("{detail}  (!) {w}");
+                }
+                ui::CheckItem {
+                    label: format!("{}{}", ui::pad(group_name(t.group), gw), t.name),
+                    detail,
+                    size: s.bytes,
+                    checked: t.default_on,
+                }
             })
             .collect();
         match ui::checklist(
@@ -734,7 +794,24 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             ),
             items,
         )? {
-            Some(sel) => sel,
+            Some(sel) => {
+                // remember the winapp2 picks: they start selected next time
+                let w2: Vec<(String, bool)> = measured
+                    .iter()
+                    .zip(&sel)
+                    .filter(|((t, _), _)| t.group == "Winapp2")
+                    .map(|((t, _), on)| (t.name.to_string(), *on))
+                    .collect();
+                if !w2.is_empty() {
+                    let mut keep: Vec<String> = crate::winapp2::remembered()
+                        .into_iter()
+                        .filter(|n| !w2.iter().any(|(m, _)| m == n))
+                        .collect();
+                    keep.extend(w2.into_iter().filter(|(_, on)| *on).map(|(n, _)| n));
+                    crate::winapp2::remember(&keep);
+                }
+                sel
+            }
             None => {
                 println!("  {}", ui::t("cancelled.", "iptal edildi."));
                 return Ok(());
@@ -795,11 +872,20 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
 
     if !needs_admin.is_empty() {
         ui::section(ui::t("Needs administrator", "Yönetici gerekli"));
-        for t in &needs_admin {
+        // winapp2 can name dozens of such entries: one line for all of them
+        let w2 = needs_admin.iter().filter(|t| t.group == "Winapp2").count();
+        for t in needs_admin.iter().filter(|t| t.group != "Winapp2") {
             ui::skip(&tr!(
                 "{}  (run kz from an elevated terminal)",
                 "{}  (kz'yi yönetici terminalinde çalıştırın)",
                 t.name
+            ));
+        }
+        if w2 > 0 {
+            ui::skip(&tr!(
+                "{} winapp2 entries  (run kz from an elevated terminal)",
+                "{} winapp2 kaydı  (kz'yi yönetici terminalinde çalıştırın)",
+                w2
             ));
         }
     }
@@ -823,6 +909,15 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         total.files
     );
     println!("  '{}'\n", "-".repeat(44));
+    if cfg!(windows) && !crate::winapp2::file().is_some_and(|f| f.is_file()) {
+        println!(
+            "  {}\n",
+            tr!(
+                "tip: kz winapp2 update adds cleaning rules for 4,000+ programs",
+                "ipucu: kz winapp2 update, 4.000'den fazla program için temizlik kuralı ekler"
+            )
+        );
+    }
     Ok(())
 }
 

@@ -12,6 +12,8 @@ enum Action {
     Dirs(Vec<PathBuf>),
     /// Run this PowerShell.
     Ps(&'static str),
+    /// Delete the cookies of every site not on the keep list.
+    Cookies(Vec<crate::cookies::CookieDb>),
 }
 
 struct Item {
@@ -63,36 +65,19 @@ fn items() -> Vec<Item> {
     let recent = roaming
         .as_ref()
         .map(|r| r.join("Microsoft").join("Windows").join("Recent"));
-    let browsers: [(&str, Option<PathBuf>, &'static [&'static str]); 4] = [
-        (
-            "Chrome",
-            local
-                .as_ref()
-                .map(|l| l.join("Google").join("Chrome").join("User Data")),
-            &["chrome"],
-        ),
-        (
-            "Edge",
-            local
-                .as_ref()
-                .map(|l| l.join("Microsoft").join("Edge").join("User Data")),
-            &["msedge"],
-        ),
-        (
-            "Brave",
-            local.as_ref().map(|l| {
-                l.join("BraveSoftware")
-                    .join("Brave-Browser")
-                    .join("User Data")
-            }),
-            &["brave"],
-        ),
-        (
-            "Vivaldi",
-            local.as_ref().map(|l| l.join("Vivaldi").join("User Data")),
-            &["vivaldi"],
-        ),
-    ];
+    let browsers = crate::cookies::CHROMIUM
+        .iter()
+        .map(|(name, dir, procs)| (*name, local.as_ref().map(|l| l.join(dir)), *procs));
+    let keep = crate::cookies::load_keep();
+    let cookie_detail = if keep.is_empty() {
+        tr!("signs you out of websites", "sitelerden çıkış yaparsınız")
+    } else {
+        tr!(
+            "keeps {} sites (kz privacy keep)",
+            "{} site saklanır (kz privacy keep)",
+            keep.len()
+        )
+    };
     let firefox_profiles: Vec<PathBuf> = roaming
         .as_ref()
         .map(|r| r.join("Mozilla").join("Firefox").join("Profiles"))
@@ -208,10 +193,14 @@ fn items() -> Vec<Item> {
         });
         v.push(Item {
             name: tr!("{name} cookies", "{name} çerezleri"),
-            detail: tr!("signs you out of websites", "sitelerden çıkış yaparsınız"),
+            detail: cookie_detail.clone(),
             default_on: false,
             blocked_by: procs,
-            action: Action::Files(cookies),
+            action: if keep.is_empty() {
+                Action::Files(cookies)
+            } else {
+                Action::Cookies(crate::cookies::databases_of(name))
+            },
         });
     }
     if !firefox_profiles.is_empty() {
@@ -240,16 +229,21 @@ fn items() -> Vec<Item> {
         });
         v.push(Item {
             name: tr!("Firefox cookies", "Firefox çerezleri"),
-            detail: tr!("signs you out of websites", "sitelerden çıkış yaparsınız"),
+            detail: cookie_detail.clone(),
             default_on: false,
             blocked_by: &["firefox"],
-            action: Action::Files(cookies),
+            action: if keep.is_empty() {
+                Action::Files(cookies)
+            } else {
+                Action::Cookies(crate::cookies::databases_of("Firefox"))
+            },
         });
     }
     v.into_iter()
         .filter(|i| match &i.action {
             Action::Files(f) | Action::Dirs(f) => !f.is_empty(),
             Action::Ps(_) => cfg!(windows),
+            Action::Cookies(d) => !d.is_empty(),
         })
         .collect()
 }
@@ -288,6 +282,16 @@ fn apply(a: &Action) -> Result<Stats, String> {
                 files: a.files + b.files,
                 failed: a.failed + b.failed,
             })),
+        Action::Cookies(dbs) => {
+            let keep = crate::cookies::load_keep();
+            let mut st = Stats::default();
+            for db in dbs {
+                let (removed, _) =
+                    crate::cookies::filter(db, &keep, false).map_err(|e| e.to_string())?;
+                st.files += removed;
+            }
+            Ok(st)
+        }
         Action::Ps(script) => {
             let full = if script.starts_with("$env:KAZMA_KEYS") {
                 format!("{script}\n{CLEAR_KEYS}")
@@ -312,7 +316,7 @@ fn size_of(a: &Action) -> u64 {
     match a {
         Action::Files(f) => f.iter().map(|p| fsutil::path_size(p)).sum(),
         Action::Dirs(d) => d.iter().map(|p| fsutil::dir_size(p)).sum(),
-        Action::Ps(_) => 0,
+        Action::Ps(_) | Action::Cookies(_) => 0,
     }
 }
 
@@ -402,6 +406,8 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             Ok(s) => {
                 let note = if s.failed > 0 {
                     tr!("  ({} in use)", "  ({} kullanımda)", s.failed)
+                } else if matches!(i.action, Action::Cookies(_)) {
+                    tr!("  ({} cookies removed)", "  ({} çerez silindi)", s.files)
                 } else {
                     String::new()
                 };
