@@ -1294,7 +1294,7 @@ fn ps_path(key: &str) -> String {
 }
 
 const READ_FN: &str = r#"
-function R($p, $n) {
+function KzGet($p, $n) {
   $k = Get-Item -LiteralPath $p -ErrorAction SilentlyContinue
   if (-not $k) { return @{ k = $false } }
   $v = $k.GetValue($n, $null, 'DoNotExpandEnvironmentNames')
@@ -1312,7 +1312,7 @@ fn read_script() -> String {
     for t in TWEAKS {
         for r in t.regs {
             s.push_str(&format!(
-                "[void]$l.Add((R {} {}))\n",
+                "[void]$l.Add((KzGet {} {}))\n",
                 ps_path(r.key),
                 ps_quote(r.name)
             ));
@@ -1347,7 +1347,7 @@ fn read_state() -> anyhow::Result<(u32, Vec<Vec<Cur>>)> {
 }
 
 const WRITE_FN: &str = r#"
-function W($p, $n, $t, $v, $mk) {
+function KzSet($p, $n, $t, $v, $mk) {
   if (-not (Test-Path -LiteralPath $p)) {
     if (-not $mk) { return }
     New-Item -Path $p -Force | Out-Null
@@ -1355,17 +1355,17 @@ function W($p, $n, $t, $v, $mk) {
   if ($n -eq '') { Set-Item -LiteralPath $p -Value $v }
   else { New-ItemProperty -LiteralPath $p -Name $n -PropertyType $t -Value $v -Force | Out-Null }
 }
-function D($p, $n) {
+function KzDel($p, $n) {
   if (Test-Path -LiteralPath $p) { Remove-ItemProperty -LiteralPath $p -Name $n -ErrorAction SilentlyContinue }
 }
-function K($p) {
+function KzDelKey($p) {
   if (-not (Test-Path -LiteralPath $p)) { return }
   Remove-Item -LiteralPath $p -Recurse -Force
   # the parent kazma created along with it, if nothing else is in it
   $up = Get-Item -LiteralPath (Split-Path -LiteralPath $p -Parent) -ErrorAction SilentlyContinue
   if ($up -and $up.SubKeyCount -eq 0 -and $up.ValueCount -eq 0) { Remove-Item -LiteralPath $up.PSPath -Force }
 }
-function TaskOff($t) {
+function KzTaskOff($t) {
   $i = $t.LastIndexOf('\')
   $x = Get-ScheduledTask -TaskPath $t.Substring(0, $i + 1) -TaskName $t.Substring($i + 1) -ErrorAction SilentlyContinue
   if ($x -and $x.State -ne 'Disabled') {
@@ -1373,7 +1373,7 @@ function TaskOff($t) {
     "TASK $t"
   }
 }
-function TaskOn($t) {
+function KzTaskOn($t) {
   $i = $t.LastIndexOf('\')
   $x = Get-ScheduledTask -TaskPath $t.Substring(0, $i + 1) -TaskName $t.Substring($i + 1) -ErrorAction SilentlyContinue
   if ($x) { $null = $x | Enable-ScheduledTask -ErrorAction SilentlyContinue }
@@ -1432,16 +1432,16 @@ fn ops_script(ops: &[Op]) -> String {
                     ps_quote(value)
                 };
                 s.push_str(&format!(
-                    "W {} {} {kind} {value} ${}\n",
+                    "KzSet {} {} {kind} {value} ${}\n",
                     ps_path(key),
                     ps_quote(name),
                     !is_service(key)
                 ));
             }
             Op::DelValue(key, name) => {
-                s.push_str(&format!("D {} {}\n", ps_path(key), ps_quote(name)))
+                s.push_str(&format!("KzDel {} {}\n", ps_path(key), ps_quote(name)))
             }
-            Op::DelKey(key) => s.push_str(&format!("K {}\n", ps_path(key))),
+            Op::DelKey(key) => s.push_str(&format!("KzDelKey {}\n", ps_path(key))),
         }
     }
     s
@@ -1516,7 +1516,7 @@ fn apply(i: usize, cur: &[Cur], backups: &mut BTreeMap<String, Saved>) -> anyhow
     let ops: Vec<Op> = t.regs.iter().map(|r| op_for(r, r.set)).collect();
     let mut script = ops_script(&ops);
     for task in t.tasks {
-        script.push_str(&format!("TaskOff {}\n", ps_quote(task)));
+        script.push_str(&format!("KzTaskOff {}\n", ps_quote(task)));
     }
     let out = ps::powershell(&script, &[])?;
     let off: Vec<String> = String::from_utf8_lossy(&out.stdout)
@@ -1561,7 +1561,7 @@ fn undo(i: usize, backups: &mut BTreeMap<String, Saved>) -> anyhow::Result<()> {
         None => t.tasks.iter().map(|s| s.to_string()).collect(),
     };
     for task in &tasks {
-        script.push_str(&format!("TaskOn {}\n", ps_quote(task)));
+        script.push_str(&format!("KzTaskOn {}\n", ps_quote(task)));
     }
     let out = ps::powershell(&script, &[])?;
     if !out.status.success() {
@@ -2015,7 +2015,7 @@ mod tests {
             r"'Registry::HKEY_CURRENT_USER\Software\It''s'"
         );
         let s = read_script();
-        let calls = s.matches("$l.Add((R ").count();
+        let calls = s.matches("$l.Add((KzGet ").count();
         assert_eq!(calls, TWEAKS.iter().map(|t| t.regs.len()).sum::<usize>());
         // services are never created, other keys are
         let svc = Reg {
@@ -2029,9 +2029,9 @@ mod tests {
         let on = ops_script(&[op_for(&menu.regs[0], menu.regs[0].set)]);
         assert!(on.contains("'' String '' $true"));
         let off = ops_script(&[op_for(&menu.regs[0], menu.regs[0].default)]);
-        assert!(
-            off.contains("\nK 'Registry::HKEY_CURRENT_USER\\Software\\Classes\\CLSID\\{86ca1aa0")
-        );
+        assert!(off.contains(
+            "\nKzDelKey 'Registry::HKEY_CURRENT_USER\\Software\\Classes\\CLSID\\{86ca1aa0"
+        ));
     }
 
     #[test]
