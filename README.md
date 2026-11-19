@@ -81,7 +81,7 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz installer [paths...]` | Old setup files (`.exe`, `.msi`, `.msix`, `.iso`) in Downloads and on the Desktop |
 | `kz dupes [paths...]` | Duplicate files (size -> partial hash -> BLAKE3, all parallel) |
 | `kz empty [paths...]` | Empty folders, broken shortcuts and 0-byte files (to the Recycle Bin) |
-| `kz privacy` | Recent files, Run / Explorer history, clipboard, browser history and cookies (opt-in) |
+| `kz privacy` | Recent files, Run / Explorer history, clipboard, browser history and cookies (opt-in); `keep` picks sites whose cookies stay |
 | `kz uninstall` | Remove classic, Microsoft Store and Scoop apps, then leftover folders and registry keys (backed up first); `--leftovers` finds remains of apps removed some other way |
 | `kz upgrade` | Update installed programs through winget |
 | `kz drivers` | Driver updates from Windows Update; `--installed` lists third-party drivers by age |
@@ -105,6 +105,7 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz cleanscreen [seconds]` | Black screen that ignores input, to wipe the display |
 | `kz whitelist` | Paths kazma must never delete (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Your own clean rules for `kz clean` (`--edit` opens Notepad) |
+| `kz winapp2` | Cleaning rules for 4,000+ programs from [winapp2.ini](https://github.com/MoscaDotTo/Winapp2): `update` downloads it, then `kz clean` lists the programs found on this PC; `list`, `use FILE`, `remove` |
 | `kz context install` | "Analyze with kazma" in Explorer's right-click menu (`uninstall` removes it) |
 | `kz config` | Pick language and theme with the arrow keys; or `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | Update kazma itself from GitHub (checksum verified) |
@@ -125,6 +126,7 @@ tasks, and clean Windows Update and system temp caches.
 - `drivers` only installs drivers offered by **Windows Update** and creates a **restore point** first.
 - `startup` only flips Task Manager's on/off flags; `debloat` only removes apps on a fixed list and `--restore` undoes its settings.
 - `tweak` saves the registry values it changes to `%LOCALAPPDATA%\kazma\tweaks.json` first, and `kz tweak undo` writes exactly those values back.
+- winapp2.ini is not bundled; `kz winapp2 update` downloads it on request. kazma uses its file rules only (not its registry rules) and refuses rules that would empty a top-level folder (a drive, Windows, the profile, Documents...).
 - `update` verifies the download against the release's `SHA256SUMS.txt`.
 - `deepclean` removes Windows.old and upgrade files through Windows' own Disk Cleanup, and always keeps the newest restore point.
 - `repair` renames the Windows Update folders instead of deleting them and offers a restore point first.

@@ -1200,6 +1200,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "Programs (winapp2)",
+  "tr": "Programlar (winapp2)",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
   "en": "System",
   "tr": "Sistem",
   "kind": "plain",
@@ -1308,6 +1314,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "tip: kz winapp2 update adds cleaning rules for 4,000+ programs",
+  "tr": "ipucu: kz winapp2 update, 4.000'den fazla program için temizlik kuralı ekler",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
   "en": "context :: Explorer right-click menu",
   "tr": "context :: Gezgin sağ tık menüsü",
   "kind": "plain",
@@ -1366,6 +1378,96 @@
   "tr": "bilinmeyen: {other}. install | uninstall | status kullanın",
   "kind": "fmt",
   "file": "context.rs"
+ },
+ {
+  "en": "privacy :: cookies to keep",
+  "tr": "privacy :: saklanacak çerezler",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "not a site name: {s}",
+  "tr": "site adı değil: {s}",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "keeping cookies of {d}",
+  "tr": "{d} çerezleri saklanacak",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "no longer keeping {d}",
+  "tr": "{d} artık saklanmayacak",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "unknown action: {other}. use kz privacy keep [add | remove] SITE",
+  "tr": "bilinmeyen işlem: {other}. kz privacy keep [add | remove] SITE kullanın",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "no sites yet: kz privacy deletes every cookie it is asked to",
+  "tr": "henüz site yok: kz privacy istenen tüm çerezleri siler",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "add: kz privacy keep add github.com   remove: kz privacy keep remove github.com",
+  "tr": "ekle: kz privacy keep add github.com   çıkar: kz privacy keep remove github.com",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "file: {}",
+  "tr": "dosya: {}",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "reading cookies...",
+  "tr": "çerezler okunuyor...",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "{b}: cookies could not be read, close it and try again",
+  "tr": "{b}: çerezler okunamadı, tarayıcıyı kapatıp yeniden deneyin",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "{n} cookies  {}",
+  "tr": "{n} çerez  {}",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "on your list",
+  "tr": "listenizde",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "No cookies found.",
+  "tr": "Çerez bulunamadı.",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "kazma privacy :: [x] = keep these cookies",
+  "tr": "kazma privacy :: [x] = bu çerezleri sakla",
+  "kind": "fmt",
+  "file": "cookies.rs"
+ },
+ {
+  "en": "keeping cookies of {} sites",
+  "tr": "{} sitenin çerezleri saklanacak",
+  "kind": "fmt",
+  "file": "cookies.rs"
  },
  {
   "en": "Start menu suggestions & ads",
@@ -2760,6 +2862,12 @@
   "file": "main.rs"
  },
  {
+  "en": "cleaning rules for 4,000+ programs",
+  "tr": "4.000'den fazla program için temizlik kuralları",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
   "en": "your own clean rules",
   "tr": "kendi temizlik kuralların",
   "kind": "plain",
@@ -3378,6 +3486,18 @@
   "file": "power.rs"
  },
  {
+  "en": "signs you out of websites",
+  "tr": "sitelerden çıkış yaparsınız",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "keeps {} sites (kz privacy keep)",
+  "tr": "{} site saklanır (kz privacy keep)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
   "en": "Recent files list & jump lists",
   "tr": "Son kullanılan dosyalar ve atlama listeleri",
   "kind": "fmt",
@@ -3434,12 +3554,6 @@
  {
   "en": "{name} cookies",
   "tr": "{name} çerezleri",
-  "kind": "fmt",
-  "file": "privacy.rs"
- },
- {
-  "en": "signs you out of websites",
-  "tr": "sitelerden çıkış yaparsınız",
   "kind": "fmt",
   "file": "privacy.rs"
  },
@@ -3506,6 +3620,12 @@
  {
   "en": "  ({} in use)",
   "tr": "  ({} kullanımda)",
+  "kind": "fmt",
+  "file": "privacy.rs"
+ },
+ {
+  "en": "  ({} cookies removed)",
+  "tr": "  ({} çerez silindi)",
   "kind": "fmt",
   "file": "privacy.rs"
  },
@@ -6166,5 +6286,125 @@
   "tr": "düzenle:",
   "kind": "plain",
   "file": "whitelist.rs"
+ },
+ {
+  "en": "this does not look like a winapp2.ini file",
+  "tr": "bu bir winapp2.ini dosyasına benzemiyor",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini is not installed.",
+  "tr": "winapp2.ini kurulu değil.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz winapp2 update   downloads it (about 2 MB) from the winapp2 project",
+  "tr": "kz winapp2 update   winapp2 projesinden indirir (yaklaşık 2 MB)",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz winapp2 use FILE uses a winapp2.ini you already have",
+  "tr": "kz winapp2 use FILE elinizdeki bir winapp2.ini dosyasını kullanır",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "looking for the programs on this PC...",
+  "tr": "bu bilgisayardaki programlar aranıyor...",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "file",
+  "tr": "dosya",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "version",
+  "tr": "sürüm",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "entries",
+  "tr": "kayıt",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "on this PC",
+  "tr": "bu bilgisayarda",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz clean lists these entries; the ones you pick are remembered.",
+  "tr": "kz clean bu kayıtları listeler; seçtikleriniz hatırlanır.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "only file rules are used, registry rules are skipped.",
+  "tr": "yalnızca dosya kuralları kullanılır, kayıt defteri kuralları atlanır.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini: github.com/MoscaDotTo/Winapp2 (CC BY-SA 4.0)",
+  "tr": "winapp2.ini: github.com/MoscaDotTo/Winapp2 (CC BY-SA 4.0)",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2 :: cleaning rules for thousands of programs",
+  "tr": "winapp2 :: binlerce program için temizlik kuralları",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "no entries for this PC (install with: kz winapp2 update)",
+  "tr": "bu bilgisayar için kayıt yok (kurmak için: kz winapp2 update)",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "use an https:// address",
+  "tr": "https:// adresi kullanın",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "downloading winapp2.ini...",
+  "tr": "winapp2.ini indiriliyor...",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini {} installed: {} entries",
+  "tr": "winapp2.ini {} kuruldu: {} kayıt",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "kz clean now lists the programs found on this PC.",
+  "tr": "kz clean artık bu bilgisayarda bulunan programları listeler.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "winapp2.ini removed.",
+  "tr": "winapp2.ini kaldırıldı.",
+  "kind": "fmt",
+  "file": "winapp2.rs"
+ },
+ {
+  "en": "unknown action: {other}. use status | list | update | use FILE | remove",
+  "tr": "bilinmeyen işlem: {other}. status | list | update | use FILE | remove kullanın",
+  "kind": "fmt",
+  "file": "winapp2.rs"
  }
 ]

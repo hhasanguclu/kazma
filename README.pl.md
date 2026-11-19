@@ -81,7 +81,7 @@ Instaluje do `%LOCALAPPDATA%\Programs\kazma` i dodaje `kz` do PATH. Alternatywy:
 | `kz installer [paths...]` | Stare pliki instalacyjne (`.exe`, `.msi`, `.msix`, `.iso`) w Pobranych i na Pulpicie |
 | `kz dupes [paths...]` | Zduplikowane pliki (rozmiar -> częściowy hash -> BLAKE3, wszystko równolegle) |
 | `kz empty [paths...]` | Puste foldery, uszkodzone skróty i pliki 0-bajtowe (do Kosza) |
-| `kz privacy` | Ostatnie pliki, historia Uruchamiania / Eksploratora, schowek, historia i pliki cookie przeglądarek (do wyboru) |
+| `kz privacy` | Ostatnie pliki, historia Uruchamiania / Eksploratora, schowek, historia i pliki cookie przeglądarek (do wyboru); `keep` wybiera witryny, których pliki cookie zostają |
 | `kz uninstall` | Usuwa aplikacje klasyczne, z Microsoft Store i ze Scoop, a potem pozostałe foldery i klucze rejestru (najpierw z kopią zapasową); `--leftovers` znajduje resztki aplikacji usuniętych w inny sposób |
 | `kz upgrade` | Aktualizuje zainstalowane programy przez winget |
 | `kz drivers` | Aktualizacje sterowników z Windows Update; `--installed` wyświetla sterowniki innych firm według wieku |
@@ -105,6 +105,7 @@ Instaluje do `%LOCALAPPDATA%\Programs\kazma` i dodaje `kz` do PATH. Alternatywy:
 | `kz cleanscreen [seconds]` | Czarny ekran ignorujący wejście, do przetarcia monitora |
 | `kz whitelist` | Ścieżki, których kazma nigdy nie usunie (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Własne reguły czyszczenia dla `kz clean` (`--edit` otwiera Notatnik) |
+| `kz winapp2` | Reguły czyszczenia dla ponad 4000 programów z [winapp2.ini](https://github.com/MoscaDotTo/Winapp2): `update` pobiera plik, a potem `kz clean` pokazuje programy znalezione na tym komputerze; `list`, `use FILE`, `remove` |
 | `kz context install` | „Analyze with kazma” w menu prawego przycisku Eksploratora plików (`uninstall` usuwa wpis) |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | Aktualizuje kazma z GitHuba (z weryfikacją sumy kontrolnej) |
@@ -125,6 +126,7 @@ zadania konserwacyjne wymagające administratora oraz czyścić pamięć podręc
 - `drivers` instaluje tylko sterowniki oferowane przez **Windows Update** i najpierw tworzy **punkt przywracania**.
 - `startup` przełącza jedynie flagi wł./wył. Menedżera zadań; `debloat` usuwa tylko aplikacje ze stałej listy, a `--restore` cofa jego ustawienia.
 - `tweak` najpierw zapisuje zmieniane wartości rejestru w `%LOCALAPPDATA%\kazma\tweaks.json`, a `kz tweak undo` przywraca dokładnie te wartości.
+- winapp2.ini nie jest dołączony; `kz winapp2 update` pobiera go na żądanie. kazma używa tylko jego reguł plików (nie reguł rejestru) i odrzuca reguły, które opróżniłyby folder najwyższego poziomu (dysk, Windows, profil, Dokumenty...).
 - `update` weryfikuje pobrany plik względem `SHA256SUMS.txt` z wydania.
 - `deepclean` usuwa Windows.old i pliki aktualizacji za pomocą Oczyszczania dysku samego Windows i zawsze zostawia najnowszy punkt przywracania.
 - `repair` zmienia nazwy folderów Windows Update zamiast je usuwać i najpierw proponuje punkt przywracania.

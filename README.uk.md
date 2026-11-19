@@ -81,7 +81,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | Старі інсталятори (`.exe`, `.msi`, `.msix`, `.iso`) у Downloads і на Робочому столі |
 | `kz dupes [paths...]` | Дублікати файлів (розмір -> частковий хеш -> BLAKE3, усе паралельно) |
 | `kz empty [paths...]` | Порожні папки, зламані ярлики й файли 0 байтів (у Кошик) |
-| `kz privacy` | Недавні файли, історія «Виконати» / Провідника, буфер обміну, історія й файли cookie браузерів (за вибором) |
+| `kz privacy` | Недавні файли, історія «Виконати» / Провідника, буфер обміну, історія й файли cookie браузерів (за вибором); `keep` вибирає сайти, файли cookie яких залишаються |
 | `kz uninstall` | Видаляє класичні програми, програми з Microsoft Store і Scoop, а потім залишки папок і розділів реєстру (спершу з резервною копією); `--leftovers` знаходить залишки програм, видалених іншим способом |
 | `kz upgrade` | Оновлює встановлені програми через winget |
 | `kz drivers` | Оновлення драйверів із Windows Update; `--installed` показує сторонні драйвери за віком |
@@ -105,6 +105,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz cleanscreen [seconds]` | Чорний екран, що ігнорує введення, щоб протерти дисплей |
 | `kz whitelist` | Шляхи, які kazma ніколи не видалить (`--add`, `--remove`, `--edit`) |
 | `kz rules` | Власні правила очищення для `kz clean` (`--edit` відкриває Блокнот) |
+| `kz winapp2` | Правила очищення для 4000+ програм із [winapp2.ini](https://github.com/MoscaDotTo/Winapp2): `update` завантажує його, потім `kz clean` показує програми, знайдені на цьому ПК; `list`, `use FILE`, `remove` |
 | `kz context install` | «Analyze with kazma» у контекстному меню Провідника (`uninstall` прибирає) |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | Оновлює саму kazma з GitHub (з перевіркою контрольної суми) |
@@ -125,6 +126,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `drivers` встановлює лише драйвери, які пропонує **Windows Update**, і спершу створює **точку відновлення**.
 - `startup` лише перемикає прапорці увімк./вимк. Диспетчера завдань; `debloat` видаляє лише програми з фіксованого списку, а `--restore` скасовує його налаштування.
 - `tweak` спершу зберігає змінювані значення реєстру в `%LOCALAPPDATA%\kazma\tweaks.json`, а `kz tweak undo` записує назад саме їх.
+- winapp2.ini не входить до складу; `kz winapp2 update` завантажує його на запит. kazma використовує лише правила для файлів (не для реєстру) і відхиляє правила, що очистили б теку верхнього рівня (диск, Windows, профіль, Документи...).
 - `update` перевіряє завантажений файл за `SHA256SUMS.txt` випуску.
 - `deepclean` видаляє Windows.old і файли оновлення через власне Очищення диска Windows і завжди залишає найновішу точку відновлення.
 - `repair` перейменовує папки Windows Update замість видалення й спершу пропонує створити точку відновлення.

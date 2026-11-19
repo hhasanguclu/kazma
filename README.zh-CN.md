@@ -80,7 +80,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | “下载”和桌面上的旧安装文件（`.exe`、`.msi`、`.msix`、`.iso`） |
 | `kz dupes [paths...]` | 重复文件（大小 -> 部分哈希 -> BLAKE3，全部并行） |
 | `kz empty [paths...]` | 空文件夹、失效快捷方式和 0 字节文件（移到回收站） |
-| `kz privacy` | 最近文件、“运行” / 资源管理器历史、剪贴板、浏览器历史和 Cookie（需手动勾选） |
+| `kz privacy` | 最近文件、“运行” / 资源管理器历史、剪贴板、浏览器历史和 Cookie（需手动勾选）；`keep` 选择保留 Cookie 的网站 |
 | `kz uninstall` | 卸载经典程序、Microsoft Store 应用和 Scoop 应用，然后清理残留文件夹和注册表项（先备份）；`--leftovers` 查找以其他方式卸载的应用的残留 |
 | `kz upgrade` | 通过 winget 更新已安装的程序 |
 | `kz drivers` | 来自 Windows 更新的驱动更新；`--installed` 按时间列出第三方驱动 |
@@ -104,6 +104,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz cleanscreen [seconds]` | 忽略输入的黑屏，方便擦拭屏幕 |
 | `kz whitelist` | kazma 绝不删除的路径（`--add`、`--remove`、`--edit`） |
 | `kz rules` | 你为 `kz clean` 定制的清理规则（`--edit` 用记事本打开） |
+| `kz winapp2` | 来自 [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) 的 4,000 多个程序的清理规则：`update` 下载后，`kz clean` 会列出这台电脑上找到的程序；`list`、`use FILE`、`remove` |
 | `kz context install` | 在资源管理器右键菜单中添加“Analyze with kazma”（`uninstall` 将其移除） |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de`（auto、en、tr、zh-CN、zh-TW、ja、ko、de、fr、pl、uk、ru），`kz config theme amber`（green、amber、white、blue） |
 | `kz update` | 从 GitHub 更新 kazma 本身（校验和验证） |
@@ -124,6 +125,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `drivers` 只安装 **Windows 更新**提供的驱动，并且会先创建**还原点**。
 - `startup` 只切换任务管理器的开/关标志；`debloat` 只移除固定列表中的应用，`--restore` 可撤销其设置更改。
 - `tweak` 会先把要修改的注册表值保存到 `%LOCALAPPDATA%\kazma\tweaks.json`，`kz tweak undo` 会原样写回这些值。
+- winapp2.ini 不随附，`kz winapp2 update` 会在你需要时下载。kazma 只使用其中的文件规则（不使用注册表规则），并拒绝会清空顶层文件夹（驱动器、Windows、用户目录、文档等）的规则。
 - `update` 会用发布版本的 `SHA256SUMS.txt` 校验下载内容。
 - `deepclean` 通过 Windows 自带的磁盘清理删除 Windows.old 和升级文件，并始终保留最新的还原点。
 - `repair` 会重命名 Windows 更新文件夹而不是删除，并且会先提议创建还原点。

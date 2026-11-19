@@ -81,7 +81,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [yollar]` | İndirilenler ve Masaüstü'ndeki eski `.exe`, `.msi`, `.msix`, `.iso` dosyaları |
 | `kz dupes [yollar]` | Yinelenen dosyalar (boyut -> kısmi özet -> BLAKE3, hepsi paralel) |
 | `kz empty [yollar]` | Boş klasörler, bozuk kısayollar ve 0 baytlık dosyalar (Geri Dönüşüm Kutusu'na) |
-| `kz privacy` | Son dosyalar, Çalıştır / Gezgin geçmişi, pano, tarayıcı geçmişi ve çerezler (isteğe bağlı) |
+| `kz privacy` | Son dosyalar, Çalıştır / Gezgin geçmişi, pano, tarayıcı geçmişi ve çerezler (isteğe bağlı); `keep` çerezleri kalacak siteleri seçer |
 | `kz uninstall` | Klasik, Microsoft Store ve Scoop uygulamalarını kaldırır; ardından kalıntı klasörleri ve kayıt defteri anahtarlarını (önce yedekleyerek) temizler; `--leftovers` başka yolla silinmiş uygulamaların kalıntılarını bulur |
 | `kz upgrade` | Yüklü programları winget ile günceller |
 | `kz drivers` | Windows Update'ten sürücü güncellemeleri; `--installed` üçüncü taraf sürücüleri yaşına göre listeler |
@@ -105,6 +105,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz cleanscreen [saniye]` | Ekranı silmek için girdileri yok sayan siyah ekran |
 | `kz whitelist` | kazma'nın asla silmeyeceği yollar (`--add`, `--remove`, `--edit`) |
 | `kz rules` | `kz clean` için kendi temizlik kuralların (`--edit` Not Defteri'nde açar) |
+| `kz winapp2` | [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) ile 4.000'den fazla program için temizlik kuralları: `update` indirir, sonra `kz clean` bu bilgisayarda bulunan programları listeler; `list`, `use FILE`, `remove` |
 | `kz context install` | Gezgin sağ tık menüsüne "kazma ile analiz et" ekler (`uninstall` kaldırır) |
 | `kz config` | Dili ve temayı ok tuşlarıyla seçin; ya da `kz config lang en` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | kazma'yı GitHub'dan günceller (sağlama toplamı doğrulanır) |
@@ -125,6 +126,7 @@ dosyalarını temizlemek için terminali **yönetici olarak** açın.
 - `drivers` yalnızca **Windows Update**'in sunduğu sürücüleri kurar ve önce **geri yükleme noktası** oluşturur.
 - `startup` yalnızca Görev Yöneticisi'nin açık / kapalı ayarını değiştirir; `debloat` yalnızca listedeki uygulamaları kaldırır, ayarlarını `--restore` geri alır.
 - `tweak` değiştirdiği kayıt defteri değerlerini önce `%LOCALAPPDATA%\kazma\tweaks.json` dosyasına kaydeder; `kz tweak undo` tam olarak o değerleri geri yazar.
+- winapp2.ini kazma ile gelmez; `kz winapp2 update` istendiğinde indirir. kazma yalnızca dosya kurallarını kullanır (kayıt defteri kurallarını değil) ve üst düzey bir klasörü (sürücü, Windows, profil, Belgeler...) boşaltacak kuralları reddeder.
 - `update` indirilen dosyayı release'teki `SHA256SUMS.txt` ile doğrular.
 - `deepclean`, Windows.old ve yükseltme dosyalarını Windows'un kendi Disk Temizleme aracıyla kaldırır; en yeni geri yükleme noktası her zaman kalır.
 - `repair`, Windows Update klasörlerini silmez, yeniden adlandırır; önce geri yükleme noktası önerir.

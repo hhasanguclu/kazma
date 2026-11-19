@@ -81,7 +81,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | 다운로드 폴더와 바탕 화면의 오래된 설치 파일(`.exe`, `.msi`, `.msix`, `.iso`) |
 | `kz dupes [paths...]` | 중복 파일 (크기 -> 부분 해시 -> BLAKE3, 모두 병렬) |
 | `kz empty [paths...]` | 빈 폴더, 깨진 바로 가기, 0바이트 파일 (휴지통으로) |
-| `kz privacy` | 최근 파일, 실행 / 파일 탐색기 기록, 클립보드, 브라우저 방문 기록과 쿠키 (선택 시에만) |
+| `kz privacy` | 최근 파일, 실행 / 파일 탐색기 기록, 클립보드, 브라우저 방문 기록과 쿠키 (선택 시에만); `keep`으로 쿠키를 남길 사이트 선택 |
 | `kz uninstall` | 일반 앱, Microsoft Store 앱, Scoop 앱을 제거한 뒤 남은 폴더와 레지스트리 키까지 정리(먼저 백업); `--leftovers`는 다른 방법으로 제거한 앱의 잔여물을 찾습니다 |
 | `kz upgrade` | winget으로 설치된 프로그램 업데이트 |
 | `kz drivers` | Windows 업데이트의 드라이버 업데이트; `--installed`는 타사 드라이버를 오래된 순으로 보여줍니다 |
@@ -105,6 +105,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz cleanscreen [seconds]` | 입력을 무시하는 검은 화면으로 디스플레이 닦기 |
 | `kz whitelist` | kazma가 절대 삭제하지 않을 경로 (`--add`, `--remove`, `--edit`) |
 | `kz rules` | `kz clean`에 쓸 나만의 정리 규칙 (`--edit`는 메모장을 엽니다) |
+| `kz winapp2` | [winapp2.ini](https://github.com/MoscaDotTo/Winapp2)의 4,000개 이상 프로그램 정리 규칙: `update`로 내려받으면 `kz clean`이 이 PC에서 찾은 프로그램을 보여 줍니다; `list`, `use FILE`, `remove` |
 | `kz context install` | 파일 탐색기 오른쪽 클릭 메뉴에 "Analyze with kazma" 추가 (`uninstall`로 제거) |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
 | `kz update` | GitHub에서 kazma 자체 업데이트 (체크섬 확인) |
@@ -125,6 +126,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `drivers`는 **Windows 업데이트**가 제공하는 드라이버만 설치하며, 먼저 **복원 지점**을 만듭니다.
 - `startup`은 작업 관리자의 켜기/끄기 플래그만 바꿉니다. `debloat`는 정해진 목록의 앱만 제거하며, `--restore`로 설정을 되돌릴 수 있습니다.
 - `tweak`은 바꾸는 레지스트리 값을 먼저 `%LOCALAPPDATA%\kazma\tweaks.json`에 저장하고, `kz tweak undo`는 바로 그 값을 되돌려 씁니다.
+- winapp2.ini는 포함되어 있지 않으며 `kz winapp2 update`로 원할 때 내려받습니다. kazma는 파일 규칙만 사용하고(레지스트리 규칙은 사용하지 않음) 최상위 폴더(드라이브, Windows, 프로필, 문서 등)를 비우는 규칙은 거부합니다.
 - `update`는 다운로드한 파일을 릴리스의 `SHA256SUMS.txt`로 검증합니다.
 - `deepclean`은 Windows.old와 업그레이드 파일을 Windows의 디스크 정리로 제거하며, 가장 최근 복원 지점은 항상 남깁니다.
 - `repair`는 Windows 업데이트 폴더를 삭제하지 않고 이름을 바꾸며, 먼저 복원 지점 생성을 제안합니다.

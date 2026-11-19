@@ -77,7 +77,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | ダウンロードとデスクトップにある古いセットアップ ファイル (`.exe`、`.msi`、`.msix`、`.iso`) |
 | `kz dupes [paths...]` | 重複ファイル (サイズ -> 部分ハッシュ -> BLAKE3、すべて並列) |
 | `kz empty [paths...]` | 空のフォルダー、壊れたショートカット、0 バイトのファイル (ごみ箱へ) |
-| `kz privacy` | 最近使ったファイル、ファイル名を指定して実行 / エクスプローラーの履歴、クリップボード、ブラウザーの履歴と Cookie (選択制) |
+| `kz privacy` | 最近使ったファイル、ファイル名を指定して実行 / エクスプローラーの履歴、クリップボード、ブラウザーの履歴と Cookie (選択制)。`keep` で Cookie を残すサイトを選択 |
 | `kz uninstall` | クラシック アプリ、Microsoft Store アプリ、Scoop アプリを削除し、残ったフォルダーとレジストリ キーも削除 (事前にバックアップ)。`--leftovers` で別の方法で削除したアプリの残骸を検出 |
 | `kz upgrade` | winget でインストール済みプログラムを更新 |
 | `kz drivers` | Windows Update からのドライバー更新。`--installed` でサードパーティ製ドライバーを古い順に一覧表示 |
@@ -101,6 +101,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz cleanscreen [seconds]` | 入力を無視する黒い画面。ディスプレイを拭くときに |
 | `kz whitelist` | kazma が絶対に削除しないパス (`--add`、`--remove`、`--edit`) |
 | `kz rules` | `kz clean` 用の独自ルール (`--edit` でメモ帳が開きます) |
+| `kz winapp2` | [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) による 4,000 以上のプログラムのクリーンアップ ルール。`update` でダウンロードすると、`kz clean` がこの PC で見つかったプログラムを表示します。`list`、`use FILE`、`remove` |
 | `kz context install` | エクスプローラーの右クリック メニューに "Analyze with kazma" を追加 (`uninstall` で削除) |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru)、`kz config theme amber` (green, amber, white, blue) |
 | `kz update` | GitHub から kazma 自体を更新 (チェックサム検証あり) |
@@ -120,6 +121,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `drivers` は **Windows Update** が提供するドライバーだけをインストールし、先に**復元ポイント**を作成します。
 - `startup` はタスク マネージャーのオン/オフ フラグを切り替えるだけです。`debloat` は固定リストにあるアプリだけを削除し、`--restore` で設定を元に戻せます。
 - `tweak` は変更するレジストリ値を先に `%LOCALAPPDATA%\kazma\tweaks.json` に保存し、`kz tweak undo` はその値をそのまま書き戻します。
+- winapp2.ini は同梱されていません。`kz winapp2 update` で必要なときにダウンロードします。kazma はファイルのルールだけを使い (レジストリのルールは使いません)、最上位のフォルダー (ドライブ、Windows、プロファイル、ドキュメントなど) を空にするルールは拒否します。
 - `update` はダウンロードしたファイルをリリースの `SHA256SUMS.txt` で検証します。
 - `deepclean` は Windows 標準のディスク クリーンアップを使って Windows.old とアップグレード ファイルを削除し、最新の復元ポイントは必ず残します。
 - `repair` は Windows Update のフォルダーを削除せずに名前を変更し、先に復元ポイントの作成を提案します。
