@@ -35,8 +35,8 @@ arka planda servis çalıştırmaz, veri toplamaz. Arayüz 11 dilde kullanılabi
 | | |
 |---|---|
 | **Temizlik** | yapay zekâ araçları, oyun başlatıcıları ve ekran kartı sürücü artıkları dahil 100+ tür önbellek, geçici dosya, log ve Geri Dönüşüm Kutusu (`clean`) · winapp2.ini ile 4.000'den fazla program için ek kurallar (`winapp2`) · Windows.old, yükseltme dosyaları, bellek dökümleri, hazırda bekletme dosyası, eski geri yükleme noktaları (`deepclean`) · ağaç haritalı ve en büyük dosyalar görünümlü disk gezgini (`analyze`) · dosya türleri (`types`) · proje derleme çıktıları (`purge`) · eski kurulum dosyaları (`installer`) · yinelenen dosyalar (`dupes`) · boş klasörler ve bozuk kısayollar (`empty`) · kullanım izleri (`privacy`) |
-| **Programlar ve sürücüler** | program ve kalıntılarını kaldırma (`uninstall`) · winget ile program güncelleme (`upgrade`) · Windows Update'ten sürücü güncelleme (`drivers`) · başlangıç programları (`startup`) · tanıtım uygulamaları ve Windows reklamları (`debloat`) · gizlilik, yapay zekâ, Edge, Gezgin, görev çubuğu ve güncelleme ayarları (`tweak`) · yeni bilgisayara taşıma yedeği (`backup`) |
-| **Sistem** | sağlık raporu (`health`) · açılış süresi ve onu yavaşlatanlar (`boot`) · GPU ve pil dahil canlı izleme, bir sürecin neden çalıştığını açıklayan süreç yöneticisi (`status`) · bakım: DNS, ikon önbelleği, SSD TRIM, DISM, SFC (`optimize`) · onarım: ağ, Windows Update, Store, sistem dosyaları (`repair`) · güç planı ve pil (`power`) · geri yükleme noktaları (`restore`) · HTML rapor (`report`) · disk hız testi (`bench`) · otomatik temizlik (`schedule`) |
+| **Programlar ve sürücüler** | program ve kalıntılarını kaldırma (`uninstall`) · winget ile program güncelleme (`upgrade`) · yeni bilgisayar için programlar (`install`) · Windows Update'ten sürücü güncelleme (`drivers`) · başlangıç programları (`startup`) · tanıtım uygulamaları ve Windows reklamları (`debloat`) · gizlilik, yapay zekâ, Edge, Gezgin, görev çubuğu ve güncelleme ayarları (`tweak`) · yeni bilgisayara taşıma yedeği (`backup`) |
+| **Sistem** | sağlık raporu (`health`) · açılış süresi ve onu yavaşlatanlar (`boot`) · açıklamalı hizmetler, zamanlanmış görevler ve isteğe bağlı özellikler (`services`, `tasks`, `features`) · GPU ve pil dahil canlı izleme, bir sürecin neden çalıştığını açıklayan süreç yöneticisi (`status`) · bakım: DNS, ikon önbelleği, SSD TRIM, DISM, SFC (`optimize`) · onarım: ağ, Windows Update, Store, sistem dosyaları (`repair`) · güç planı ve pil (`power`) · geri yükleme noktaları (`restore`) · HTML rapor (`report`) · disk hız testi (`bench`) · otomatik temizlik (`schedule`) |
 | **Ağ** | IP, gecikme, DNS karşılaştırma ve değiştirme, hız testi, kayıtlı Wi-Fi (`net`) · hangi port hangi programda (`ports`) |
 | **Pratik** | dosyayı hangi programın açık tuttuğu (`lock`) · ekranı açık tutma (`awake`) · ekran silme modu (`cleanscreen`) |
 | **kazma** | korunan yollar (`whitelist`) · kendi temizlik kuralların (`rules`) · Gezgin sağ tık menüsü (`context`) · dil ve tema (`config`) · kendini güncelleme (`update`) · geçmiş (`history`) · kazma'yı kaldırma (`remove`) |
@@ -83,11 +83,15 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz empty [yollar]` | Boş klasörler, bozuk kısayollar ve 0 baytlık dosyalar (Geri Dönüşüm Kutusu'na) |
 | `kz privacy` | Son dosyalar, Çalıştır / Gezgin geçmişi, pano, tarayıcı geçmişi ve çerezler (isteğe bağlı); `keep` çerezleri kalacak siteleri seçer; `audit` kamerayı, mikrofonu ve konumu hangi uygulamaların kullandığını gösterir |
 | `kz uninstall` | Klasik, Microsoft Store ve Scoop uygulamalarını kaldırır; ardından kalıntı klasörleri ve kayıt defteri anahtarlarını (önce yedekleyerek) temizler; `--leftovers` başka yolla silinmiş uygulamaların kalıntılarını bulur |
+| `kz install` | Kısa bir listeden yeni bilgisayar için programlar (tarayıcı, mesajlaşma, medya, araçlar, belgeler, geliştirme, oyun), winget ile; `--list` ya da adıyla: `kz install firefox vlc` |
 | `kz upgrade` | Yüklü programları winget ile günceller |
 | `kz drivers` | Windows Update'ten sürücü güncellemeleri; `--installed` üçüncü taraf sürücüleri yaşına göre listeler |
 | `kz startup` | Başlangıç programlarını açar / kapatır (Görev Yöneticisi ile aynı ayar, geri alınabilir) |
 | `kz debloat` | Sabit bir listedeki tanıtım uygulamalarını kaldırır, reklamları kapatır; `--restore` geri alır |
-| `kz tweak` | Anahtar olarak 60'a yakın Windows ayarı: telemetri, Copilot / Recall, Edge, Gezgin, görev çubuğu, oyun, güncellemeler; `list`, `apply ID`, `undo ID`, `undo all` |
+| `kz tweak` | Anahtar olarak 60'a yakın Windows ayarı: telemetri, Copilot / Recall, Edge, Gezgin, görev çubuğu, oyun, güncellemeler; `list`, `apply ID`, `undo ID`, `undo all`; `profile recommended \| privacy \| gaming \| classic`, `export` / `import FILE` |
+| `kz services` | Gerekmeyebilecek hizmetler, her biri açıklamalı; kapatılanın eski başlangıç türü saklanır; `--all` tüm hizmetleri listeler; `on` / `off NAME` |
+| `kz tasks` | Programların eklediği zamanlanmış görevler (güncelleyiciler, yardımcılar), açık / kapalı; `--all` Windows'unkileri de gösterir |
+| `kz features` | Windows isteğe bağlı özellikleri: WSL, Hyper-V, Windows Korumalı Alanı, .NET 3.5, SMB 1.0, PowerShell 2.0... (yönetici) |
 | `kz backup [klasör]` | Yeni bilgisayar paketi: winget program listesi, sürücüler, program listesi, kazma ayarları; `kz backup restore KLASÖR` geri kurar |
 | `kz health` | Disk sağlığı, pil yıpranması, mavi ekranlar, hatalar, güncellemeler, Defender, güvenlik duvarı |
 | `kz boot` | Windows'un açılış süresi ve açılışı yavaşlatan uygulama, sürücü ve hizmetler (Windows'un kendi açılış kaydından; yönetici) |
@@ -100,7 +104,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz ports [filtre]` | Hangi port hangi programda; `--kill PORT` programı kapatır |
 | `kz optimize` | Bozuk başlangıç kayıtları (yedekleyerek), Başlat/Arama yeniden başlatma, DNS, ikon önbelleği, zamanı gelince SSD TRIM / DISM / SFC |
 | `kz repair [düzeltme]` | `network`, `update` (Windows Update sıfırlama), `store`, `dism` (+SFC), `time`, `printer`; önce geri yükleme noktası (yönetici) |
-| `kz schedule weekly` | `kz clean --yes`'i otomatik çalıştırır (`daily`, `weekly`, `monthly`, `off`, `status`) |
+| `kz schedule weekly` | `kz clean --yes`'i otomatik çalıştırır (`daily`, `weekly`, `monthly`, `off`, `status`) · `kz schedule lowdisk --below 15` |
 | `kz lock <yol>` | Bir dosyayı ya da klasörü hangi programın açık tuttuğu |
 | `kz awake [dakika]` | Ekranı ve bilgisayarı uyanık tutar |
 | `kz cleanscreen [saniye]` | Ekranı silmek için girdileri yok sayan siyah ekran |
@@ -109,6 +113,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz winapp2` | [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) ile 4.000'den fazla program için temizlik kuralları: `update` indirir, sonra `kz clean` bu bilgisayarda bulunan programları listeler; `list`, `use FILE`, `remove` |
 | `kz context install` | Gezgin sağ tık menüsüne "kazma ile analiz et" ekler (`uninstall` kaldırır) |
 | `kz config` | Dili ve temayı ok tuşlarıyla seçin; ya da `kz config lang en` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz completion` | Tab ile tamamlama: PowerShell profilinize `kz completion \| Out-String \| Invoke-Expression` ekleyin |
 | `kz update` | kazma'yı GitHub'dan günceller (sağlama toplamı doğrulanır) |
 | `kz history` | kazma'nın yaptığı her şeyin kaydı |
 | `kz remove` | kazma'yı kaldırır |
@@ -131,6 +136,7 @@ dosyalarını temizlemek için terminali **yönetici olarak** açın.
 - `startup` yalnızca Görev Yöneticisi'nin açık / kapalı ayarını değiştirir; `debloat` yalnızca listedeki uygulamaları kaldırır, ayarlarını `--restore` geri alır.
 - `tweak` değiştirdiği kayıt defteri değerlerini önce `%LOCALAPPDATA%\kazma\tweaks.json` dosyasına kaydeder; `kz tweak undo` tam olarak o değerleri geri yazar.
 - winapp2.ini kazma ile gelmez; `kz winapp2 update` istendiğinde indirir. kazma yalnızca dosya kurallarını kullanır (kayıt defteri kurallarını değil) ve üst düzey bir klasörü (sürücü, Windows, profil, Belgeler...) boşaltacak kuralları reddeder.
+- `services` kapattığı her hizmetin başlangıç türünü saklar; winapp2 kayıt defteri kuralları her anahtarı silmeden önce `%LOCALAPPDATA%\kazma\backups` içine `.reg` dosyası olarak yedekler.
 - `update` indirilen dosyayı release'teki `SHA256SUMS.txt` ile doğrular.
 - `deepclean`, Windows.old ve yükseltme dosyalarını Windows'un kendi Disk Temizleme aracıyla kaldırır; en yeni geri yükleme noktası her zaman kalır.
 - `repair`, Windows Update klasörlerini silmez, yeniden adlandırır; önce geri yükleme noktası önerir.

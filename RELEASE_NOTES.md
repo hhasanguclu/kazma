@@ -9,7 +9,32 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~5 MB exe. No installer required, no telemetry.
 
-## What's new in v1.2.0
+## What's new in v1.3.0
+
+- **`kz install`**: set up a new PC from a short list of well-known programs (browsers, chat,
+  media, tools, documents, development, games) through winget. Installed ones are left out;
+  `kz install firefox vlc` works too.
+- **`kz services`**: 29 services you may not need, each with a line on what it does and when to
+  keep it. Turning one off saves its old start type, turning it on puts that back. `--all` lists
+  every service, third-party ones first; `kz services off NAME` / `on NAME` for scripts.
+- **`kz tasks`**: scheduled tasks that programs added (updaters, helpers), on / off. Nothing is
+  deleted. `--all` also lists Windows' own tasks.
+- **`kz features`**: Windows optional features as switches: WSL, Virtual Machine Platform,
+  Hyper-V, Windows Sandbox, .NET 3.5, SMB 1.0, PowerShell 2.0 and more (admin).
+- **Tweak profiles**: `kz tweak profile recommended | privacy | gaming | classic`;
+  `kz tweak export FILE` / `import FILE`. `kz backup` saves the settings that are on, and
+  `backup restore` applies them again on the new PC (the cookie keep list and winapp2 picks too).
+- **winapp2 registry rules**: each key is exported to a `.reg` file before it is deleted; keys
+  Windows needs (Run, Uninstall, file associations, policies) are never touched.
+- **Cookies to keep** also works for Opera, Opera GX and Arc.
+- **Low-disk cleaning**: `kz schedule lowdisk --below 15` checks every day and cleans only when
+  less than 15 GB are free (`kz clean --if-below 15` does the same once).
+- **Interface**: the main menu has a new Windows group and two balanced columns; `clean` shows
+  its scan progress and the free space before and after; lists cut names at the end, paths at
+  the start; `kz completion` gives PowerShell tab completion; the installer adds kazma to the
+  Start menu.
+
+## v1.2.0
 
 - **`kz boot`**: how long Windows takes to start (time to a usable desktop for the last boots) and
   the apps, drivers and services that slowed it down in the last 60 days, read from Windows' own
@@ -162,11 +187,16 @@ kz privacy               usage traces
 kz privacy keep          pick the sites whose cookies stay
 kz privacy audit         who used the camera, microphone and location
 kz uninstall             remove programs + leftovers
+kz install               programs for a new PC (winget)
 kz upgrade               update installed programs (winget)
 kz drivers               driver updates from Windows Update
 kz startup               startup programs on / off
 kz debloat               promo apps and Windows ads
 kz tweak                 Windows settings on / off (privacy, AI, Edge, Explorer...), reversible
+kz tweak profile gaming  ready-made sets: recommended, privacy, gaming, classic
+kz services              services you may not need, explained
+kz tasks                 scheduled tasks programs added
+kz features              WSL, Hyper-V, Sandbox, .NET 3.5...
 kz backup [folder]       new-PC kit;  kz backup restore FOLDER
 kz health                system health report
 kz boot                  boot time and what slows it down
@@ -177,7 +207,7 @@ kz power                 power plans, battery report, wake sources
 kz restore               System Restore points
 kz report                HTML system report
 kz bench [path]          disk speed test
-kz schedule weekly       automatic cleaning
+kz schedule weekly       automatic cleaning (lowdisk: only when space runs low)
 kz net                   ip, latency, dns, speed test, wifi
 kz ports [filter]        who listens on which port
 kz lock <path>           which program has a file open
@@ -188,6 +218,7 @@ kz winapp2 update        cleaning rules for 4,000+ programs (winapp2.ini)
 kz context install       Explorer right-click menu
 kz config lang tr        language / theme
 kz update                update kazma
+kz completion            PowerShell tab completion
 kz whitelist             paths kazma must never delete
 kz history               what kazma has done
 kz remove                uninstall kazma

@@ -35,8 +35,8 @@ Windows 电脑，带有复古的绿屏风格。无需安装程序，没有后台
 | | |
 |---|---|
 | **清理** | 100 多种缓存、临时文件、日志和回收站，包括 AI 工具、游戏启动器和显卡驱动残留（`clean`）· 来自 winapp2.ini 的 4,000 多个程序的额外规则（`winapp2`）· Windows.old、升级文件、内存转储、休眠文件、旧的还原点（`deepclean`）· 带树状图和最大文件视图的磁盘浏览器（`analyze`）· 文件类型（`types`）· 项目构建产物（`purge`）· 旧安装包（`installer`）· 重复文件（`dupes`）· 空文件夹和失效快捷方式（`empty`）· 使用痕迹（`privacy`） |
-| **程序和驱动** | 卸载程序及其残留（`uninstall`）· 用 winget 更新程序（`upgrade`）· 来自 Windows 更新的驱动更新（`drivers`）· 启动程序（`startup`）· 推广应用和 Windows 广告（`debloat`）· 隐私、AI、Edge、资源管理器、任务栏和更新相关的 Windows 设置（`tweak`）· 换新电脑备份（`backup`） |
-| **系统** | 健康报告（`health`）· 启动时间及拖慢启动的原因（`boot`）· 含 GPU 和电池信息的实时监视，以及能解释进程为何运行的进程管理器（`status`）· 维护：DNS、图标缓存、SSD TRIM、DISM、SFC（`optimize`）· 修复：网络、Windows 更新、应用商店、系统文件（`repair`）· 电源计划和电池（`power`）· 还原点（`restore`）· HTML 报告（`report`）· 磁盘速度测试（`bench`）· 自动清理（`schedule`） |
+| **程序和驱动** | 卸载程序及其残留（`uninstall`）· 用 winget 更新程序（`upgrade`）· 新电脑所需程序（`install`）· 来自 Windows 更新的驱动更新（`drivers`）· 启动程序（`startup`）· 推广应用和 Windows 广告（`debloat`）· 隐私、AI、Edge、资源管理器、任务栏和更新相关的 Windows 设置（`tweak`）· 换新电脑备份（`backup`） |
+| **系统** | 健康报告（`health`）· 启动时间及拖慢启动的原因（`boot`）· 带说明的服务、计划任务和可选功能（`services`、`tasks`、`features`）· 含 GPU 和电池信息的实时监视，以及能解释进程为何运行的进程管理器（`status`）· 维护：DNS、图标缓存、SSD TRIM、DISM、SFC（`optimize`）· 修复：网络、Windows 更新、应用商店、系统文件（`repair`）· 电源计划和电池（`power`）· 还原点（`restore`）· HTML 报告（`report`）· 磁盘速度测试（`bench`）· 自动清理（`schedule`） |
 | **网络** | IP、延迟、DNS 基准测试与切换、测速、已保存的 Wi-Fi（`net`）· 哪个程序占用哪个端口（`ports`） |
 | **实用** | 哪个程序占用着某个文件（`lock`）· 保持屏幕常亮（`awake`）· 擦屏模式（`cleanscreen`） |
 | **kazma** | 受保护的路径（`whitelist`）· 你自己的清理规则（`rules`）· 资源管理器右键菜单（`context`）· 语言和主题（`config`）· 自我更新（`update`）· 日志（`history`）· 卸载 kazma（`remove`） |
@@ -82,11 +82,15 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz empty [paths...]` | 空文件夹、失效快捷方式和 0 字节文件（移到回收站） |
 | `kz privacy` | 最近文件、“运行” / 资源管理器历史、剪贴板、浏览器历史和 Cookie（需手动勾选）；`keep` 选择保留 Cookie 的网站；`audit` 显示哪些应用使用过摄像头、麦克风和位置 |
 | `kz uninstall` | 卸载经典程序、Microsoft Store 应用和 Scoop 应用，然后清理残留文件夹和注册表项（先备份）；`--leftovers` 查找以其他方式卸载的应用的残留 |
+| `kz install` | 从一份简短清单（浏览器、聊天、媒体、工具、文档、开发、游戏）通过 winget 安装新电脑所需程序；`--list`，或按名称：`kz install firefox vlc` |
 | `kz upgrade` | 通过 winget 更新已安装的程序 |
 | `kz drivers` | 来自 Windows 更新的驱动更新；`--installed` 按时间列出第三方驱动 |
 | `kz startup` | 开启/关闭启动程序（与任务管理器使用相同的标志，完全可逆） |
 | `kz debloat` | 按固定列表移除预装的推广应用，关闭广告；`--restore` 可撤销 |
-| `kz tweak` | 约 60 项 Windows 设置，以开关形式呈现：遥测、Copilot / Recall、Edge、资源管理器、任务栏、游戏、更新；`list`、`apply ID`、`undo ID`、`undo all` |
+| `kz tweak` | 约 60 项 Windows 设置，以开关形式呈现：遥测、Copilot / Recall、Edge、资源管理器、任务栏、游戏、更新；`list`、`apply ID`、`undo ID`、`undo all`; `profile recommended \| privacy \| gaming \| classic`, `export` / `import FILE` |
+| `kz services` | 可能不需要的服务，每项都有说明；关闭时保存原启动类型；`--all` 列出所有服务；`on` / `off NAME` |
+| `kz tasks` | 程序添加的计划任务（更新程序、辅助程序）的开 / 关；`--all` 也显示 Windows 自己的任务 |
+| `kz features` | Windows 可选功能：WSL、Hyper-V、Windows 沙盒、.NET 3.5、SMB 1.0、PowerShell 2.0...（需管理员） |
 | `kz backup [folder]` | 换新电脑工具包：winget 应用列表、驱动、程序列表、kazma 设置；`kz backup restore FOLDER` 重新安装 |
 | `kz health` | 磁盘 SMART、电池损耗、蓝屏、错误、更新、Defender、防火墙 |
 | `kz boot` | Windows 启动需要多久，以及拖慢启动的应用、驱动和服务（来自 Windows 自己的启动日志；需管理员） |
@@ -99,7 +103,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz ports [filter]` | 哪个程序在监听哪个端口；`--kill PORT` 将其关闭 |
 | `kz optimize` | 失效的启动项（先备份）、重启“开始”/搜索、刷新 DNS、图标缓存，到期时执行 SSD TRIM / DISM / SFC |
 | `kz repair [fix]` | `network`、`update`（重置 Windows 更新）、`store`、`dism`（+SFC）、`time`、`printer`；先创建还原点（需管理员） |
-| `kz schedule weekly` | 自动运行 `kz clean --yes`（`daily`、`weekly`、`monthly`、`off`、`status`） |
+| `kz schedule weekly` | 自动运行 `kz clean --yes`（`daily`、`weekly`、`monthly`、`off`、`status`） · `kz schedule lowdisk --below 15` |
 | `kz lock <path>` | 哪个程序打开了某个文件或文件夹 |
 | `kz awake [minutes]` | 保持屏幕和电脑唤醒 |
 | `kz cleanscreen [seconds]` | 忽略输入的黑屏，方便擦拭屏幕 |
@@ -108,6 +112,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz winapp2` | 来自 [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) 的 4,000 多个程序的清理规则：`update` 下载后，`kz clean` 会列出这台电脑上找到的程序；`list`、`use FILE`、`remove` |
 | `kz context install` | 在资源管理器右键菜单中添加“Analyze with kazma”（`uninstall` 将其移除） |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de`（auto、en、tr、zh-CN、zh-TW、ja、ko、de、fr、pl、uk、ru），`kz config theme amber`（green、amber、white、blue） |
+| `kz completion` | Tab 补全：在 PowerShell 配置文件中加入 `kz completion \| Out-String \| Invoke-Expression` |
 | `kz update` | 从 GitHub 更新 kazma 本身（校验和验证） |
 | `kz history` | kazma 所有操作的日志 |
 | `kz remove` | 卸载 kazma |
@@ -130,6 +135,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `startup` 只切换任务管理器的开/关标志；`debloat` 只移除固定列表中的应用，`--restore` 可撤销其设置更改。
 - `tweak` 会先把要修改的注册表值保存到 `%LOCALAPPDATA%\kazma\tweaks.json`，`kz tweak undo` 会原样写回这些值。
 - winapp2.ini 不随附，`kz winapp2 update` 会在你需要时下载。kazma 只使用其中的文件规则（不使用注册表规则），并拒绝会清空顶层文件夹（驱动器、Windows、用户目录、文档等）的规则。
+- `services` 会保存每个被关闭服务的启动类型；winapp2 注册表规则在删除前会把每个键导出为 `%LOCALAPPDATA%\kazma\backups` 中的 `.reg` 文件。
 - `update` 会用发布版本的 `SHA256SUMS.txt` 校验下载内容。
 - `deepclean` 通过 Windows 自带的磁盘清理删除 Windows.old 和升级文件，并始终保留最新的还原点。
 - `repair` 会重命名 Windows 更新文件夹而不是删除，并且会先提议创建还原点。
