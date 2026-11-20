@@ -98,6 +98,29 @@ pub fn culprits(slow: Vec<(String, String, i64)>) -> Vec<Culprit> {
     map
 }
 
+#[derive(Debug, PartialEq)]
+enum ReadError {
+    /// no boot recorded, or no such log on this edition (Windows Server, some VMs)
+    NoBoots,
+    Denied,
+    Other,
+}
+
+fn read_error(stderr: &str) -> ReadError {
+    let e = stderr.to_lowercase();
+    if e.contains("no events")
+        || e.contains("there is not an event log")
+        || e.contains("could not be found")
+        || e.contains("specified channel")
+    {
+        ReadError::NoBoots
+    } else if e.contains("unauthorized") || e.contains("access is denied") {
+        ReadError::Denied
+    } else {
+        ReadError::Other
+    }
+}
+
 fn secs(ms: i64) -> String {
     format!("{:.1} s", ms as f64 / 1000.0)
 }
@@ -125,18 +148,26 @@ pub fn run(json: bool) -> anyhow::Result<()> {
     if !json {
         println!("{:60}", "");
     }
-    let err = String::from_utf8_lossy(&out.stderr).to_lowercase();
-    // a PC that has not logged a boot yet (a fresh install, a VM) is not an error
-    let none = !out.status.success() && err.contains("no events");
-    if !out.status.success() && !none {
-        anyhow::bail!(
-            "{}",
-            tr!(
-                "the boot log can only be read from an elevated terminal (Run as administrator)",
-                "açılış kaydı yalnızca yönetici terminalinden okunabilir (Yönetici olarak çalıştır)"
-            )
-        );
-    }
+    let none = !out.status.success()
+        && match read_error(&String::from_utf8_lossy(&out.stderr)) {
+            ReadError::NoBoots => true,
+            ReadError::Denied if !crate::sys::is_admin() => anyhow::bail!(
+                "{}",
+                tr!(
+                    "the boot log can only be read from an elevated terminal (Run as administrator)",
+                    "açılış kaydı yalnızca yönetici terminalinden okunabilir (Yönetici olarak çalıştır)"
+                )
+            ),
+            // anything else: the first line of PowerShell's own message says what it was
+            _ => anyhow::bail!(
+                "{}",
+                String::from_utf8_lossy(&out.stderr)
+                    .lines()
+                    .map(str::trim)
+                    .find(|l| !l.is_empty())
+                    .unwrap_or("Get-WinEvent failed")
+            ),
+        };
     let raw: Raw = if none {
         Raw {
             boots: vec![],
@@ -272,5 +303,26 @@ mod tests {
         assert_eq!(c[0].name, "Teams");
         assert_eq!((c[0].times, c[0].avg_delay), (2, 3000));
         assert_eq!(secs(1500), "1.5 s");
+    }
+
+    #[test]
+    fn read_errors() {
+        assert_eq!(
+            read_error(
+                "Get-WinEvent : No events were found that match the specified selection criteria."
+            ),
+            ReadError::NoBoots
+        );
+        assert_eq!(
+            read_error(
+                "Get-WinEvent : There is not an event log on the localhost computer that matches \"Microsoft-Windows-Diagnostics-Performance/Operational\"."
+            ),
+            ReadError::NoBoots
+        );
+        assert_eq!(
+            read_error("Get-WinEvent : Attempted to perform an unauthorized operation."),
+            ReadError::Denied
+        );
+        assert_eq!(read_error("something else"), ReadError::Other);
     }
 }
