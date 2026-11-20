@@ -52,7 +52,7 @@ fn what(t: &Task) -> String {
     }
 }
 
-pub fn run(all: bool, dry: bool) -> anyhow::Result<()> {
+pub fn run(action: Option<String>, names: Vec<String>, all: bool, dry: bool) -> anyhow::Result<()> {
     ui::print_banner(&tr!(
         "tasks :: scheduled tasks that programs added",
         "tasks :: programların eklediği zamanlanmış görevler"
@@ -71,6 +71,45 @@ pub fn run(all: bool, dry: bool) -> anyhow::Result<()> {
     let mut tasks: Vec<Task> = ps::powershell_json(READ, &[])?;
     println!("{:60}", "");
     tasks.sort_by_key(|t| (is_windows(t), t.path.to_lowercase(), t.name.to_lowercase()));
+    // kz tasks off \\Path\\Name... / on ...: any task, by full path or by name
+    if let Some(act) = action.as_deref() {
+        let on = match act {
+            "on" | "enable" => true,
+            "off" | "disable" => false,
+            other => anyhow::bail!(
+                "{}",
+                tr!(
+                    "unknown action: {other}. use on | off TASK...",
+                    "bilinmeyen işlem: {other}. on | off TASK... kullanın"
+                )
+            ),
+        };
+        if names.is_empty() {
+            anyhow::bail!("kz tasks {act} TASK...");
+        }
+        let mut changes = vec![];
+        for n in &names {
+            let full = |t: &Task| format!("{}{}", t.path, t.name);
+            match tasks
+                .iter()
+                .find(|t| full(t).eq_ignore_ascii_case(n) || t.name.eq_ignore_ascii_case(n))
+            {
+                Some(t) if enabled(t) == on => {
+                    ui::skip(&tr!("{}  (already like that)", "{}  (zaten öyle)", full(t)))
+                }
+                Some(t) => changes.push((t, on)),
+                None => ui::warn(&tr!("no such task: {n}", "böyle bir görev yok: {n}")),
+            }
+        }
+        if dry {
+            for (t, _) in &changes {
+                ui::info(&format!("{}{}", t.path, t.name));
+            }
+            println!();
+            return Ok(());
+        }
+        return apply(changes);
+    }
     let mine: Vec<&Task> = tasks.iter().filter(|t| !is_windows(t)).collect();
 
     if all || dry || !ui::interactive() {
@@ -170,6 +209,14 @@ pub fn run(all: bool, dry: bool) -> anyhow::Result<()> {
         .collect();
     if changes.is_empty() {
         ui::ok(&tr!("Nothing to change.", "Değiştirilecek bir şey yok."));
+        return Ok(());
+    }
+    apply(changes)
+}
+
+fn apply(changes: Vec<(&Task, bool)>) -> anyhow::Result<()> {
+    if changes.is_empty() {
+        println!();
         return Ok(());
     }
     ui::section(&tr!("Applying", "Uygulanıyor"));

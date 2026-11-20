@@ -307,7 +307,7 @@ fn print_all(all: &[Svc]) {
     );
 }
 
-pub fn run(all: bool, dry: bool) -> anyhow::Result<()> {
+pub fn run(action: Option<String>, names: Vec<String>, all: bool, dry: bool) -> anyhow::Result<()> {
     ui::print_banner(&tr!(
         "services :: Windows services you may not need",
         "services :: gerekmeyebilecek Windows hizmetleri"
@@ -325,6 +325,46 @@ pub fn run(all: bool, dry: bool) -> anyhow::Result<()> {
     if all {
         print_all(&services);
         return Ok(());
+    }
+    // kz services off NAME... / on NAME...: any service, by its short or display name
+    if let Some(act) = action.as_deref() {
+        let on = match act {
+            "on" | "enable" => true,
+            "off" | "disable" => false,
+            other => anyhow::bail!(
+                "{}",
+                tr!(
+                    "unknown action: {other}. use on | off NAME...",
+                    "bilinmeyen işlem: {other}. on | off NAME... kullanın"
+                )
+            ),
+        };
+        if names.is_empty() {
+            anyhow::bail!("kz services {act} NAME...");
+        }
+        let mut changes = vec![];
+        for n in &names {
+            match services
+                .iter()
+                .find(|s| s.name.eq_ignore_ascii_case(n) || s.display.eq_ignore_ascii_case(n))
+            {
+                Some(s) if (start_kind(s) != "Disabled") == on => ui::skip(&tr!(
+                    "{}  (already like that)",
+                    "{}  (zaten öyle)",
+                    s.display
+                )),
+                Some(s) => changes.push((s, on)),
+                None => ui::warn(&tr!("no such service: {n}", "böyle bir hizmet yok: {n}")),
+            }
+        }
+        if changes.is_empty() || dry {
+            for (s, _) in &changes {
+                ui::info(&s.display);
+            }
+            println!();
+            return Ok(());
+        }
+        return apply(changes, load_backup());
     }
     // the known optional services present on this PC
     let here: Vec<(&Known, &Svc)> = KNOWN
@@ -411,6 +451,11 @@ pub fn run(all: bool, dry: bool) -> anyhow::Result<()> {
         ui::ok(&tr!("Nothing to change.", "Değiştirilecek bir şey yok."));
         return Ok(());
     }
+    apply(changes, backup)
+}
+
+/// Turn services off (Disabled, old start type saved) or on (old type back).
+fn apply(changes: Vec<(&Svc, bool)>, backup: BTreeMap<String, String>) -> anyhow::Result<()> {
     if !sys::is_admin() {
         anyhow::bail!(
             "{}",

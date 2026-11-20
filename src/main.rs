@@ -125,6 +125,9 @@ enum Cmd {
     },
     /// Windows services you may not need, explained; --all lists every service
     Services {
+        /// on | off, then service names (default: pick from the list)
+        action: Option<String>,
+        names: Vec<String>,
         #[arg(long)]
         all: bool,
         #[arg(long, short = 'n')]
@@ -132,6 +135,9 @@ enum Cmd {
     },
     /// Scheduled tasks that programs added (updaters, helpers); --all adds Windows' own
     Tasks {
+        /// on | off, then \Path\Name or task names (default: pick from the list)
+        action: Option<String>,
+        names: Vec<String>,
         #[arg(long)]
         all: bool,
         #[arg(long, short = 'n')]
@@ -478,55 +484,6 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "who used the camera, mic and location",
         "kamerayı, mikrofonu, konumu kim kullandı",
     ),
-    (' ', "", "programs & drivers", "programlar ve sürücüler"),
-    (
-        '8',
-        "uninstall",
-        "remove programs and their leftovers",
-        "program kaldır, kalıntılarını temizle",
-    ),
-    (
-        'I',
-        "install",
-        "programs for a new PC (winget)",
-        "yeni bilgisayar için programlar (winget)",
-    ),
-    (
-        '9',
-        "upgrade",
-        "update installed programs (winget)",
-        "yüklü programları güncelle (winget)",
-    ),
-    (
-        '0',
-        "drivers",
-        "driver updates from windows update",
-        "windows update'ten sürücü güncellemeleri",
-    ),
-    (
-        's',
-        "startup",
-        "programs that start with windows",
-        "windows ile başlayan programlar",
-    ),
-    (
-        'b',
-        "debloat",
-        "remove promo apps, turn off ads",
-        "tanıtım uygulamalarını kaldır, reklamları kapat",
-    ),
-    (
-        'T',
-        "tweak",
-        "privacy, AI, Explorer, taskbar settings",
-        "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
-    ),
-    (
-        'a',
-        "backup",
-        "move-to-a-new-PC kit: apps, drivers, settings",
-        "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
-    ),
     (' ', "", "system", "sistem"),
     (
         'c',
@@ -547,46 +504,10 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "canlı izleme ve süreç yöneticisi",
     ),
     (
-        'S',
-        "services",
-        "services you may not need, explained",
-        "gerekmeyebilecek hizmetler, açıklamalı",
-    ),
-    (
-        'K',
-        "tasks",
-        "scheduled tasks programs added",
-        "programların eklediği zamanlanmış görevler",
-    ),
-    (
-        'F',
-        "features",
-        "WSL, Hyper-V, Sandbox, .NET 3.5...",
-        "WSL, Hyper-V, Korumalı Alan, .NET 3.5...",
-    ),
-    (
-        'f',
-        "repair",
-        "fix network, Windows Update, Store, system files",
-        "ağ, Windows Update, Store, sistem dosyası onarımı",
-    ),
-    (
-        'o',
-        "optimize",
-        "dns flush, icon cache, ssd trim, dism, sfc",
-        "dns, ikon önbelleği, ssd trim, dism, sfc",
-    ),
-    (
         'p',
         "power",
         "power plans, battery report, wake sources",
         "güç planı, pil raporu, uyandırma nedenleri",
-    ),
-    (
-        'e',
-        "restore",
-        "system restore points",
-        "sistem geri yükleme noktaları",
     ),
     (
         'r',
@@ -620,6 +541,92 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "ports",
         "which program uses which port",
         "hangi port hangi programda",
+    ),
+    (' ', "", "programs & drivers", "programlar ve sürücüler"),
+    (
+        '8',
+        "uninstall",
+        "remove programs and their leftovers",
+        "program kaldır, kalıntılarını temizle",
+    ),
+    (
+        'I',
+        "install",
+        "programs for a new PC (winget)",
+        "yeni bilgisayar için programlar (winget)",
+    ),
+    (
+        '9',
+        "upgrade",
+        "update installed programs (winget)",
+        "yüklü programları güncelle (winget)",
+    ),
+    (
+        '0',
+        "drivers",
+        "driver updates from windows update",
+        "windows update'ten sürücü güncellemeleri",
+    ),
+    (
+        's',
+        "startup",
+        "programs that start with windows",
+        "windows ile başlayan programlar",
+    ),
+    (
+        'a',
+        "backup",
+        "move-to-a-new-PC kit: apps, drivers, settings",
+        "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
+    ),
+    (' ', "", "windows", "yapılandırma"),
+    (
+        'T',
+        "tweak",
+        "privacy, AI, Explorer, taskbar settings",
+        "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
+    ),
+    (
+        'b',
+        "debloat",
+        "remove promo apps, turn off ads",
+        "tanıtım uygulamalarını kaldır, reklamları kapat",
+    ),
+    (
+        'S',
+        "services",
+        "services you may not need, explained",
+        "gerekmeyebilecek hizmetler, açıklamalı",
+    ),
+    (
+        'K',
+        "tasks",
+        "scheduled tasks programs added",
+        "programların eklediği zamanlanmış görevler",
+    ),
+    (
+        'F',
+        "features",
+        "WSL, Hyper-V, Sandbox, .NET 3.5...",
+        "WSL, Hyper-V, Korumalı Alan, .NET 3.5...",
+    ),
+    (
+        'f',
+        "repair",
+        "fix network, Windows Update, Store, system files",
+        "ağ, Windows Update, Store, sistem dosyası onarımı",
+    ),
+    (
+        'o',
+        "optimize",
+        "dns flush, icon cache, ssd trim, dism, sfc",
+        "dns, ikon önbelleği, ssd trim, dism, sfc",
+    ),
+    (
+        'e',
+        "restore",
+        "system restore points",
+        "sistem geri yükleme noktaları",
     ),
     (' ', "", "kazma", "kazma"),
     (
@@ -729,12 +736,6 @@ fn menu(
             }
             terminal.draw(|f| {
                 let full = f.area();
-                let big_banner = full.height >= 34;
-                let top_h = if big_banner {
-                    ui::BANNER.lines().count() as u16 + 2
-                } else {
-                    3
-                };
                 // the menu frame is only as tall as its longest column
                 let two_cols = full.width >= 102;
                 let rows = if two_cols {
@@ -742,6 +743,10 @@ fn menu(
                 } else {
                     MENU.len()
                 } as u16;
+                // the big banner only when the whole menu still fits under it
+                let banner_h = ui::BANNER.lines().count() as u16 + 2;
+                let big_banner = full.height >= banner_h + rows + 2 + 4;
+                let top_h = if big_banner { banner_h } else { 3 };
                 let [top, body, foot, _] = Layout::vertical([
                     Constraint::Length(top_h),
                     Constraint::Max(rows + 2),
@@ -1164,8 +1169,8 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "uninstall" => uninstall::run(false, false)?,
         "upgrade" => upgrade::run(false, false)?,
         "install" => install::run(vec![], false, false)?,
-        "services" => services::run(false, false)?,
-        "tasks" => tasks::run(false, false)?,
+        "services" => services::run(None, vec![], false, false)?,
+        "tasks" => tasks::run(None, vec![], false, false)?,
         "features" => features::run(false, false)?,
         "drivers" => drivers::run(false, false, false, false)?,
         "startup" => startup::run(false)?,
@@ -1241,8 +1246,18 @@ fn main() -> anyhow::Result<()> {
             dry_run,
         }) => install::run(names, dry_run, list),
         Some(Cmd::Features { list, dry_run }) => features::run(list, dry_run),
-        Some(Cmd::Services { all, dry_run }) => services::run(all, dry_run),
-        Some(Cmd::Tasks { all, dry_run }) => tasks::run(all, dry_run),
+        Some(Cmd::Services {
+            action,
+            names,
+            all,
+            dry_run,
+        }) => services::run(action, names, all, dry_run),
+        Some(Cmd::Tasks {
+            action,
+            names,
+            all,
+            dry_run,
+        }) => tasks::run(action, names, all, dry_run),
         Some(Cmd::Drivers {
             installed,
             dry_run,
