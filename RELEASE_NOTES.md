@@ -9,7 +9,19 @@
 Oldschool, all-ASCII system cleaner, disk explorer and system toolkit for Windows 10/11 (x64 and ARM64).
 One ~5 MB exe. No installer required, no telemetry.
 
-## What's new in v1.1.0
+## What's new in v1.2.0
+
+- **`kz boot`**: how long Windows takes to start (time to a usable desktop for the last boots) and
+  the apps, drivers and services that slowed it down in the last 60 days, read from Windows' own
+  boot log. Run it from an elevated terminal.
+- **`kz privacy audit`**: which apps used the camera, the microphone and your location, when, and
+  whether one is using them right now.
+- **Main menu**: a status line (free space, days since the last clean, admin or not), `/` to search
+  the commands by name or description, `?` for a box with every key. Lists have `?` too.
+- **`--json`** for `health`, `history`, `boot` and `privacy audit`, for scripts and dashboards.
+- **`NO_COLOR`** is respected: with colors off the selected row is shown reversed, so it stays visible.
+
+## v1.1.0
 
 - **`kz tweak`**: 62 Windows settings as switches, in 10 groups: privacy (telemetry, crash
   reports, activity history, location...), ads, AI (Copilot, Recall, Click to Do, AI in Notepad,
@@ -148,6 +160,7 @@ kz dupes [paths]         duplicate files
 kz empty [paths]         empty folders, broken shortcuts, 0-byte files
 kz privacy               usage traces
 kz privacy keep          pick the sites whose cookies stay
+kz privacy audit         who used the camera, microphone and location
 kz uninstall             remove programs + leftovers
 kz upgrade               update installed programs (winget)
 kz drivers               driver updates from Windows Update
@@ -156,6 +169,7 @@ kz debloat               promo apps and Windows ads
 kz tweak                 Windows settings on / off (privacy, AI, Edge, Explorer...), reversible
 kz backup [folder]       new-PC kit;  kz backup restore FOLDER
 kz health                system health report
+kz boot                  boot time and what slows it down
 kz status                live monitor + process manager
 kz optimize              dns flush, icon cache, ssd trim, dism, sfc
 kz repair [fix]          network, update, store, dism, time, printer
@@ -180,6 +194,7 @@ kz remove                uninstall kazma
 ```
 
 Every command that deletes or installs supports `--dry-run` (`-n`) to preview first.
+`health`, `history`, `boot` and `privacy audit` print JSON with `--json`; `NO_COLOR=1` turns colors off.
 Run from an **elevated** terminal (Run as administrator) to install drivers, run the admin
 maintenance tasks, and clean Windows Update and system temp caches.
 

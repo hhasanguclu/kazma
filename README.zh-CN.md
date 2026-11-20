@@ -36,7 +36,7 @@ Windows 电脑，带有复古的绿屏风格。无需安装程序，没有后台
 |---|---|
 | **清理** | 100 多种缓存、临时文件、日志和回收站，包括 AI 工具、游戏启动器和显卡驱动残留（`clean`）· 来自 winapp2.ini 的 4,000 多个程序的额外规则（`winapp2`）· Windows.old、升级文件、内存转储、休眠文件、旧的还原点（`deepclean`）· 带树状图和最大文件视图的磁盘浏览器（`analyze`）· 文件类型（`types`）· 项目构建产物（`purge`）· 旧安装包（`installer`）· 重复文件（`dupes`）· 空文件夹和失效快捷方式（`empty`）· 使用痕迹（`privacy`） |
 | **程序和驱动** | 卸载程序及其残留（`uninstall`）· 用 winget 更新程序（`upgrade`）· 来自 Windows 更新的驱动更新（`drivers`）· 启动程序（`startup`）· 推广应用和 Windows 广告（`debloat`）· 隐私、AI、Edge、资源管理器、任务栏和更新相关的 Windows 设置（`tweak`）· 换新电脑备份（`backup`） |
-| **系统** | 健康报告（`health`）· 含 GPU 和电池信息的实时监视，以及能解释进程为何运行的进程管理器（`status`）· 维护：DNS、图标缓存、SSD TRIM、DISM、SFC（`optimize`）· 修复：网络、Windows 更新、应用商店、系统文件（`repair`）· 电源计划和电池（`power`）· 还原点（`restore`）· HTML 报告（`report`）· 磁盘速度测试（`bench`）· 自动清理（`schedule`） |
+| **系统** | 健康报告（`health`）· 启动时间及拖慢启动的原因（`boot`）· 含 GPU 和电池信息的实时监视，以及能解释进程为何运行的进程管理器（`status`）· 维护：DNS、图标缓存、SSD TRIM、DISM、SFC（`optimize`）· 修复：网络、Windows 更新、应用商店、系统文件（`repair`）· 电源计划和电池（`power`）· 还原点（`restore`）· HTML 报告（`report`）· 磁盘速度测试（`bench`）· 自动清理（`schedule`） |
 | **网络** | IP、延迟、DNS 基准测试与切换、测速、已保存的 Wi-Fi（`net`）· 哪个程序占用哪个端口（`ports`） |
 | **实用** | 哪个程序占用着某个文件（`lock`）· 保持屏幕常亮（`awake`）· 擦屏模式（`cleanscreen`） |
 | **kazma** | 受保护的路径（`whitelist`）· 你自己的清理规则（`rules`）· 资源管理器右键菜单（`context`）· 语言和主题（`config`）· 自我更新（`update`）· 日志（`history`）· 卸载 kazma（`remove`） |
@@ -80,7 +80,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | “下载”和桌面上的旧安装文件（`.exe`、`.msi`、`.msix`、`.iso`） |
 | `kz dupes [paths...]` | 重复文件（大小 -> 部分哈希 -> BLAKE3，全部并行） |
 | `kz empty [paths...]` | 空文件夹、失效快捷方式和 0 字节文件（移到回收站） |
-| `kz privacy` | 最近文件、“运行” / 资源管理器历史、剪贴板、浏览器历史和 Cookie（需手动勾选）；`keep` 选择保留 Cookie 的网站 |
+| `kz privacy` | 最近文件、“运行” / 资源管理器历史、剪贴板、浏览器历史和 Cookie（需手动勾选）；`keep` 选择保留 Cookie 的网站；`audit` 显示哪些应用使用过摄像头、麦克风和位置 |
 | `kz uninstall` | 卸载经典程序、Microsoft Store 应用和 Scoop 应用，然后清理残留文件夹和注册表项（先备份）；`--leftovers` 查找以其他方式卸载的应用的残留 |
 | `kz upgrade` | 通过 winget 更新已安装的程序 |
 | `kz drivers` | 来自 Windows 更新的驱动更新；`--installed` 按时间列出第三方驱动 |
@@ -89,6 +89,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz tweak` | 约 60 项 Windows 设置，以开关形式呈现：遥测、Copilot / Recall、Edge、资源管理器、任务栏、游戏、更新；`list`、`apply ID`、`undo ID`、`undo all` |
 | `kz backup [folder]` | 换新电脑工具包：winget 应用列表、驱动、程序列表、kazma 设置；`kz backup restore FOLDER` 重新安装 |
 | `kz health` | 磁盘 SMART、电池损耗、蓝屏、错误、更新、Defender、防火墙 |
+| `kz boot` | Windows 启动需要多久，以及拖慢启动的应用、驱动和服务（来自 Windows 自己的启动日志；需管理员） |
 | `kz status` | 实时 CPU、GPU、内存、磁盘、网络、电池；`enter` 解释进程为何运行，`x` 结束进程，`m` 按内存排序 |
 | `kz power` | 电源计划（`set saver / balanced / high / ultimate`）、`battery` 报告、`wake` 唤醒源、`hibernate off / reduced / full` |
 | `kz restore` | 系统还原点：`list`、`create "desc"`、`enable`、`open`（Windows 自带向导） |
@@ -112,6 +113,9 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz remove` | 卸载 kazma |
 
 所有会删除或安装内容的命令都支持 `--dry-run`（`-n`），可先预览。
+
+`health`、`history`、`boot` 和 `privacy audit` 可用 `--json` 输出 JSON。`NO_COLOR=1` 关闭颜色。菜单中 `/` 搜索命令，`?` 显示按键说明。
+
 在**管理员**终端（以管理员身份运行）中运行，才能安装驱动、执行需要管理员权限的维护任务，
 以及清理 Windows 更新和系统临时缓存。
 

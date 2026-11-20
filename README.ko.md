@@ -36,7 +36,7 @@
 |---|---|
 | **정리** | AI 도구, 게임 런처, GPU 드라이버 잔여 파일을 포함한 100가지 이상의 캐시, 임시 파일, 로그와 휴지통 (`clean`) · winapp2.ini의 4,000개 이상 프로그램용 추가 규칙 (`winapp2`) · Windows.old, 업그레이드 파일, 메모리 덤프, 최대 절전 모드 파일, 오래된 복원 지점 (`deepclean`) · 트리맵과 큰 파일 보기를 갖춘 디스크 탐색기 (`analyze`) · 파일 유형 (`types`) · 프로젝트 빌드 결과물 (`purge`) · 오래된 설치 파일 (`installer`) · 중복 파일 (`dupes`) · 빈 폴더와 깨진 바로 가기 (`empty`) · 사용 흔적 (`privacy`) |
 | **프로그램 및 드라이버** | 프로그램과 남은 파일 제거 (`uninstall`) · winget으로 프로그램 업데이트 (`upgrade`) · Windows 업데이트의 드라이버 업데이트 (`drivers`) · 시작 프로그램 (`startup`) · 홍보 앱과 Windows 광고 (`debloat`) · 개인 정보, AI, Edge, 파일 탐색기, 작업 표시줄, 업데이트 관련 Windows 설정 (`tweak`) · 새 PC 이사용 백업 (`backup`) |
-| **시스템** | 상태 보고서 (`health`) · GPU와 배터리까지 보여주는 실시간 모니터, 프로세스가 왜 실행 중인지 알려주는 프로세스 관리자 (`status`) · 유지 관리: DNS, 아이콘 캐시, SSD TRIM, DISM, SFC (`optimize`) · 복구: 네트워크, Windows 업데이트, Store, 시스템 파일 (`repair`) · 전원 관리 옵션과 배터리 (`power`) · 복원 지점 (`restore`) · HTML 보고서 (`report`) · 디스크 속도 테스트 (`bench`) · 자동 정리 (`schedule`) |
+| **시스템** | 상태 보고서 (`health`) · 부팅 시간과 느리게 만드는 원인 (`boot`) · GPU와 배터리까지 보여주는 실시간 모니터, 프로세스가 왜 실행 중인지 알려주는 프로세스 관리자 (`status`) · 유지 관리: DNS, 아이콘 캐시, SSD TRIM, DISM, SFC (`optimize`) · 복구: 네트워크, Windows 업데이트, Store, 시스템 파일 (`repair`) · 전원 관리 옵션과 배터리 (`power`) · 복원 지점 (`restore`) · HTML 보고서 (`report`) · 디스크 속도 테스트 (`bench`) · 자동 정리 (`schedule`) |
 | **네트워크** | IP, 지연 시간, DNS 벤치마크 및 변경, 속도 테스트, 저장된 Wi-Fi (`net`) · 어떤 포트를 누가 쓰는지 (`ports`) |
 | **편의 기능** | 파일을 열고 있는 프로그램 찾기 (`lock`) · 화면 켜두기 (`awake`) · 화면 닦기 모드 (`cleanscreen`) |
 | **kazma** | 보호 경로 (`whitelist`) · 나만의 정리 규칙 (`rules`) · 파일 탐색기 오른쪽 클릭 메뉴 (`context`) · 언어와 테마 (`config`) · 자체 업데이트 (`update`) · 기록 (`history`) · kazma 제거 (`remove`) |
@@ -81,7 +81,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | 다운로드 폴더와 바탕 화면의 오래된 설치 파일(`.exe`, `.msi`, `.msix`, `.iso`) |
 | `kz dupes [paths...]` | 중복 파일 (크기 -> 부분 해시 -> BLAKE3, 모두 병렬) |
 | `kz empty [paths...]` | 빈 폴더, 깨진 바로 가기, 0바이트 파일 (휴지통으로) |
-| `kz privacy` | 최근 파일, 실행 / 파일 탐색기 기록, 클립보드, 브라우저 방문 기록과 쿠키 (선택 시에만); `keep`으로 쿠키를 남길 사이트 선택 |
+| `kz privacy` | 최근 파일, 실행 / 파일 탐색기 기록, 클립보드, 브라우저 방문 기록과 쿠키 (선택 시에만); `keep`으로 쿠키를 남길 사이트 선택; `audit`로 카메라, 마이크, 위치를 사용한 앱 확인 |
 | `kz uninstall` | 일반 앱, Microsoft Store 앱, Scoop 앱을 제거한 뒤 남은 폴더와 레지스트리 키까지 정리(먼저 백업); `--leftovers`는 다른 방법으로 제거한 앱의 잔여물을 찾습니다 |
 | `kz upgrade` | winget으로 설치된 프로그램 업데이트 |
 | `kz drivers` | Windows 업데이트의 드라이버 업데이트; `--installed`는 타사 드라이버를 오래된 순으로 보여줍니다 |
@@ -90,6 +90,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz tweak` | 약 60개의 Windows 설정을 스위치로: 원격 분석, Copilot / Recall, Edge, 파일 탐색기, 작업 표시줄, 게임, 업데이트; `list`, `apply ID`, `undo ID`, `undo all` |
 | `kz backup [folder]` | 새 PC 키트: winget 앱 목록, 드라이버, 프로그램 목록, kazma 설정; `kz backup restore FOLDER`로 다시 설치 |
 | `kz health` | 디스크 SMART, 배터리 마모도, 블루스크린, 오류, 업데이트, Defender, 방화벽 |
+| `kz boot` | Windows 부팅에 걸리는 시간과 부팅을 느리게 하는 앱, 드라이버, 서비스 (Windows 자체 부팅 로그 기준; 관리자) |
 | `kz status` | 실시간 CPU, GPU, 메모리, 디스크, 네트워크, 배터리; `enter`는 프로세스가 실행 중인 이유를 설명하고, `x`는 종료, `m`은 메모리순 정렬 |
 | `kz power` | 전원 관리 옵션(`set saver / balanced / high / ultimate`), `battery` 보고서, `wake` 절전 해제 원인, `hibernate off / reduced / full` |
 | `kz restore` | 시스템 복원 지점: `list`, `create "desc"`, `enable`, `open` (Windows 기본 마법사) |
@@ -113,6 +114,9 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz remove` | kazma 제거 |
 
 삭제하거나 설치하는 모든 명령은 `--dry-run`(`-n`)으로 먼저 미리 볼 수 있습니다.
+
+`health`, `history`, `boot`, `privacy audit`는 `--json`으로 JSON을 출력합니다. `NO_COLOR=1`은 색을 끕니다. 메뉴에서 `/`는 명령 검색, `?`는 키 안내입니다.
+
 드라이버 설치, 관리자 유지 관리 작업, Windows 업데이트 및 시스템 임시 캐시 정리는 **관리자 권한** 터미널(관리자 권한으로 실행)에서
 실행하세요.
 

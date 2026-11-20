@@ -2,7 +2,7 @@
 //! script; each check is isolated with try/catch so one failure never hides the rest.
 
 use crate::{ps, tr, ui};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 pub const CHECKS: &str = r#"
 $tr = $env:KAZMA_TR -eq '1'
@@ -125,7 +125,7 @@ try {
 ConvertTo-Json -InputObject @($out) -Compress
 "#;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Check {
     pub section: String,
@@ -141,10 +141,17 @@ pub fn ps_table() -> String {
 }
 
 pub fn run() -> anyhow::Result<()> {
-    ui::print_banner(&tr!(
-        "health :: system health report",
-        "health :: sistem sağlık raporu"
-    ));
+    run_with(false)
+}
+
+/// `json`: print the checks as JSON instead of the report.
+pub fn run_with(json: bool) -> anyhow::Result<()> {
+    if !json {
+        ui::print_banner(&tr!(
+            "health :: system health report",
+            "health :: sistem sağlık raporu"
+        ));
+    }
     if !cfg!(windows) {
         ui::warn(&tr!(
             "kz health works on Windows only.",
@@ -152,10 +159,12 @@ pub fn run() -> anyhow::Result<()> {
         ));
         return Ok(());
     }
-    ps::working(&tr!(
-        "checking (10-30 s)...",
-        "kontrol ediliyor (10-30 sn)..."
-    ));
+    if !json {
+        ps::working(&tr!(
+            "checking (10-30 s)...",
+            "kontrol ediliyor (10-30 sn)..."
+        ));
+    }
     let checks: Vec<Check> = ps::powershell_json(
         CHECKS,
         &[
@@ -163,6 +172,10 @@ pub fn run() -> anyhow::Result<()> {
             ("KAZMA_T", &ps_table()),
         ],
     )?;
+    if json {
+        println!("{}", serde_json::to_string_pretty(&checks)?);
+        return Ok(());
+    }
     println!("{:60}", "");
 
     let mut section = String::new();

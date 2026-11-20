@@ -36,7 +36,7 @@ kein Hintergrunddienst, keine Telemetrie. Die Oberfläche gibt es in 11 Sprachen
 |---|---|
 | **Aufräumen** | über 100 Arten von Caches, temporären Dateien, Protokollen und der Papierkorb, inklusive KI-Tools, Spiele-Launchern und Resten von GPU-Treibern (`clean`) · Regeln für über 4.000 weitere Programme aus winapp2.ini (`winapp2`) · Windows.old, Upgradedateien, Speicherabbilder, Ruhezustandsdatei, alte Wiederherstellungspunkte (`deepclean`) · Datenträger-Explorer mit Treemap und Ansicht der größten Dateien (`analyze`) · Dateitypen (`types`) · Build-Artefakte von Projekten (`purge`) · alte Installer (`installer`) · doppelte Dateien (`dupes`) · leere Ordner und defekte Verknüpfungen (`empty`) · Nutzungsspuren (`privacy`) |
 | **Programme & Treiber** | Programme samt Resten deinstallieren (`uninstall`) · Programme per winget aktualisieren (`upgrade`) · Treiberupdates über Windows Update (`drivers`) · Autostart-Apps (`startup`) · Werbe-Apps und Windows-Werbung (`debloat`) · Windows-Einstellungen für Datenschutz, KI, Edge, Explorer, Taskleiste und Updates (`tweak`) · Sicherung für den Umzug auf einen neuen PC (`backup`) |
-| **System** | Zustandsbericht (`health`) · Live-Monitor mit GPU und Akku, Prozessmanager, der erklärt, warum ein Prozess läuft (`status`) · Wartung: DNS, Symbolcache, SSD-TRIM, DISM, SFC (`optimize`) · Reparaturen: Netzwerk, Windows Update, Store, Systemdateien (`repair`) · Energiesparpläne und Akku (`power`) · Wiederherstellungspunkte (`restore`) · HTML-Bericht (`report`) · Datenträger-Geschwindigkeitstest (`bench`) · automatische Bereinigung (`schedule`) |
+| **System** | Zustandsbericht (`health`) · Startzeit und was sie bremst (`boot`) · Live-Monitor mit GPU und Akku, Prozessmanager, der erklärt, warum ein Prozess läuft (`status`) · Wartung: DNS, Symbolcache, SSD-TRIM, DISM, SFC (`optimize`) · Reparaturen: Netzwerk, Windows Update, Store, Systemdateien (`repair`) · Energiesparpläne und Akku (`power`) · Wiederherstellungspunkte (`restore`) · HTML-Bericht (`report`) · Datenträger-Geschwindigkeitstest (`bench`) · automatische Bereinigung (`schedule`) |
 | **Netzwerk** | IP, Latenz, DNS-Benchmark und -Wechsel, Speedtest, gespeicherte WLANs (`net`) · wer welchen Port nutzt (`ports`) |
 | **Praktisch** | welches Programm eine Datei geöffnet hält (`lock`) · Bildschirm wach halten (`awake`) · Modus zum Abwischen des Bildschirms (`cleanscreen`) |
 | **kazma** | geschützte Pfade (`whitelist`) · eigene Bereinigungsregeln (`rules`) · Rechtsklickmenü im Explorer (`context`) · Sprache und Theme (`config`) · Selbstaktualisierung (`update`) · Protokoll (`history`) · kazma deinstallieren (`remove`) |
@@ -81,7 +81,7 @@ Das installiert nach `%LOCALAPPDATA%\Programs\kazma` und fügt `kz` zum PATH hin
 | `kz installer [paths...]` | Alte Setupdateien (`.exe`, `.msi`, `.msix`, `.iso`) in Downloads und auf dem Desktop |
 | `kz dupes [paths...]` | Doppelte Dateien (Größe -> Teil-Hash -> BLAKE3, alles parallel) |
 | `kz empty [paths...]` | Leere Ordner, defekte Verknüpfungen und 0-Byte-Dateien (in den Papierkorb) |
-| `kz privacy` | Zuletzt verwendete Dateien, Ausführen- / Explorer-Verlauf, Zwischenablage, Browserverlauf und Cookies (Opt-in); `keep` wählt Websites, deren Cookies bleiben |
+| `kz privacy` | Zuletzt verwendete Dateien, Ausführen- / Explorer-Verlauf, Zwischenablage, Browserverlauf und Cookies (Opt-in); `keep` wählt Websites, deren Cookies bleiben; `audit` zeigt, welche Apps Kamera, Mikrofon und Standort genutzt haben |
 | `kz uninstall` | Klassische, Microsoft Store- und Scoop-Apps entfernen, danach übrige Ordner und Registrierungsschlüssel (vorher gesichert); `--leftovers` findet Reste von Apps, die anders entfernt wurden |
 | `kz upgrade` | Installierte Programme über winget aktualisieren |
 | `kz drivers` | Treiberupdates über Windows Update; `--installed` listet Drittanbieter-Treiber nach Alter |
@@ -90,6 +90,7 @@ Das installiert nach `%LOCALAPPDATA%\Programs\kazma` und fügt `kz` zum PATH hin
 | `kz tweak` | Rund 60 Windows-Einstellungen als Schalter: Telemetrie, Copilot / Recall, Edge, Explorer, Taskleiste, Gaming, Updates; `list`, `apply ID`, `undo ID`, `undo all` |
 | `kz backup [folder]` | Umzugspaket für den neuen PC: winget-App-Liste, Treiber, Programmliste, kazma-Einstellungen; `kz backup restore FOLDER` installiert neu |
 | `kz health` | SMART der Datenträger, Akkuverschleiß, Bluescreens, Fehler, Updates, Defender, Firewall |
+| `kz boot` | Wie lange Windows zum Starten braucht und welche Apps, Treiber und Dienste es bremsen (aus dem Startprotokoll von Windows; Admin) |
 | `kz status` | Live-Werte für CPU, GPU, Speicher, Datenträger, Netzwerk, Akku; `enter` erklärt, warum ein Prozess läuft, `x` beendet ihn, `m` sortiert nach Speicher |
 | `kz power` | Energiesparpläne (`set saver / balanced / high / ultimate`), `battery`-Bericht, `wake`-Quellen, `hibernate off / reduced / full` |
 | `kz restore` | Wiederherstellungspunkte der Systemwiederherstellung: `list`, `create "desc"`, `enable`, `open` (Windows-eigener Assistent) |
@@ -113,6 +114,9 @@ Das installiert nach `%LOCALAPPDATA%\Programs\kazma` und fügt `kz` zum PATH hin
 | `kz remove` | kazma deinstallieren |
 
 Jeder Befehl, der löscht oder installiert, unterstützt `--dry-run` (`-n`) für eine Vorschau.
+
+`health`, `history`, `boot` und `privacy audit` geben mit `--json` JSON aus. `NO_COLOR=1` schaltet die Farben ab. Im Menü sucht `/` nach Befehlen, `?` zeigt die Tasten.
+
 Aus einem Terminal **mit Adminrechten** (Als Administrator ausführen) starten, um Treiber zu installieren,
 Wartungsaufgaben mit Adminrechten auszuführen und die Caches von Windows Update und System-Temp zu bereinigen.
 

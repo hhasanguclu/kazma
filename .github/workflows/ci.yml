@@ -67,6 +67,12 @@ jobs:
             @('tweak', 'apply', 'privacy', 'dark-mode', '--dry-run'),
             @('privacy', '--dry-run'),
             @('privacy', 'keep'),
+            @('privacy', 'audit'),
+            @('privacy', 'audit', '--json'),
+            @('boot'),
+            @('boot', '--json'),
+            @('health', '--json'),
+            @('history', '--json'),
             @('winapp2'),
             @('schedule', 'status'),
             @('whitelist'),
@@ -88,6 +94,12 @@ jobs:
             Write-Host "== kz $($args_ -join ' ')"
             & $kz @args_
             if ($LASTEXITCODE -ne 0) { throw "kz $($args_ -join ' ') failed with $LASTEXITCODE" }
+          }
+          # --json output parses as JSON
+          foreach ($a in @(@('health', '--json'), @('history', '--json'), @('boot', '--json'), @('privacy', 'audit', '--json'))) {
+            $j = & $kz @a | Out-String
+            if ($LASTEXITCODE -ne 0) { throw "kz $($a -join ' ') failed" }
+            try { $null = $j | ConvertFrom-Json } catch { throw "kz $($a -join ' ') is not valid JSON: $j" }
           }
           # kz tweak for real: apply, check, undo, check that the earlier value is back
           Set-ItemProperty 'HKCU:\Control Panel\Desktop' MenuShowDelay '250'
@@ -140,7 +152,7 @@ jobs:
           New-Item -ItemType Directory -Force $out | Out-Null
           $cmds = [ordered]@{
             health = @('health'); startup = @('startup', '--list'); clean = @('clean', '--dry-run')
-            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run'); tweak = @('tweak', 'list'); keep = @('privacy', 'keep'); winapp2 = @('winapp2')
+            uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run'); tweak = @('tweak', 'list'); keep = @('privacy', 'keep'); winapp2 = @('winapp2'); audit = @('privacy', 'audit'); boot = @('boot')
             privacy = @('privacy', '--dry-run'); power = @('power'); ports = @('ports'); schedule = @('schedule', 'status')
             whitelist = @('whitelist'); config = @('config'); drivers = @('drivers', '--installed'); deepclean = @('deepclean', '--dry-run')
             repair = @('repair', '--dry-run'); backup = @('backup', '--dry-run'); context = @('context', 'status')

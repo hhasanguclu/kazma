@@ -36,7 +36,7 @@ no telemetry. The interface is available in 11 languages (English, Türkçe, 简
 |---|---|
 | **Clean up** | 100+ kinds of caches, temp files, logs and the Recycle Bin, including AI tools, game launchers and GPU driver leftovers (`clean`) · rules for 4,000+ more programs from winapp2.ini (`winapp2`) · Windows.old, upgrade files, memory dumps, hibernation file, old restore points (`deepclean`) · disk explorer with treemap and largest-files view (`analyze`) · file types (`types`) · project build artifacts (`purge`) · old installers (`installer`) · duplicate files (`dupes`) · empty folders and broken shortcuts (`empty`) · usage traces (`privacy`) |
 | **Programs & drivers** | uninstall programs and their leftovers (`uninstall`) · update programs with winget (`upgrade`) · driver updates from Windows Update (`drivers`) · startup programs (`startup`) · promo apps and Windows ads (`debloat`) · Windows settings for privacy, AI, Edge, Explorer, the taskbar and updates (`tweak`) · move-to-a-new-PC backup (`backup`) |
-| **System** | health report (`health`) · live monitor with GPU and battery, process manager that explains why a process runs (`status`) · maintenance: DNS, icon cache, SSD TRIM, DISM, SFC (`optimize`) · repairs: network, Windows Update, Store, system files (`repair`) · power plans and battery (`power`) · restore points (`restore`) · HTML report (`report`) · disk speed test (`bench`) · automatic cleaning (`schedule`) |
+| **System** | health report (`health`) · boot time and what slows it down (`boot`) · live monitor with GPU and battery, process manager that explains why a process runs (`status`) · maintenance: DNS, icon cache, SSD TRIM, DISM, SFC (`optimize`) · repairs: network, Windows Update, Store, system files (`repair`) · power plans and battery (`power`) · restore points (`restore`) · HTML report (`report`) · disk speed test (`bench`) · automatic cleaning (`schedule`) |
 | **Network** | IP, latency, DNS benchmark and switch, speed test, saved Wi-Fi (`net`) · who uses which port (`ports`) |
 | **Handy** | which program holds a file open (`lock`) · keep the screen awake (`awake`) · wipe-the-screen mode (`cleanscreen`) |
 | **kazma** | protected paths (`whitelist`) · your own clean rules (`rules`) · Explorer right-click menu (`context`) · language and theme (`config`) · self-update (`update`) · log (`history`) · uninstall kazma (`remove`) |
@@ -81,7 +81,7 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz installer [paths...]` | Old setup files (`.exe`, `.msi`, `.msix`, `.iso`) in Downloads and on the Desktop |
 | `kz dupes [paths...]` | Duplicate files (size -> partial hash -> BLAKE3, all parallel) |
 | `kz empty [paths...]` | Empty folders, broken shortcuts and 0-byte files (to the Recycle Bin) |
-| `kz privacy` | Recent files, Run / Explorer history, clipboard, browser history and cookies (opt-in); `keep` picks sites whose cookies stay |
+| `kz privacy` | Recent files, Run / Explorer history, clipboard, browser history and cookies (opt-in); `keep` picks sites whose cookies stay; `audit` shows which apps used the camera, microphone and location |
 | `kz uninstall` | Remove classic, Microsoft Store and Scoop apps, then leftover folders and registry keys (backed up first); `--leftovers` finds remains of apps removed some other way |
 | `kz upgrade` | Update installed programs through winget |
 | `kz drivers` | Driver updates from Windows Update; `--installed` lists third-party drivers by age |
@@ -90,6 +90,7 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz tweak` | About 60 Windows settings as switches: telemetry, Copilot / Recall, Edge, Explorer, taskbar, gaming, updates; `list`, `apply ID`, `undo ID`, `undo all` |
 | `kz backup [folder]` | New-PC kit: winget app list, drivers, program list, kazma settings; `kz backup restore FOLDER` reinstalls |
 | `kz health` | Disk SMART, battery wear, blue screens, errors, updates, Defender, firewall |
+| `kz boot` | How long Windows takes to start, and the apps, drivers and services that slow it down (from Windows' own boot log; admin) |
 | `kz status` | Live CPU, GPU, memory, disk, network, battery; `enter` explains why a process runs, `x` ends it, `m` sorts by memory |
 | `kz power` | Power plans (`set saver / balanced / high / ultimate`), `battery` report, `wake` sources, `hibernate off / reduced / full` |
 | `kz restore` | System Restore points: `list`, `create "desc"`, `enable`, `open` (Windows' own wizard) |
@@ -113,6 +114,9 @@ This installs to `%LOCALAPPDATA%\Programs\kazma` and adds `kz` to your PATH. Alt
 | `kz remove` | Uninstall kazma |
 
 Every command that deletes or installs supports `--dry-run` (`-n`) to preview first.
+
+`health`, `history`, `boot` and `privacy audit` print JSON with `--json`. `NO_COLOR=1` turns colors off. In the menu, `/` searches the commands and `?` shows the keys.
+
 Run from an **elevated** terminal (Run as administrator) to install drivers, run admin maintenance
 tasks, and clean Windows Update and system temp caches.
 

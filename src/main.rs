@@ -3,8 +3,10 @@
 pub(crate) use kazma_macros::tr;
 
 mod analyze;
+mod audit;
 mod backup;
 mod bench;
+mod boot;
 mod catalog;
 mod clean;
 mod context;
@@ -166,7 +168,17 @@ enum Cmd {
         list: bool,
     },
     /// System health report: disks, battery, crashes, updates, security
-    Health,
+    Health {
+        /// Print the checks as JSON
+        #[arg(long)]
+        json: bool,
+    },
+    /// How long Windows takes to start and what slows it down (admin)
+    Boot {
+        /// Print the result as JSON
+        #[arg(long)]
+        json: bool,
+    },
     /// Find duplicate files (sent to the Recycle Bin)
     Dupes {
         /// Folders to scan (default: Documents, Downloads, Desktop, Pictures, Videos, Music)
@@ -205,9 +217,13 @@ enum Cmd {
     },
     /// Clear usage traces: recent files, Run history, browser history / cookies
     Privacy {
-        /// keep: pick the sites whose cookies stay (keep add SITE / keep remove SITE)
+        /// keep: pick the sites whose cookies stay (keep add SITE / keep remove SITE);
+        /// audit: which apps used the camera, microphone and location
         action: Option<String>,
         args: Vec<String>,
+        /// With audit: print the result as JSON
+        #[arg(long)]
+        json: bool,
         #[arg(long, short = 'n')]
         dry_run: bool,
         #[arg(long, short)]
@@ -345,6 +361,9 @@ enum Cmd {
     History {
         #[arg(long, default_value_t = 50)]
         limit: usize,
+        /// Print the entries as JSON
+        #[arg(long)]
+        json: bool,
     },
 }
 
@@ -405,6 +424,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "recent files, run history, browser traces",
         "son dosyalar, çalıştır geçmişi, tarayıcı izleri",
     ),
+    (
+        'P',
+        "audit",
+        "who used the camera, mic and location",
+        "kamerayı, mikrofonu, konumu kim kullandı",
+    ),
     (' ', "", "programs & drivers", "programlar ve sürücüler"),
     (
         '8',
@@ -454,6 +479,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "health",
         "health report: disks, battery, crashes",
         "sağlık raporu: disk, pil, çökmeler",
+    ),
+    (
+        'B',
+        "boot",
+        "boot time and what slows it down",
+        "açılış süresi ve onu yavaşlatanlar",
     ),
     (
         't',
@@ -612,6 +643,9 @@ fn menu(
     notice: &std::sync::mpsc::Receiver<String>,
     newer: &mut Option<String>,
 ) -> anyhow::Result<(&'static str, usize)> {
+    let strip = status_strip();
+    let mut search = ui::Search::default();
+    let mut help = false;
     let mut terminal = ui::tui_start();
     let mut sel = start;
     let (left, right) = menu_columns();
@@ -625,9 +659,9 @@ fn menu(
                 let full = f.area();
                 let big_banner = full.height >= 34;
                 let top_h = if big_banner {
-                    ui::BANNER.lines().count() as u16 + 1
+                    ui::BANNER.lines().count() as u16 + 2
                 } else {
-                    2
+                    3
                 };
                 // the menu frame is only as tall as its longest column
                 let two_cols = full.width >= 102;
@@ -680,6 +714,24 @@ fn menu(
                     ));
                 }
                 lines.push(Line::from(sub));
+                // this PC at a glance: free space, last clean, elevated or not
+                let mut glance = vec![Span::raw("  ")];
+                for (n, (label, value, warn)) in strip.iter().enumerate() {
+                    if n > 0 {
+                        glance.push(Span::styled("  ·  ", Style::new().fg(ui::line_c())));
+                    }
+                    glance.push(Span::styled(
+                        format!("{label} "),
+                        Style::new().fg(ui::dim()),
+                    ));
+                    glance.push(Span::styled(
+                        value.clone(),
+                        Style::new()
+                            .fg(if *warn { ui::warn_c() } else { ui::fg() })
+                            .add_modifier(Modifier::BOLD),
+                    ));
+                }
+                lines.push(Line::from(glance));
                 f.render_widget(Paragraph::new(lines), top);
 
                 // one or two columns inside a single frame
@@ -729,23 +781,41 @@ fn menu(
                     Span::styled(format!("  ({key})  "), Style::new().fg(ui::hi())),
                     Span::styled(ui::t(en, trd), Style::new().fg(ui::dim())),
                 ]);
-                let keys = ui::keys(&[
-                    (ui::t("arrows", "oklar"), ui::t("move", "gez")),
-                    ("enter", ui::t("open", "aç")),
-                    (ui::t("letter", "harf"), ui::t("jump", "doğrudan aç")),
-                    (ui::t("mouse", "fare"), ui::t("click", "tıkla")),
-                    ("q", ui::t("quit", "çık")),
-                ]);
+                let keys = match search.status() {
+                    Some(st) => Line::from(Span::styled(
+                        st,
+                        Style::new().fg(ui::hi()).add_modifier(Modifier::BOLD),
+                    )),
+                    None => ui::keys(&[
+                        (ui::t("arrows", "oklar"), ui::t("move", "gez")),
+                        ("enter", ui::t("open", "aç")),
+                        (ui::t("letter", "harf"), ui::t("jump", "doğrudan aç")),
+                        ("/", ui::t("search", "ara")),
+                        ("?", ui::t("help", "yardım")),
+                        ("q", ui::t("quit", "çık")),
+                    ]),
+                };
                 f.render_widget(
                     Paragraph::new(vec![detail, keys])
                         .block(ui::block(ui::t("selected", "seçili"))),
                     foot,
                 );
+                if help {
+                    ui::help_popup(f, ui::t("help", "yardım"), &menu_help());
+                }
             })?;
             if !event::poll(std::time::Duration::from_millis(250))? {
                 continue;
             }
             let ev = event::read()?;
+            if help {
+                if ui::pressed(&ev).is_some()
+                    || matches!(ev, Event::Mouse(m) if matches!(m.kind, crossterm::event::MouseEventKind::Down(_)))
+                {
+                    help = false;
+                }
+                continue;
+            }
             let step = |from: usize, down: bool| -> usize {
                 let mut i = from;
                 loop {
@@ -804,7 +874,33 @@ fn menu(
             let Some(code) = ui::pressed(&ev) else {
                 continue;
             };
+            // `/` search: every key goes to the query; the first match is selected
+            if search.typing && code == KeyCode::Enter {
+                return Ok((MENU[sel].1, sel));
+            }
+            if search.key(code) {
+                if !search.query.is_empty()
+                    && let Some(i) = first_match(&search)
+                {
+                    sel = i;
+                }
+                continue;
+            }
+            if search.typing || !search.query.is_empty() {
+                match code {
+                    KeyCode::Up => {
+                        sel = next_match(&search, sel, false);
+                        continue;
+                    }
+                    KeyCode::Down => {
+                        sel = next_match(&search, sel, true);
+                        continue;
+                    }
+                    _ => {}
+                }
+            }
             match code {
+                KeyCode::Char('?') => help = true,
                 KeyCode::Up | KeyCode::Char('k') => sel = step(sel, false),
                 KeyCode::Down | KeyCode::Char('j') => sel = step(sel, true),
                 KeyCode::Left | KeyCode::Right | KeyCode::Tab => sel = across(sel),
@@ -821,6 +917,119 @@ fn menu(
     })();
     ui::tui_end();
     res
+}
+
+/// Does menu row `i` match the search? Command name or description, any language shown.
+fn menu_matches(search: &ui::Search, i: usize) -> bool {
+    let (key, name, en, trd) = MENU[i];
+    key != ' ' && (search.matches(name) || search.matches(ui::t(en, trd)) || search.matches(en))
+}
+
+fn first_match(search: &ui::Search) -> Option<usize> {
+    (0..MENU.len()).find(|&i| menu_matches(search, i))
+}
+
+/// The next (or previous) matching row, wrapping around.
+fn next_match(search: &ui::Search, from: usize, down: bool) -> usize {
+    let n = MENU.len();
+    (1..n)
+        .map(|k| {
+            if down {
+                (from + k) % n
+            } else {
+                (from + n - k) % n
+            }
+        })
+        .find(|&i| menu_matches(search, i))
+        .unwrap_or(from)
+}
+
+/// Free space on the system drive, days since the last clean, elevated or not.
+fn status_strip() -> Vec<(String, String, bool)> {
+    let mut v = vec![];
+    if let Some(free) = sys::system_drive_free() {
+        let drive = std::env::var("SystemDrive").unwrap_or_else(|_| "/".into());
+        v.push((
+            tr!("{drive} free", "{drive} boş"),
+            ui::human(free),
+            free < 10 * 1024 * 1024 * 1024,
+        ));
+    }
+    let (clean, stale) = match oplog::days_since_clean() {
+        Some(0) => (tr!("today", "bugün"), false),
+        Some(1) => (tr!("yesterday", "dün"), false),
+        Some(d) => (tr!("{d} days ago", "{d} gün önce"), d > 30),
+        None => (tr!("never", "hiç"), false),
+    };
+    v.push((tr!("last clean", "son temizlik"), clean, stale));
+    v.push((
+        tr!("admin", "yönetici"),
+        if sys::is_admin() {
+            tr!("yes", "evet")
+        } else {
+            tr!("no", "hayır")
+        },
+        false,
+    ));
+    v
+}
+
+fn menu_help() -> Vec<(String, String)> {
+    vec![
+        (
+            ui::t("arrows, j k", "oklar, j k").into(),
+            ui::t(
+                "move; left / right switch columns",
+                "gez; sol / sağ sütun değiştirir",
+            )
+            .into(),
+        ),
+        (
+            "enter".into(),
+            ui::t("open the selected command", "seçili komutu aç").into(),
+        ),
+        (
+            ui::t("letter", "harf").into(),
+            ui::t(
+                "open the command with that key at once",
+                "o harfin komutunu hemen aç",
+            )
+            .into(),
+        ),
+        (
+            "/".into(),
+            ui::t(
+                "search commands by name or description",
+                "komutları ada ya da açıklamaya göre ara",
+            )
+            .into(),
+        ),
+        (
+            ui::t("mouse", "fare").into(),
+            ui::t(
+                "click selects, click again opens",
+                "tıklama seçer, ikinci tıklama açar",
+            )
+            .into(),
+        ),
+        ("q  esc".into(), ui::t("quit", "çık").into()),
+        (
+            "kz CMD --help".into(),
+            ui::t(
+                "every command also runs straight from the terminal",
+                "her komut doğrudan terminalden de çalışır",
+            )
+            .into(),
+        ),
+        (
+            "--dry-run".into(),
+            ui::t(
+                "preview anything that deletes or installs",
+                "silen ya da kuran her şeyi önce göster",
+            )
+            .into(),
+        ),
+    ]
 }
 
 fn pause() {
@@ -872,6 +1081,8 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "tweak" => tweak::run(None, vec![], false, false)?,
         "backup" => backup::create(None, false)?,
         "health" => health::run()?,
+        "boot" => boot::run(false)?,
+        "audit" => audit::run(false)?,
         "status" => status::run()?,
         "optimize" => optimize::run(false, false)?,
         "power" => power::run(None, None)?,
@@ -937,7 +1148,8 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Optimize { dry_run, yes }) => optimize::run(dry_run, yes),
         Some(Cmd::Whitelist { add, remove, edit }) => whitelist::run(add, remove, edit),
         Some(Cmd::Startup { list }) => startup::run(list),
-        Some(Cmd::Health) => health::run(),
+        Some(Cmd::Health { json }) => health::run_with(json),
+        Some(Cmd::Boot { json }) => boot::run(json),
         Some(Cmd::Dupes {
             paths,
             min_mb,
@@ -953,11 +1165,13 @@ fn main() -> anyhow::Result<()> {
         Some(Cmd::Privacy {
             action,
             args,
+            json,
             dry_run,
             yes,
         }) => match action.as_deref() {
             None => privacy::run(dry_run, yes),
             Some("keep") => cookies::command(args),
+            Some("audit") => audit::run(json),
             Some(other) => anyhow::bail!("kz privacy [keep]: {other}?"),
         },
         Some(Cmd::Schedule { frequency, time }) => schedule::run(frequency, time),
@@ -1008,8 +1222,12 @@ fn main() -> anyhow::Result<()> {
             no_restore_point,
         }) => repair::run(fix, dry_run, no_restore_point),
         Some(Cmd::Remove { dry_run, yes }) => remove::run(dry_run, yes),
-        Some(Cmd::History { limit }) => {
-            oplog::show_history(limit);
+        Some(Cmd::History { limit, json }) => {
+            if json {
+                oplog::history_json(limit);
+            } else {
+                oplog::show_history(limit);
+            }
             Ok(())
         }
         None => {

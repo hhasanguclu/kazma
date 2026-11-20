@@ -109,9 +109,100 @@ pub fn grad(i: usize) -> Color {
     Color::Indexed(g[i.min(g.len() - 1)])
 }
 
+/// NO_COLOR (https://no-color.org) is set: colors are dropped by the terminal
+/// layer, so anything shown only by color needs another mark.
+pub fn no_color() -> bool {
+    std::env::var_os("NO_COLOR").is_some_and(|v| !v.is_empty())
+}
+
 /// Style of the selected row: one calm background bar, text keeps its colors.
+/// Without colors the row is shown reversed instead.
 pub fn sel_style() -> Style {
+    if no_color() {
+        return Style::new().add_modifier(Modifier::REVERSED | Modifier::BOLD);
+    }
     Style::new().bg(theme().sel).add_modifier(Modifier::BOLD)
+}
+
+/// A centered box over the current screen with (key, what it does) rows; any
+/// key closes it (the caller decides).
+pub fn help_popup(f: &mut ratatui::Frame, title: &str, rows: &[(String, String)]) {
+    let area = f.area();
+    let kw = rows.iter().map(|r| width(&r.0)).max().unwrap_or(0);
+    let w = rows
+        .iter()
+        .map(|r| kw + 3 + width(&r.1))
+        .max()
+        .unwrap_or(20)
+        .max(width(title) + 6)
+        + 4;
+    let w = (w as u16).min(area.width.saturating_sub(2));
+    let h = (rows.len() as u16 + 4).min(area.height);
+    let r = Rect {
+        x: area.x + (area.width - w) / 2,
+        y: area.y + (area.height - h) / 2,
+        width: w,
+        height: h,
+    };
+    let room = (w as usize).saturating_sub(kw + 7);
+    let mut lines = vec![Line::raw("")];
+    for (k, d) in rows {
+        lines.push(Line::from(vec![
+            Span::styled(
+                format!(" {}  ", pad(k, kw)),
+                Style::new().fg(hi()).add_modifier(Modifier::BOLD),
+            ),
+            Span::styled(truncate_end(d, room), Style::new().fg(fg())),
+        ]));
+    }
+    f.render_widget(ratatui::widgets::Clear, r);
+    f.render_widget(Paragraph::new(lines).block(block(title)), r);
+}
+
+/// Keys of every list screen, for the `?` box.
+pub fn list_help() -> Vec<(String, String)> {
+    vec![
+        (
+            t("arrows, j k", "oklar, j k").into(),
+            t("move", "gez").into(),
+        ),
+        (
+            t("space", "boşluk").into(),
+            t("select / unselect the row", "satırı seç / bırak").into(),
+        ),
+        (
+            "a  n".into(),
+            t(
+                "select all / none (of the rows shown)",
+                "hepsini / hiçbirini seç (görünenler)",
+            )
+            .into(),
+        ),
+        (
+            "/".into(),
+            t(
+                "search; esc clears the filter",
+                "ara; esc filtreyi temizler",
+            )
+            .into(),
+        ),
+        (
+            t("mouse", "fare").into(),
+            t(
+                "click selects, click again toggles, wheel scrolls",
+                "tıklama seçer, ikinci tıklama işaretler, tekerlek kaydırır",
+            )
+            .into(),
+        ),
+        (
+            "enter".into(),
+            t("go on with the selection", "seçimle devam et").into(),
+        ),
+        (
+            "q  esc".into(),
+            t("cancel, nothing is changed", "iptal, hiçbir şey değişmez").into(),
+        ),
+    ]
 }
 
 /// `[######......]` as colored spans: filled part in `color`, the rest dim.
@@ -556,6 +647,7 @@ fn checklist_inner(
     let mut state = ListState::default().with_selected(Some(0));
     let mut search = Search::default();
     let mut list_area = Rect::default();
+    let mut help = false;
     let result = loop {
         let visible: Vec<usize> = (0..items.len())
             .filter(|&i| search.matches(&items[i].label) || search.matches(&items[i].detail))
@@ -656,6 +748,7 @@ fn checklist_inner(
                     ("/", t("search", "ara")),
                     ("enter", t("go", "uygula")),
                     ("q", t("cancel", "iptal")),
+                    ("?", t("help", "yardım")),
                 ]),
             };
             let mut lines = vec![];
@@ -672,8 +765,20 @@ fn checklist_inner(
                 Paragraph::new(lines).block(block(t("keys", "tuşlar"))),
                 foot,
             );
+            if help {
+                help_popup(f, t("keys", "tuşlar"), &list_help());
+            }
         })?;
         let ev = event::read()?;
+        if help {
+            // any key or click closes the help box
+            if pressed(&ev).is_some()
+                || matches!(ev, Event::Mouse(m) if matches!(m.kind, crossterm::event::MouseEventKind::Down(_)))
+            {
+                help = false;
+            }
+            continue;
+        }
         let sel = state.selected().unwrap_or(0);
         if let Some(m) = mouse(&ev, list_area, state.offset(), visible.len()) {
             match m {
@@ -694,6 +799,10 @@ fn checklist_inner(
         let Some(code) = pressed(&ev) else { continue };
         if search.key(code) {
             state.select(Some(0));
+            continue;
+        }
+        if code == KeyCode::Char('?') {
+            help = true;
             continue;
         }
         let cur = visible.get(sel).copied();
