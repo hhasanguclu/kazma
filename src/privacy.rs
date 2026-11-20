@@ -41,33 +41,18 @@ const WORDWHEEL: &str = r#"$env:KAZMA_KEYS = 'HKCU:\Software\Microsoft\Windows\C
 const CLIPBOARD: &str =
     "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::Clear()";
 
-fn chromium_profiles(user_data: Option<PathBuf>) -> Vec<PathBuf> {
-    let Some(ud) = user_data.filter(|p| p.is_dir()) else {
-        return vec![];
-    };
-    std::fs::read_dir(&ud)
-        .map(|rd| {
-            rd.flatten()
-                .map(|e| e.path())
-                .filter(|p| p.join("Preferences").is_file())
-                .collect()
-        })
-        .unwrap_or_default()
-}
-
 fn existing(v: impl IntoIterator<Item = PathBuf>) -> Vec<PathBuf> {
     v.into_iter().filter(|p| p.exists()).collect()
 }
 
 fn items() -> Vec<Item> {
-    let local = env_path("LOCALAPPDATA");
     let roaming = env_path("APPDATA");
     let recent = roaming
         .as_ref()
         .map(|r| r.join("Microsoft").join("Windows").join("Recent"));
     let browsers = crate::cookies::CHROMIUM
         .iter()
-        .map(|(name, dir, procs)| (*name, local.as_ref().map(|l| l.join(dir)), *procs));
+        .map(|(name, base, dir, procs)| (*name, crate::cookies::user_data(base, dir), *procs));
     let keep = crate::cookies::load_keep();
     let cookie_detail = if keep.is_empty() {
         tr!("signs you out of websites", "sitelerden çıkış yaparsınız")
@@ -158,7 +143,9 @@ fn items() -> Vec<Item> {
         );
     }
     for (name, ud, procs) in browsers {
-        let profiles = chromium_profiles(ud);
+        let profiles = ud
+            .map(|u| crate::cookies::chromium_profiles(&u))
+            .unwrap_or_default();
         if profiles.is_empty() {
             continue;
         }

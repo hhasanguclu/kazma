@@ -596,7 +596,7 @@ fn winapp2_targets(known: &[Target]) -> Vec<Target> {
     let picked = crate::winapp2::remembered();
     crate::winapp2::installed()
         .into_iter()
-        .filter(|f| !f.rules.iter().all(|r| inside(&r.dir)))
+        .filter(|f| !f.regs.is_empty() || !f.rules.iter().all(|r| inside(&r.dir)))
         .map(|f| {
             let on = f.warning.is_none() && picked.contains(&f.name);
             Target {

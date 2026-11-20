@@ -7,7 +7,13 @@ use crate::{oplog, ps, sys, tr, ui, uninstall};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-const KAZMA_FILES: [&str; 3] = ["config.txt", "whitelist.txt", "clean-rules.txt"];
+const KAZMA_FILES: [&str; 5] = [
+    "config.txt",
+    "whitelist.txt",
+    "clean-rules.txt",
+    "cookies-keep.txt",
+    "winapp2-selected.txt",
+];
 
 fn default_dir() -> PathBuf {
     let date = &oplog::now_utc()[..10];
@@ -158,6 +164,20 @@ pub fn create(dir: Option<PathBuf>, dry: bool) -> anyhow::Result<()> {
             }
         }
         ui::ok(&tr!("{n} settings files", "{n} ayar dosyası"));
+        // the kz tweak settings that are on, applied again by `backup restore`
+        if cfg!(windows)
+            && let Ok(on) = crate::tweak::applied_ids()
+        {
+            std::fs::write(
+                target.join("tweaks.txt"),
+                format!("# kz tweak settings that were on\n{}\n", on.join("\n")),
+            )?;
+            ui::ok(&tr!(
+                "tweaks.txt  ({} kz tweak settings)",
+                "tweaks.txt  ({} kz tweak ayarı)",
+                on.len()
+            ));
+        }
     }
     std::fs::write(dir.join("README.txt"), readme())?;
     oplog::record("backup", &dir.display().to_string());
@@ -296,6 +316,13 @@ pub fn restore(dir: &Path, dry: bool) -> anyhow::Result<()> {
             "kazma settings restored",
             "kazma ayarları geri yüklendi",
         ));
+        let tweaks = kazma.join("tweaks.txt");
+        if let Ok(text) = std::fs::read_to_string(&tweaks) {
+            let ids = crate::tweak::parse_ids(&text);
+            if !ids.is_empty() {
+                crate::tweak::run(Some("apply".into()), ids, false, true)?;
+            }
+        }
     }
     oplog::record("backup", &format!("restored from {}", dir.display()));
     println!(
