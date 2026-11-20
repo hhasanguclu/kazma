@@ -155,7 +155,15 @@ pub fn help_popup(f: &mut ratatui::Frame, title: &str, rows: &[(String, String)]
             Span::styled(truncate_end(d, room), Style::new().fg(fg())),
         ]));
     }
-    f.render_widget(ratatui::widgets::Clear, r);
+    // clear one column more on each side: a wide (CJK) character cut in half
+    // by the box edge would otherwise be drawn over the border
+    let x0 = r.x.saturating_sub(1).max(area.x);
+    let wide = Rect {
+        x: x0,
+        width: (r.x + r.width + 1).min(area.x + area.width) - x0,
+        ..r
+    };
+    f.render_widget(ratatui::widgets::Clear, wide);
     f.render_widget(Paragraph::new(lines).block(block(title)), r);
 }
 
