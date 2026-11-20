@@ -346,7 +346,8 @@ pub fn print_banner(subtitle: &str) {
     let (cmd, desc) = subtitle.split_once(" :: ").unwrap_or(("", subtitle));
     let ver = format!("v{}", env!("CARGO_PKG_VERSION"));
     let used = "kazma".len() + 3 + width(cmd) + 3 + ver.len();
-    let room = W.saturating_sub(used + 2);
+    // at least one space between the description and the version
+    let room = W.saturating_sub(used + 3);
     let desc = truncate_end(desc, room);
     let pad = room.saturating_sub(width(&desc));
     let l = ct(line_c());
@@ -359,7 +360,7 @@ pub fn print_banner(subtitle: &str) {
         " / ".with(l),
         cmd.with(ct(hi())).bold(),
         desc.with(ct(fg())),
-        " ".repeat(pad),
+        " ".repeat(pad + 1),
         ver.with(ct(dim())),
         "|".with(l)
     );

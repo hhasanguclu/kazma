@@ -1205,6 +1205,14 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
 }
 
 fn main() -> anyhow::Result<()> {
+    // `kz ... | Select-Object -First 5` closes the pipe early: stop quietly, no panic
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        if info.to_string().contains("failed printing to stdout") {
+            std::process::exit(0);
+        }
+        default_hook(info);
+    }));
     let cli = Cli::parse();
     update::cleanup_old();
     ui::init();
