@@ -14,7 +14,7 @@ pub struct Pkg {
 
 /// Clean one raw output line: keep only what follows the last carriage return
 /// (winget redraws its spinner with `\r`) and drop control characters.
-fn clean_line(raw: &str) -> String {
+pub(crate) fn clean_line(raw: &str) -> String {
     let after_cr = raw.rsplit('\r').next().unwrap_or(raw);
     after_cr
         .chars()
@@ -85,13 +85,13 @@ pub fn parse_winget_table(output: &str) -> Vec<Pkg> {
     out
 }
 
-fn winget() -> Command {
+pub(crate) fn winget() -> Command {
     let mut c = Command::new("winget");
     ps::hide_window(&mut c);
     c
 }
 
-fn winget_available() -> bool {
+pub(crate) fn winget_available() -> bool {
     winget()
         .arg("--version")
         .output()

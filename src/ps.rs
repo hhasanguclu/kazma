@@ -122,3 +122,13 @@ pub fn last_line(text: &str) -> String {
         .unwrap_or("")
         .to_string()
 }
+
+/// The first non-empty line: PowerShell puts the actual message there
+/// ("Cmdlet-Name : what went wrong"), the last lines are its location info.
+pub fn first_line(text: &str) -> String {
+    text.lines()
+        .map(str::trim)
+        .find(|l| !l.is_empty())
+        .unwrap_or("")
+        .to_string()
+}

@@ -17,10 +17,12 @@ mod drivers;
 mod dupes;
 mod empty;
 mod explain;
+mod features;
 mod fsutil;
 mod gpu;
 mod health;
 mod i18n;
+mod install;
 mod installer;
 mod locks;
 mod mft;
@@ -39,11 +41,13 @@ mod report;
 mod restore;
 mod schedule;
 mod screen;
+mod services;
 mod settings;
 mod sqlite;
 mod startup;
 mod status;
 mod sys;
+mod tasks;
 mod treemap;
 mod tweak;
 mod types;
@@ -97,6 +101,38 @@ enum Cmd {
         dry_run: bool,
         #[arg(long, short)]
         yes: bool,
+    },
+    /// Install well-known programs for a new PC through winget (pick from a list)
+    Install {
+        /// Programs to install by name or winget id (default: pick from the list)
+        names: Vec<String>,
+        /// Show the list and what is installed
+        #[arg(long)]
+        list: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Turn Windows optional features on / off (WSL, Hyper-V, Sandbox, .NET 3.5...)
+    Features {
+        /// Only show which are on
+        #[arg(long)]
+        list: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Windows services you may not need, explained; --all lists every service
+    Services {
+        #[arg(long)]
+        all: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Scheduled tasks that programs added (updaters, helpers); --all adds Windows' own
+    Tasks {
+        #[arg(long)]
+        all: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
     },
     /// Update installed programs with winget
     Upgrade {
@@ -438,6 +474,12 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "program kaldır, kalıntılarını temizle",
     ),
     (
+        'I',
+        "install",
+        "programs for a new PC (winget)",
+        "yeni bilgisayar için programlar (winget)",
+    ),
+    (
         '9',
         "upgrade",
         "update installed programs (winget)",
@@ -491,6 +533,24 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "status",
         "live monitor and process manager",
         "canlı izleme ve süreç yöneticisi",
+    ),
+    (
+        'S',
+        "services",
+        "services you may not need, explained",
+        "gerekmeyebilecek hizmetler, açıklamalı",
+    ),
+    (
+        'K',
+        "tasks",
+        "scheduled tasks programs added",
+        "programların eklediği zamanlanmış görevler",
+    ),
+    (
+        'F',
+        "features",
+        "WSL, Hyper-V, Sandbox, .NET 3.5...",
+        "WSL, Hyper-V, Korumalı Alan, .NET 3.5...",
     ),
     (
         'f',
@@ -1075,6 +1135,10 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "privacy" => privacy::run(false, false)?,
         "uninstall" => uninstall::run(false, false)?,
         "upgrade" => upgrade::run(false, false)?,
+        "install" => install::run(vec![], false, false)?,
+        "services" => services::run(false, false)?,
+        "tasks" => tasks::run(false, false)?,
+        "features" => features::run(false, false)?,
         "drivers" => drivers::run(false, false, false, false)?,
         "startup" => startup::run(false)?,
         "debloat" => debloat::run(false, false)?,
@@ -1139,6 +1203,14 @@ fn main() -> anyhow::Result<()> {
             }
         }
         Some(Cmd::Upgrade { dry_run, yes }) => upgrade::run(dry_run, yes),
+        Some(Cmd::Install {
+            names,
+            list,
+            dry_run,
+        }) => install::run(names, dry_run, list),
+        Some(Cmd::Features { list, dry_run }) => features::run(list, dry_run),
+        Some(Cmd::Services { all, dry_run }) => services::run(all, dry_run),
+        Some(Cmd::Tasks { all, dry_run }) => tasks::run(all, dry_run),
         Some(Cmd::Drivers {
             installed,
             dry_run,
