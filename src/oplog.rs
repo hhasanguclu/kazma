@@ -57,6 +57,57 @@ pub fn record(command: &str, message: &str) {
     }
 }
 
+/// One log line as JSON: {"time": "...", "command": "...", "message": "..."}.
+pub fn parse_line(l: &str) -> Option<serde_json::Value> {
+    let (time, rest) = l.split_once(" UTC  ")?;
+    let rest = rest.trim_start();
+    let (command, message) = rest.split_once(' ').unwrap_or((rest, ""));
+    Some(serde_json::json!({
+        "time": format!("{time} UTC"),
+        "command": command,
+        "message": message.trim(),
+    }))
+}
+
+/// `kz history --json`: the last `limit` entries as a JSON array.
+pub fn history_json(limit: usize) {
+    let lines: Vec<serde_json::Value> = log_path()
+        .and_then(|p| std::fs::read_to_string(p).ok())
+        .map(|s| s.lines().filter_map(parse_line).collect())
+        .unwrap_or_default();
+    let from = lines.len().saturating_sub(limit);
+    println!(
+        "{}",
+        serde_json::to_string_pretty(&lines[from..]).unwrap_or_else(|_| "[]".into())
+    );
+}
+
+/// Days since the last `kz clean` that deleted something, from the log.
+pub fn days_since_clean() -> Option<i64> {
+    let text = std::fs::read_to_string(log_path()?).ok()?;
+    let last = text.lines().rev().find(|l| {
+        l.split_once(" UTC  ")
+            .is_some_and(|(_, r)| r.starts_with("clean "))
+    })?;
+    let then = day_number(&last[..10])?;
+    let now = day_number(&now_utc()[..10])?;
+    Some(now - then)
+}
+
+/// Days since 1970-01-01 for "YYYY-MM-DD".
+fn day_number(date: &str) -> Option<i64> {
+    let mut p = date.split('-').map(|x| x.parse::<i64>().ok());
+    let (y, m, d) = (p.next()??, p.next()??, p.next()??);
+    // days from civil, Howard Hinnant's algorithm
+    let y = if m <= 2 { y - 1 } else { y };
+    let era = y.div_euclid(400);
+    let yoe = y - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    Some(era * 146097 + doe - 719468)
+}
+
 pub fn show_history(limit: usize) {
     crate::ui::print_banner(&crate::tr!(
         "history :: what kazma did",
@@ -76,5 +127,32 @@ pub fn show_history(limit: usize) {
             crate::tr!("No history yet.", "Henüz geçmiş yok."),
             path.display()
         ),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn days() {
+        assert_eq!(day_number("1970-01-01"), Some(0));
+        assert_eq!(
+            day_number("2026-11-20").unwrap() - day_number("2026-11-13").unwrap(),
+            7
+        );
+        assert_eq!(
+            day_number("2024-03-01").unwrap() - day_number("2024-02-28").unwrap(),
+            2
+        );
+    }
+
+    #[test]
+    fn parses_lines() {
+        let v = parse_line("2026-11-19 15:01:44 UTC  tweak    on menu-delay").unwrap();
+        assert_eq!(v["command"], "tweak");
+        assert_eq!(v["message"], "on menu-delay");
+        assert_eq!(v["time"], "2026-11-19 15:01:44 UTC");
+        assert!(parse_line("garbage").is_none());
     }
 }

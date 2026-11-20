@@ -34,7 +34,7 @@
 |---|---|
 | **クリーンアップ** | 100 種類以上のキャッシュ、一時ファイル、ログ、ごみ箱。AI ツール、ゲーム ランチャー、GPU ドライバーの残りファイルも対象 (`clean`) · winapp2.ini による 4,000 以上のプログラムの追加ルール (`winapp2`) · Windows.old、アップグレード ファイル、メモリ ダンプ、休止状態ファイル、古い復元ポイント (`deepclean`) · ツリーマップと最大ファイル表示付きのディスク エクスプローラー (`analyze`) · ファイルの種類 (`types`) · プロジェクトのビルド成果物 (`purge`) · 古いインストーラー (`installer`) · 重複ファイル (`dupes`) · 空のフォルダーと壊れたショートカット (`empty`) · 使用履歴 (`privacy`) |
 | **プログラムとドライバー** | プログラムとその残りファイルをアンインストール (`uninstall`) · winget でプログラムを更新 (`upgrade`) · Windows Update からのドライバー更新 (`drivers`) · スタートアップ アプリ (`startup`) · 宣伝アプリと Windows の広告 (`debloat`) · プライバシー、AI、Edge、エクスプローラー、タスク バー、更新の Windows 設定 (`tweak`) · 新しい PC への引っ越し用バックアップ (`backup`) |
-| **システム** | 正常性レポート (`health`) · GPU とバッテリーも表示するライブ モニター、プロセスが動いている理由を説明するプロセス マネージャー (`status`) · メンテナンス: DNS、アイコン キャッシュ、SSD TRIM、DISM、SFC (`optimize`) · 修復: ネットワーク、Windows Update、Store、システム ファイル (`repair`) · 電源プランとバッテリー (`power`) · 復元ポイント (`restore`) · HTML レポート (`report`) · ディスク速度テスト (`bench`) · 自動クリーンアップ (`schedule`) |
+| **システム** | 正常性レポート (`health`) · 起動時間と遅くしている原因 (`boot`) · GPU とバッテリーも表示するライブ モニター、プロセスが動いている理由を説明するプロセス マネージャー (`status`) · メンテナンス: DNS、アイコン キャッシュ、SSD TRIM、DISM、SFC (`optimize`) · 修復: ネットワーク、Windows Update、Store、システム ファイル (`repair`) · 電源プランとバッテリー (`power`) · 復元ポイント (`restore`) · HTML レポート (`report`) · ディスク速度テスト (`bench`) · 自動クリーンアップ (`schedule`) |
 | **ネットワーク** | IP、遅延、DNS ベンチマークと切り替え、速度テスト、保存済み Wi-Fi (`net`) · どのプログラムがどのポートを使っているか (`ports`) |
 | **便利ツール** | ファイルを開いたままのプログラムを特定 (`lock`) · 画面をスリープさせない (`awake`) · 画面拭きモード (`cleanscreen`) |
 | **kazma** | 保護するパス (`whitelist`) · 独自のクリーンアップ ルール (`rules`) · エクスプローラーの右クリック メニュー (`context`) · 言語とテーマ (`config`) · 自己更新 (`update`) · ログ (`history`) · kazma のアンインストール (`remove`) |
@@ -77,7 +77,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz installer [paths...]` | ダウンロードとデスクトップにある古いセットアップ ファイル (`.exe`、`.msi`、`.msix`、`.iso`) |
 | `kz dupes [paths...]` | 重複ファイル (サイズ -> 部分ハッシュ -> BLAKE3、すべて並列) |
 | `kz empty [paths...]` | 空のフォルダー、壊れたショートカット、0 バイトのファイル (ごみ箱へ) |
-| `kz privacy` | 最近使ったファイル、ファイル名を指定して実行 / エクスプローラーの履歴、クリップボード、ブラウザーの履歴と Cookie (選択制)。`keep` で Cookie を残すサイトを選択 |
+| `kz privacy` | 最近使ったファイル、ファイル名を指定して実行 / エクスプローラーの履歴、クリップボード、ブラウザーの履歴と Cookie (選択制)。`keep` で Cookie を残すサイトを選択。`audit` でカメラ、マイク、位置情報を使ったアプリを表示 |
 | `kz uninstall` | クラシック アプリ、Microsoft Store アプリ、Scoop アプリを削除し、残ったフォルダーとレジストリ キーも削除 (事前にバックアップ)。`--leftovers` で別の方法で削除したアプリの残骸を検出 |
 | `kz upgrade` | winget でインストール済みプログラムを更新 |
 | `kz drivers` | Windows Update からのドライバー更新。`--installed` でサードパーティ製ドライバーを古い順に一覧表示 |
@@ -86,6 +86,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz tweak` | 約 60 の Windows 設定をスイッチで切り替え: テレメトリ、Copilot / Recall、Edge、エクスプローラー、タスク バー、ゲーム、更新。`list`、`apply ID`、`undo ID`、`undo all` |
 | `kz backup [folder]` | 新しい PC 用キット: winget のアプリ一覧、ドライバー、プログラム一覧、kazma の設定。`kz backup restore FOLDER` で再インストール |
 | `kz health` | ディスクの SMART、バッテリーの劣化、ブルースクリーン、エラー、更新、Defender、ファイアウォール |
+| `kz boot` | Windows の起動にかかる時間と、起動を遅くしているアプリ、ドライバー、サービス (Windows 自身の起動ログから。管理者) |
 | `kz status` | CPU、GPU、メモリ、ディスク、ネットワーク、バッテリーをリアルタイム表示。`enter` でプロセスが動いている理由を説明、`x` で終了、`m` でメモリ順に並べ替え |
 | `kz power` | 電源プラン (`set saver / balanced / high / ultimate`)、`battery` レポート、`wake` スリープ解除の要因、`hibernate off / reduced / full` |
 | `kz restore` | システムの復元ポイント: `list`、`create "desc"`、`enable`、`open` (Windows 標準のウィザード) |
@@ -109,6 +110,9 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz remove` | kazma をアンインストール |
 
 削除やインストールを行うコマンドはすべて `--dry-run` (`-n`) に対応しており、事前に内容を確認できます。
+
+`health`、`history`、`boot`、`privacy audit` は `--json` で JSON を出力します。`NO_COLOR=1` で色を無効にできます。メニューでは `/` でコマンドを検索、`?` でキー一覧を表示します。
+
 ドライバーのインストール、管理者向けメンテナンス タスクの実行、Windows Update とシステムの一時キャッシュのクリーンアップには、**管理者権限の**ターミナル (管理者として実行) を使ってください。
 
 ## 安全性

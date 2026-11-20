@@ -212,10 +212,10 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: 
     <div class="card"><h3><span>analyze</span> · <span data-t="c2">see the disk</span></h3><p data-t="c2d">Disk explorer with treemap, largest files and file types. Reads the NTFS MFT directly for instant scans. Explains special files and shows which program holds a file open.</p></div>
     <div class="card"><h3><span>uninstall</span> · <span data-t="c3">remove for real</span></h3><p data-t="c3d">Classic, Microsoft Store and Scoop apps, then leftover folders and registry keys (backed up first). Finds leftovers of apps removed some other way.</p></div>
     <div class="card"><h3><span>upgrade · drivers</span></h3><p data-t="c4d">Update programs through winget and drivers through Windows Update, with a restore point first.</p></div>
-    <div class="card"><h3><span>health · status</span></h3><p data-t="c5d">Health report for disks, battery, stability and security. Live CPU, GPU, memory and network monitor that explains why a process is running.</p></div>
+    <div class="card"><h3><span>health · status · boot</span></h3><p data-t="c5d">Health report for disks, battery, stability and security. Live CPU, GPU, memory and network monitor that explains why a process is running. Boot time and what slows it down.</p></div>
     <div class="card"><h3><span>optimize · repair</span></h3><p data-t="c6d">Broken startup entries, DNS, icon cache, TRIM / DISM / SFC when due. One-key fixes for network, Windows Update, Store and printers.</p></div>
     <div class="card"><h3><span>purge · dupes · empty</span></h3><p data-t="c7d">Build folders like node_modules and target, duplicate files, empty folders and broken shortcuts. Everything goes to the Recycle Bin.</p></div>
-    <div class="card"><h3><span>startup · debloat · tweak · privacy</span></h3><p data-t="c8d">Control startup apps, remove promoted apps and ads, switch privacy, AI and Explorer settings (reversibly), clear recent-file and run history, keep the cookies of the sites you choose.</p></div>
+    <div class="card"><h3><span>startup · debloat · tweak · privacy</span></h3><p data-t="c8d">Control startup apps, remove promoted apps and ads, switch privacy, AI and Explorer settings (reversibly), clear recent-file and run history, keep the cookies of the sites you choose, see which apps used the camera, microphone and location.</p></div>
     <div class="card"><h3><span>backup · power · net · ports</span></h3><p data-t="c9d">Move-to-a-new-PC kit, power plans and battery report, network and speed test, which program uses which port. Plus <code>lock</code>, <code>awake</code>, <code>cleanscreen</code>.</p></div>
   </div>
 </section>
@@ -303,10 +303,10 @@ const TR = {
   c2: "diski gör", c2d: "Ağaç haritası, en büyük dosyalar ve dosya türleriyle disk gezgini. Anında tarama için NTFS MFT'yi doğrudan okur. Özel dosyaları açıklar, dosyayı hangi programın açık tuttuğunu gösterir.",
   c3: "gerçekten kaldır", c3d: "Klasik, Microsoft Store ve Scoop uygulamaları; ardından kalıntı klasörler ve kayıt defteri anahtarları (önce yedeklenir). Başka yolla silinmiş uygulamaların kalıntılarını bulur.",
   c4d: "Programları winget ile, sürücüleri Windows Update ile günceller; önce geri yükleme noktası oluşturur.",
-  c5d: "Diskler, pil, kararlılık ve güvenlik için sağlık raporu. Bir sürecin neden çalıştığını açıklayan canlı CPU, GPU, bellek ve ağ izleyici.",
+  c5d: "Diskler, pil, kararlılık ve güvenlik için sağlık raporu. Bir sürecin neden çalıştığını açıklayan canlı CPU, GPU, bellek ve ağ izleyici. Açılış süresi ve açılışı yavaşlatanlar.",
   c6d: "Bozuk başlangıç kayıtları, DNS, ikon önbelleği, zamanı gelince TRIM / DISM / SFC. Ağ, Windows Update, Store ve yazıcı için tek tuşla onarım.",
   c7d: "node_modules ve target gibi derleme klasörleri, yinelenen dosyalar, boş klasörler ve bozuk kısayollar. Hepsi Geri Dönüşüm Kutusu'na gider.",
-  c8d: "Başlangıç uygulamalarını yönetin, önerilen uygulamaları ve reklamları kaldırın, gizlilik, yapay zekâ ve Gezgin ayarlarını (geri alınabilir şekilde) değiştirin, son dosya ve çalıştırma geçmişini temizleyin, seçtiğiniz sitelerin çerezlerini saklayın.",
+  c8d: "Başlangıç uygulamalarını yönetin, önerilen uygulamaları ve reklamları kaldırın, gizlilik, yapay zekâ ve Gezgin ayarlarını (geri alınabilir şekilde) değiştirin, son dosya ve çalıştırma geçmişini temizleyin, seçtiğiniz sitelerin çerezlerini saklayın, kamerayı, mikrofonu ve konumu hangi uygulamaların kullandığını görün.",
   c9d: "Yeni bilgisayara taşınma kiti, güç planları ve pil raporu, ağ ve hız testi, hangi programın hangi portu kullandığı. Ayrıca lock, awake, cleanscreen.",
   h_screens: "ekran görüntüleri",
   s1: "disk gezgini, (i) özel dosyaları açıklar", s2: "ağaç haritası", s3: "en büyük dosyalar", s4: "mavi tema",

@@ -174,6 +174,66 @@
   "file": "analyze.rs"
  },
  {
+  "en": "just now",
+  "tr": "az önce",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "{m} min ago",
+  "tr": "{m} dk önce",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "{} h ago",
+  "tr": "{} sa önce",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "{} days ago",
+  "tr": "{} gün önce",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "privacy :: who used the camera, microphone and location",
+  "tr": "privacy :: kamera, mikrofon ve konumu kim kullandı",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "kz privacy audit works on Windows only.",
+  "tr": "kz privacy audit yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "no app has used it",
+  "tr": "hiçbir uygulama kullanmamış",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "(in use now)",
+  "tr": "(şu an kullanımda)",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "... and {} more",
+  "tr": "... ve {} tane daha",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
+  "en": "change which apps may use them: Settings > Privacy & security",
+  "tr": "hangi uygulamaların kullanabileceğini değiştirmek için: Ayarlar > Gizlilik ve güvenlik",
+  "kind": "fmt",
+  "file": "audit.rs"
+ },
+ {
   "en": "kazma backup\r\n\r\napps.json      programs that winget can reinstall\r\nprograms.txt   every installed program (install the ones not in winget by hand)\r\ndrivers\\       third-party drivers\r\nkazma\\         kazma settings\r\n\r\nTo restore on the new PC (an elevated terminal is recommended):\r\n    kz backup restore \"this folder\"\r\n",
   "tr": "kazma yedeği\r\n\r\napps.json      winget ile kurulabilen programlar\r\nprograms.txt   tüm yüklü programlar (winget'te olmayanları elle kurun)\r\ndrivers\\       üçüncü taraf sürücüler\r\nkazma\\         kazma ayarları\r\n\r\nGeri yüklemek için yeni bilgisayarda (yönetici terminali önerilir):\r\n    kz backup restore \"bu klasör\"\r\n",
   "kind": "plain",
@@ -448,6 +508,96 @@
   "tr": "bu dosya sistemi önbelleksiz G/Ç'yi reddetti; işletim sistemi önbelleği sonuçları şişirebilir",
   "kind": "plain",
   "file": "bench.rs"
+ },
+ {
+  "en": "boot :: how long Windows takes to start",
+  "tr": "boot :: Windows'un açılış süresi",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "kz boot works on Windows only.",
+  "tr": "kz boot yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "reading the boot log...",
+  "tr": "açılış kaydı okunuyor...",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "the boot log can only be read from an elevated terminal (Run as administrator)",
+  "tr": "açılış kaydı yalnızca yönetici terminalinden okunabilir (Yönetici olarak çalıştır)",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "Windows has not recorded any boot yet.",
+  "tr": "Windows henüz bir açılış kaydetmemiş.",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "Recent boots",
+  "tr": "Son açılışlar",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "desktop ready after {}",
+  "tr": "masaüstü {} sonra hazır",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "average time to a usable desktop: {}",
+  "tr": "kullanılabilir masaüstüne ortalama süre: {}",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "Slowing down startup (last 60 days)",
+  "tr": "Açılışı yavaşlatanlar (son 60 gün)",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "nothing: Windows reported no slow apps, drivers or services",
+  "tr": "yok: Windows yavaş uygulama, sürücü ya da hizmet bildirmedi",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "app",
+  "tr": "uygulama",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "driver",
+  "tr": "sürücü",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "service",
+  "tr": "hizmet",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "+{} on average, {}x",
+  "tr": "ortalama +{}, {} kez",
+  "kind": "fmt",
+  "file": "boot.rs"
+ },
+ {
+  "en": "turn startup apps off with: kz startup",
+  "tr": "başlangıç uygulamalarını kapatmak için: kz startup",
+  "kind": "fmt",
+  "file": "boot.rs"
  },
  {
   "en": "Claude desktop cache",
@@ -2634,20 +2784,104 @@
   "file": "main.rs"
  },
  {
-  "en": "mouse",
-  "tr": "fare",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "click",
-  "tr": "tıkla",
+  "en": "help",
+  "tr": "yardım",
   "kind": "plain",
   "file": "main.rs"
  },
  {
   "en": "selected",
   "tr": "seçili",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "{drive} free",
+  "tr": "{drive} boş",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "today",
+  "tr": "bugün",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "{d} days ago",
+  "tr": "{d} gün önce",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "never",
+  "tr": "hiç",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "last clean",
+  "tr": "son temizlik",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "admin",
+  "tr": "yönetici",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
+  "en": "arrows, j k",
+  "tr": "oklar, j k",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "move; left / right switch columns",
+  "tr": "gez; sol / sağ sütun değiştirir",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "open the selected command",
+  "tr": "seçili komutu aç",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "open the command with that key at once",
+  "tr": "o harfin komutunu hemen aç",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "search commands by name or description",
+  "tr": "komutları ada ya da açıklamaya göre ara",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "mouse",
+  "tr": "fare",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "click selects, click again opens",
+  "tr": "tıklama seçer, ikinci tıklama açar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "every command also runs straight from the terminal",
+  "tr": "her komut doğrudan terminalden de çalışır",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "preview anything that deletes or installs",
+  "tr": "silen ya da kuran her şeyi önce göster",
   "kind": "plain",
   "file": "main.rs"
  },
@@ -2718,6 +2952,12 @@
   "file": "main.rs"
  },
  {
+  "en": "who used the camera, mic and location",
+  "tr": "kamerayı, mikrofonu, konumu kim kullandı",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
   "en": "programs & drivers",
   "tr": "programlar ve sürücüler",
   "kind": "plain",
@@ -2774,6 +3014,12 @@
  {
   "en": "health report: disks, battery, crashes",
   "tr": "sağlık raporu: disk, pil, çökmeler",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "boot time and what slows it down",
+  "tr": "açılış süresi ve onu yavaşlatanlar",
   "kind": "plain",
   "file": "main.rs"
  },
@@ -5886,6 +6132,48 @@
   "file": "types.rs"
  },
  {
+  "en": "space",
+  "tr": "boşluk",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "select / unselect the row",
+  "tr": "satırı seç / bırak",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "select all / none (of the rows shown)",
+  "tr": "hepsini / hiçbirini seç (görünenler)",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "search; esc clears the filter",
+  "tr": "ara; esc filtreyi temizler",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "click selects, click again toggles, wheel scrolls",
+  "tr": "tıklama seçer, ikinci tıklama işaretler, tekerlek kaydırır",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "go on with the selection",
+  "tr": "seçimle devam et",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
+  "en": "cancel, nothing is changed",
+  "tr": "iptal, hiçbir şey değişmez",
+  "kind": "plain",
+  "file": "ui.rs"
+ },
+ {
   "en": " filter: {}  [esc] clear",
   "tr": " filtre: {}  [esc] temizle",
   "kind": "fmt",
@@ -5895,12 +6183,6 @@
   "en": "{count} of {} selected",
   "tr": "{} öğeden {count} seçili",
   "kind": "fmt",
-  "file": "ui.rs"
- },
- {
-  "en": "space",
-  "tr": "boşluk",
-  "kind": "plain",
   "file": "ui.rs"
  },
  {
