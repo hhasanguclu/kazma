@@ -1,7 +1,7 @@
 //! `kz clean`: known-safe caches, temp files, logs and the Recycle Bin.
 
 use crate::fsutil::{self, Stats, env_path, home};
-use crate::{oplog, sys, tr, ui};
+use crate::{oplog, ps, sys, tr, ui};
 use rayon::prelude::*;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime};
@@ -692,8 +692,28 @@ fn group_name(group: &str) -> &'static str {
     }
 }
 
+/// `if_below_gb`: only clean when the system drive has less free space than this
+/// (for the low-disk schedule); quietly does nothing otherwise.
+pub fn run_if_below(dry: bool, yes: bool, if_below_gb: Option<u64>) -> anyhow::Result<()> {
+    if let (Some(gb), Some(free)) = (if_below_gb, sys::system_drive_free())
+        && free >= gb * 1024 * 1024 * 1024
+    {
+        println!(
+            "  {}",
+            tr!(
+                "{} free, more than {gb} GB: nothing to do.",
+                "{} boş, {gb} GB'tan fazla: yapılacak bir şey yok.",
+                ui::human(free)
+            )
+        );
+        return Ok(());
+    }
+    run(dry, yes)
+}
+
 pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
     let admin = sys::is_admin();
+    let free_before = sys::system_drive_free();
     ui::print_banner(if dry {
         ui::t(
             "clean :: dry run, nothing will be deleted",
@@ -720,19 +740,42 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             }
         )
     );
-    println!("  {}", ui::t("scanning...", "taranıyor..."));
+    ps::working(ui::t("scanning...", "taranıyor..."));
 
     let all = targets();
     let (runnable, needs_admin): (Vec<Target>, Vec<Target>) =
         all.into_iter().partition(|t| admin || !t.admin);
-    let mut measured: Vec<(Target, Stats)> = runnable
-        .into_par_iter()
-        .map(|t| {
-            let s = measure(&t);
-            (t, s)
-        })
-        .filter(|(_, s)| s.bytes > 0 || s.files > 0)
-        .collect();
+    // a live "scanning... 34/120" line while the items are measured
+    let total = runnable.len();
+    let done = std::sync::atomic::AtomicUsize::new(0);
+    let finished = std::sync::atomic::AtomicBool::new(false);
+    let mut measured: Vec<(Target, Stats)> = std::thread::scope(|sc| {
+        if ui::interactive() {
+            sc.spawn(|| {
+                use std::sync::atomic::Ordering::Relaxed;
+                while !finished.load(Relaxed) {
+                    ps::working(&tr!(
+                        "scanning... {}/{total}",
+                        "taranıyor... {}/{total}",
+                        done.load(Relaxed)
+                    ));
+                    std::thread::sleep(Duration::from_millis(120));
+                }
+            });
+        }
+        let v = runnable
+            .into_par_iter()
+            .map(|t| {
+                let s = measure(&t);
+                done.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                (t, s)
+            })
+            .filter(|(_, s)| s.bytes > 0 || s.files > 0)
+            .collect();
+        finished.store(true, std::sync::atomic::Ordering::Relaxed);
+        v
+    });
+    println!("{:60}", "");
     measured.sort_by_key(|(t, _)| {
         [
             "User", "Browser", "Apps", "AI", "Games", "GPU", "Dev", "Winapp2", "Custom", "System",
@@ -908,6 +951,14 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
         ui::pad(ui::t("files", "dosya"), 20),
         total.files
     );
+    // free space before -> after, measured, not computed
+    if !dry && let (Some(a), Some(b)) = (free_before, sys::system_drive_free()) {
+        println!(
+            "  | {}{:>22} |",
+            ui::pad(ui::t("free now", "şimdi boş"), 20),
+            format!("{} -> {}", ui::human(a), ui::human(b))
+        );
+    }
     println!("  '{}'\n", "-".repeat(44));
     if cfg!(windows) && !crate::winapp2::file().is_some_and(|f| f.is_file()) {
         println!(

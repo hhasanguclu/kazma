@@ -689,7 +689,12 @@ fn checklist_inner(
                         String::new()
                     };
                     let label_w = w.saturating_sub(24).min(52);
-                    let label = truncate(&i.label, label_w);
+                    // names keep their start ("Microsoft Visual C++..."), paths their end
+                    let label = if i.label.contains(['\\', '/']) {
+                        truncate(&i.label, label_w)
+                    } else {
+                        truncate_end(&i.label, label_w)
+                    };
                     let detail_w = w.saturating_sub(label_w + 20);
                     // checked rows are bright, unchecked rows step back
                     let (mark_c, text_c) = if i.checked {
@@ -705,7 +710,14 @@ fn checklist_inner(
                         Span::styled(pad(&label, label_w), Style::new().fg(text_c)),
                         Span::styled(size, Style::new().fg(if i.checked { hi() } else { dim() })),
                         Span::styled(
-                            format!("  {}", truncate(&i.detail, detail_w)),
+                            format!(
+                                "  {}",
+                                if i.detail.contains(['\\', '/']) {
+                                    truncate(&i.detail, detail_w)
+                                } else {
+                                    truncate_end(&i.detail, detail_w)
+                                }
+                            ),
                             Style::new().fg(dim()),
                         ),
                     ]))

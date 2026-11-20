@@ -87,6 +87,9 @@ enum Cmd {
         /// Skip the selection screen and clean every item
         #[arg(long, short)]
         yes: bool,
+        /// Only clean when the system drive has less than this many GB free
+        #[arg(long, value_name = "GB")]
+        if_below: Option<u64>,
     },
     /// Interactive disk usage explorer
     #[command(alias = "analyse")]
@@ -267,10 +270,19 @@ enum Cmd {
     },
     /// Automatic cleaning: daily | weekly | monthly | off | status
     Schedule {
+        /// daily | weekly | monthly | lowdisk | off | status
         frequency: Option<String>,
         /// Time of day, HH:MM
         #[arg(long, default_value = "11:00")]
         time: String,
+        /// lowdisk: clean when less than this many GB are free
+        #[arg(long, default_value_t = 15, value_name = "GB")]
+        below: u64,
+    },
+    /// Print tab completion for a shell: powershell | bash | zsh | fish
+    Completion {
+        #[arg(default_value = "powershell")]
+        shell: String,
     },
     /// Update kazma itself from GitHub
     Update {
@@ -1092,6 +1104,22 @@ fn menu_help() -> Vec<(String, String)> {
     ]
 }
 
+/// `kz completion powershell`: tab completion for every command and flag.
+/// Add it to your profile: kz completion | Out-String | Invoke-Expression
+fn completion(shell: &str) -> anyhow::Result<()> {
+    use clap::CommandFactory;
+    use clap_complete::Shell;
+    let sh = match shell.to_lowercase().as_str() {
+        "powershell" | "pwsh" => Shell::PowerShell,
+        "bash" => Shell::Bash,
+        "zsh" => Shell::Zsh,
+        "fish" => Shell::Fish,
+        other => anyhow::bail!("unknown shell: {other}. use powershell | bash | zsh | fish"),
+    };
+    clap_complete::generate(sh, &mut Cli::command(), "kz", &mut std::io::stdout());
+    Ok(())
+}
+
 fn pause() {
     if ui::interactive() {
         println!(
@@ -1153,7 +1181,7 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "restore" => restore::run(None, None)?,
         "report" => report::run(None, true)?,
         "bench" => bench::run(None, 1024)?,
-        "schedule" => schedule::run(None, "11:00".into())?,
+        "schedule" => schedule::run(None, "11:00".into(), 15)?,
         "net" => net::run(None, None, None, false)?,
         "ports" => ports::run(None, None)?,
         "whitelist" => whitelist::run(vec![], vec![], false)?,
@@ -1178,7 +1206,11 @@ fn main() -> anyhow::Result<()> {
     // Load protected paths first; an unreadable whitelist stops everything.
     whitelist::init()?;
     match cli.cmd {
-        Some(Cmd::Clean { dry_run, yes }) => clean::run(dry_run, yes),
+        Some(Cmd::Clean {
+            dry_run,
+            yes,
+            if_below,
+        }) => clean::run_if_below(dry_run, yes, if_below),
         Some(Cmd::Analyze { path }) => analyze::run(path),
         Some(Cmd::Status) => status::run(),
         Some(Cmd::Purge {
@@ -1246,8 +1278,13 @@ fn main() -> anyhow::Result<()> {
             Some("audit") => audit::run(json),
             Some(other) => anyhow::bail!("kz privacy [keep]: {other}?"),
         },
-        Some(Cmd::Schedule { frequency, time }) => schedule::run(frequency, time),
+        Some(Cmd::Schedule {
+            frequency,
+            time,
+            below,
+        }) => schedule::run(frequency, time, below),
         Some(Cmd::Update { check }) => update::run(check),
+        Some(Cmd::Completion { shell }) => completion(&shell),
         Some(Cmd::Config { key, value }) => settings::run(key, value),
         Some(Cmd::Backup {
             action,

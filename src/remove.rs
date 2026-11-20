@@ -192,6 +192,17 @@ pub fn run(dry: bool, yes: bool) -> anyhow::Result<()> {
             ui::warn(ui::t("could not update PATH", "PATH güncellenemedi"))
         }
     }
+    // the Start menu entry install.ps1 made
+    if let Some(lnk) = crate::fsutil::env_path("APPDATA")
+        .map(|a| a.join(r"Microsoft\Windows\Start Menu\Programs\kazma.lnk"))
+        && lnk.is_file()
+        && std::fs::remove_file(&lnk).is_ok()
+    {
+        ui::ok(ui::t(
+            "Start menu entry removed",
+            "Başlat menüsü kaydı kaldırıldı",
+        ));
+    }
     if let Some(d) = data {
         if std::fs::remove_dir_all(&d).is_ok() {
             ui::ok(ui::t("data & log removed", "veri ve log kaldırıldı"))
