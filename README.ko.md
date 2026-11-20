@@ -35,8 +35,8 @@
 | | |
 |---|---|
 | **정리** | AI 도구, 게임 런처, GPU 드라이버 잔여 파일을 포함한 100가지 이상의 캐시, 임시 파일, 로그와 휴지통 (`clean`) · winapp2.ini의 4,000개 이상 프로그램용 추가 규칙 (`winapp2`) · Windows.old, 업그레이드 파일, 메모리 덤프, 최대 절전 모드 파일, 오래된 복원 지점 (`deepclean`) · 트리맵과 큰 파일 보기를 갖춘 디스크 탐색기 (`analyze`) · 파일 유형 (`types`) · 프로젝트 빌드 결과물 (`purge`) · 오래된 설치 파일 (`installer`) · 중복 파일 (`dupes`) · 빈 폴더와 깨진 바로 가기 (`empty`) · 사용 흔적 (`privacy`) |
-| **프로그램 및 드라이버** | 프로그램과 남은 파일 제거 (`uninstall`) · winget으로 프로그램 업데이트 (`upgrade`) · Windows 업데이트의 드라이버 업데이트 (`drivers`) · 시작 프로그램 (`startup`) · 홍보 앱과 Windows 광고 (`debloat`) · 개인 정보, AI, Edge, 파일 탐색기, 작업 표시줄, 업데이트 관련 Windows 설정 (`tweak`) · 새 PC 이사용 백업 (`backup`) |
-| **시스템** | 상태 보고서 (`health`) · 부팅 시간과 느리게 만드는 원인 (`boot`) · GPU와 배터리까지 보여주는 실시간 모니터, 프로세스가 왜 실행 중인지 알려주는 프로세스 관리자 (`status`) · 유지 관리: DNS, 아이콘 캐시, SSD TRIM, DISM, SFC (`optimize`) · 복구: 네트워크, Windows 업데이트, Store, 시스템 파일 (`repair`) · 전원 관리 옵션과 배터리 (`power`) · 복원 지점 (`restore`) · HTML 보고서 (`report`) · 디스크 속도 테스트 (`bench`) · 자동 정리 (`schedule`) |
+| **프로그램 및 드라이버** | 프로그램과 남은 파일 제거 (`uninstall`) · winget으로 프로그램 업데이트 (`upgrade`) · 새 PC용 프로그램 (`install`) · Windows 업데이트의 드라이버 업데이트 (`drivers`) · 시작 프로그램 (`startup`) · 홍보 앱과 Windows 광고 (`debloat`) · 개인 정보, AI, Edge, 파일 탐색기, 작업 표시줄, 업데이트 관련 Windows 설정 (`tweak`) · 새 PC 이사용 백업 (`backup`) |
+| **시스템** | 상태 보고서 (`health`) · 부팅 시간과 느리게 만드는 원인 (`boot`) · 설명이 있는 서비스, 예약된 작업, 선택적 기능 (`services`, `tasks`, `features`) · GPU와 배터리까지 보여주는 실시간 모니터, 프로세스가 왜 실행 중인지 알려주는 프로세스 관리자 (`status`) · 유지 관리: DNS, 아이콘 캐시, SSD TRIM, DISM, SFC (`optimize`) · 복구: 네트워크, Windows 업데이트, Store, 시스템 파일 (`repair`) · 전원 관리 옵션과 배터리 (`power`) · 복원 지점 (`restore`) · HTML 보고서 (`report`) · 디스크 속도 테스트 (`bench`) · 자동 정리 (`schedule`) |
 | **네트워크** | IP, 지연 시간, DNS 벤치마크 및 변경, 속도 테스트, 저장된 Wi-Fi (`net`) · 어떤 포트를 누가 쓰는지 (`ports`) |
 | **편의 기능** | 파일을 열고 있는 프로그램 찾기 (`lock`) · 화면 켜두기 (`awake`) · 화면 닦기 모드 (`cleanscreen`) |
 | **kazma** | 보호 경로 (`whitelist`) · 나만의 정리 규칙 (`rules`) · 파일 탐색기 오른쪽 클릭 메뉴 (`context`) · 언어와 테마 (`config`) · 자체 업데이트 (`update`) · 기록 (`history`) · kazma 제거 (`remove`) |
@@ -83,11 +83,15 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz empty [paths...]` | 빈 폴더, 깨진 바로 가기, 0바이트 파일 (휴지통으로) |
 | `kz privacy` | 최근 파일, 실행 / 파일 탐색기 기록, 클립보드, 브라우저 방문 기록과 쿠키 (선택 시에만); `keep`으로 쿠키를 남길 사이트 선택; `audit`로 카메라, 마이크, 위치를 사용한 앱 확인 |
 | `kz uninstall` | 일반 앱, Microsoft Store 앱, Scoop 앱을 제거한 뒤 남은 폴더와 레지스트리 키까지 정리(먼저 백업); `--leftovers`는 다른 방법으로 제거한 앱의 잔여물을 찾습니다 |
+| `kz install` | 새 PC용 프로그램을 짧은 목록(브라우저, 채팅, 미디어, 도구, 문서, 개발, 게임)에서 winget으로 설치; `--list` 또는 이름으로: `kz install firefox vlc` |
 | `kz upgrade` | winget으로 설치된 프로그램 업데이트 |
 | `kz drivers` | Windows 업데이트의 드라이버 업데이트; `--installed`는 타사 드라이버를 오래된 순으로 보여줍니다 |
 | `kz startup` | 시작 프로그램 켜기/끄기 (작업 관리자와 같은 플래그, 언제든 되돌릴 수 있음) |
 | `kz debloat` | 정해진 목록에 있는 기본 설치 홍보 앱 제거, 광고 끄기; `--restore`로 되돌리기 |
-| `kz tweak` | 약 60개의 Windows 설정을 스위치로: 원격 분석, Copilot / Recall, Edge, 파일 탐색기, 작업 표시줄, 게임, 업데이트; `list`, `apply ID`, `undo ID`, `undo all` |
+| `kz tweak` | 약 60개의 Windows 설정을 스위치로: 원격 분석, Copilot / Recall, Edge, 파일 탐색기, 작업 표시줄, 게임, 업데이트; `list`, `apply ID`, `undo ID`, `undo all`; `profile recommended \| privacy \| gaming \| classic`, `export` / `import FILE` |
+| `kz services` | 필요 없을 수 있는 서비스와 설명; 끌 때 이전 시작 유형을 저장; `--all`은 모든 서비스 표시; `on` / `off NAME` |
+| `kz tasks` | 프로그램이 추가한 예약된 작업(업데이터, 도우미) 켜기 / 끄기; `--all`은 Windows 작업도 표시 |
+| `kz features` | Windows 선택적 기능: WSL, Hyper-V, Windows 샌드박스, .NET 3.5, SMB 1.0, PowerShell 2.0... (관리자) |
 | `kz backup [folder]` | 새 PC 키트: winget 앱 목록, 드라이버, 프로그램 목록, kazma 설정; `kz backup restore FOLDER`로 다시 설치 |
 | `kz health` | 디스크 SMART, 배터리 마모도, 블루스크린, 오류, 업데이트, Defender, 방화벽 |
 | `kz boot` | Windows 부팅에 걸리는 시간과 부팅을 느리게 하는 앱, 드라이버, 서비스 (Windows 자체 부팅 로그 기준; 관리자) |
@@ -100,7 +104,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz ports [filter]` | 어떤 프로그램이 어떤 포트에서 대기 중인지; `--kill PORT`로 종료 |
 | `kz optimize` | 깨진 시작 항목(백업 후), 시작/검색 다시 시작, DNS 플러시, 아이콘 캐시, 필요할 때 SSD TRIM / DISM / SFC |
 | `kz repair [fix]` | `network`, `update` (Windows 업데이트 초기화), `store`, `dism` (+SFC), `time`, `printer`; 먼저 복원 지점 생성 (관리자) |
-| `kz schedule weekly` | `kz clean --yes`를 자동 실행 (`daily`, `weekly`, `monthly`, `off`, `status`) |
+| `kz schedule weekly` | `kz clean --yes`를 자동 실행 (`daily`, `weekly`, `monthly`, `off`, `status`) · `kz schedule lowdisk --below 15` |
 | `kz lock <path>` | 파일이나 폴더를 열고 있는 프로그램 |
 | `kz awake [minutes]` | 화면과 PC를 켜진 상태로 유지 |
 | `kz cleanscreen [seconds]` | 입력을 무시하는 검은 화면으로 디스플레이 닦기 |
@@ -109,6 +113,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz winapp2` | [winapp2.ini](https://github.com/MoscaDotTo/Winapp2)의 4,000개 이상 프로그램 정리 규칙: `update`로 내려받으면 `kz clean`이 이 PC에서 찾은 프로그램을 보여 줍니다; `list`, `use FILE`, `remove` |
 | `kz context install` | 파일 탐색기 오른쪽 클릭 메뉴에 "Analyze with kazma" 추가 (`uninstall`로 제거) |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de` (auto, en, tr, zh-CN, zh-TW, ja, ko, de, fr, pl, uk, ru), `kz config theme amber` (green, amber, white, blue) |
+| `kz completion` | Tab 자동 완성: PowerShell 프로필에 `kz completion \| Out-String \| Invoke-Expression` 추가 |
 | `kz update` | GitHub에서 kazma 자체 업데이트 (체크섬 확인) |
 | `kz history` | kazma가 한 모든 작업의 기록 |
 | `kz remove` | kazma 제거 |
@@ -131,6 +136,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `startup`은 작업 관리자의 켜기/끄기 플래그만 바꿉니다. `debloat`는 정해진 목록의 앱만 제거하며, `--restore`로 설정을 되돌릴 수 있습니다.
 - `tweak`은 바꾸는 레지스트리 값을 먼저 `%LOCALAPPDATA%\kazma\tweaks.json`에 저장하고, `kz tweak undo`는 바로 그 값을 되돌려 씁니다.
 - winapp2.ini는 포함되어 있지 않으며 `kz winapp2 update`로 원할 때 내려받습니다. kazma는 파일 규칙만 사용하고(레지스트리 규칙은 사용하지 않음) 최상위 폴더(드라이브, Windows, 프로필, 문서 등)를 비우는 규칙은 거부합니다.
+- `services`는 끄는 모든 서비스의 시작 유형을 저장합니다. winapp2 레지스트리 규칙은 삭제 전에 각 키를 `%LOCALAPPDATA%\kazma\backups`에 `.reg` 파일로 내보냅니다.
 - `update`는 다운로드한 파일을 릴리스의 `SHA256SUMS.txt`로 검증합니다.
 - `deepclean`은 Windows.old와 업그레이드 파일을 Windows의 디스크 정리로 제거하며, 가장 최근 복원 지점은 항상 남깁니다.
 - `repair`는 Windows 업데이트 폴더를 삭제하지 않고 이름을 바꾸며, 먼저 복원 지점 생성을 제안합니다.

@@ -155,7 +155,15 @@ pub fn help_popup(f: &mut ratatui::Frame, title: &str, rows: &[(String, String)]
             Span::styled(truncate_end(d, room), Style::new().fg(fg())),
         ]));
     }
-    f.render_widget(ratatui::widgets::Clear, r);
+    // clear one column more on each side: a wide (CJK) character cut in half
+    // by the box edge would otherwise be drawn over the border
+    let x0 = r.x.saturating_sub(1).max(area.x);
+    let wide = Rect {
+        x: x0,
+        width: (r.x + r.width + 1).min(area.x + area.width) - x0,
+        ..r
+    };
+    f.render_widget(ratatui::widgets::Clear, wide);
     f.render_widget(Paragraph::new(lines).block(block(title)), r);
 }
 
@@ -346,7 +354,8 @@ pub fn print_banner(subtitle: &str) {
     let (cmd, desc) = subtitle.split_once(" :: ").unwrap_or(("", subtitle));
     let ver = format!("v{}", env!("CARGO_PKG_VERSION"));
     let used = "kazma".len() + 3 + width(cmd) + 3 + ver.len();
-    let room = W.saturating_sub(used + 2);
+    // at least one space between the description and the version
+    let room = W.saturating_sub(used + 3);
     let desc = truncate_end(desc, room);
     let pad = room.saturating_sub(width(&desc));
     let l = ct(line_c());
@@ -359,7 +368,7 @@ pub fn print_banner(subtitle: &str) {
         " / ".with(l),
         cmd.with(ct(hi())).bold(),
         desc.with(ct(fg())),
-        " ".repeat(pad),
+        " ".repeat(pad + 1),
         ver.with(ct(dim())),
         "|".with(l)
     );
@@ -689,7 +698,12 @@ fn checklist_inner(
                         String::new()
                     };
                     let label_w = w.saturating_sub(24).min(52);
-                    let label = truncate(&i.label, label_w);
+                    // names keep their start ("Microsoft Visual C++..."), paths their end
+                    let label = if i.label.contains(['\\', '/']) {
+                        truncate(&i.label, label_w)
+                    } else {
+                        truncate_end(&i.label, label_w)
+                    };
                     let detail_w = w.saturating_sub(label_w + 20);
                     // checked rows are bright, unchecked rows step back
                     let (mark_c, text_c) = if i.checked {
@@ -705,7 +719,14 @@ fn checklist_inner(
                         Span::styled(pad(&label, label_w), Style::new().fg(text_c)),
                         Span::styled(size, Style::new().fg(if i.checked { hi() } else { dim() })),
                         Span::styled(
-                            format!("  {}", truncate(&i.detail, detail_w)),
+                            format!(
+                                "  {}",
+                                if i.detail.contains(['\\', '/']) {
+                                    truncate(&i.detail, detail_w)
+                                } else {
+                                    truncate_end(&i.detail, detail_w)
+                                }
+                            ),
                             Style::new().fg(dim()),
                         ),
                     ]))

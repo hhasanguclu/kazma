@@ -15,27 +15,77 @@ pub struct CookieDb {
     pub firefox: bool,
 }
 
-/// (name, User Data folder below %LOCALAPPDATA%, process names)
-pub const CHROMIUM: &[(&str, &str, &[&str])] = &[
-    ("Chrome", "Google\\Chrome\\User Data", &["chrome"]),
-    ("Edge", "Microsoft\\Edge\\User Data", &["msedge"]),
+/// (name, base: L = %LOCALAPPDATA%, R = %APPDATA%, folder below it, process names).
+/// `*` in a folder matches one name (Arc's Store package carries a publisher id).
+pub const CHROMIUM: &[(&str, &str, &str, &[&str])] = &[
+    ("Chrome", "L", "Google\\Chrome\\User Data", &["chrome"]),
+    ("Edge", "L", "Microsoft\\Edge\\User Data", &["msedge"]),
     (
         "Brave",
+        "L",
         "BraveSoftware\\Brave-Browser\\User Data",
         &["brave"],
     ),
-    ("Vivaldi", "Vivaldi\\User Data", &["vivaldi"]),
+    ("Vivaldi", "L", "Vivaldi\\User Data", &["vivaldi"]),
+    ("Opera", "R", "Opera Software\\Opera Stable", &["opera"]),
+    (
+        "Opera GX",
+        "R",
+        "Opera Software\\Opera GX Stable",
+        &["opera"],
+    ),
+    (
+        "Arc",
+        "L",
+        "Packages\\TheBrowserCompany.Arc_*\\LocalCache\\Local\\Arc\\User Data",
+        &["arc"],
+    ),
 ];
 
-fn chromium_profiles(user_data: &Path) -> Vec<PathBuf> {
-    std::fs::read_dir(user_data)
+/// The User Data folder of a Chromium browser from CHROMIUM, if it is installed.
+pub fn user_data(base: &str, dir: &str) -> Option<PathBuf> {
+    let root = env_path(if base == "R" {
+        "APPDATA"
+    } else {
+        "LOCALAPPDATA"
+    })?;
+    let mut cur = vec![root];
+    for seg in dir.split('\\') {
+        cur = match seg.strip_suffix('*') {
+            Some(prefix) => cur
+                .iter()
+                .flat_map(|d| {
+                    std::fs::read_dir(d)
+                        .map(|rd| {
+                            rd.flatten()
+                                .filter(|e| e.file_name().to_string_lossy().starts_with(prefix))
+                                .map(|e| e.path())
+                                .collect::<Vec<_>>()
+                        })
+                        .unwrap_or_default()
+                })
+                .collect(),
+            None => cur.iter().map(|d| d.join(seg)).collect(),
+        };
+    }
+    cur.into_iter().find(|p| p.is_dir())
+}
+
+/// Profile folders: subfolders with a Preferences file, or the folder itself
+/// (Opera keeps its one profile right in it).
+pub fn chromium_profiles(user_data: &Path) -> Vec<PathBuf> {
+    let mut v: Vec<PathBuf> = std::fs::read_dir(user_data)
         .map(|rd| {
             rd.flatten()
                 .map(|e| e.path())
                 .filter(|p| p.join("Preferences").is_file())
                 .collect()
         })
-        .unwrap_or_default()
+        .unwrap_or_default();
+    if v.is_empty() && user_data.join("Preferences").is_file() {
+        v.push(user_data.to_path_buf());
+    }
+    v
 }
 
 /// Cookie databases of one browser ("Firefox" or a name from CHROMIUM).
@@ -59,10 +109,10 @@ pub fn databases_of(browser: &str) -> Vec<CookieDb> {
         }
         return out;
     }
-    let Some((name, dir, _)) = CHROMIUM.iter().find(|b| b.0 == browser) else {
+    let Some((name, base, dir, _)) = CHROMIUM.iter().find(|b| b.0 == browser) else {
         return out;
     };
-    let Some(ud) = env_path("LOCALAPPDATA").map(|l| l.join(dir)) else {
+    let Some(ud) = user_data(base, dir) else {
         return out;
     };
     for prof in chromium_profiles(&ud) {
@@ -406,6 +456,20 @@ fn pick(list: Vec<String>) -> anyhow::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn profiles_in_place() {
+        let root = std::env::temp_dir().join(format!("kazma-ck-p-{}", std::process::id()));
+        std::fs::create_dir_all(root.join("Default")).unwrap();
+        std::fs::write(root.join("Default").join("Preferences"), "{}").unwrap();
+        assert_eq!(chromium_profiles(&root), vec![root.join("Default")]);
+        // Opera: the folder itself is the profile
+        let opera = root.join("Opera Stable");
+        std::fs::create_dir_all(&opera).unwrap();
+        std::fs::write(opera.join("Preferences"), "{}").unwrap();
+        assert_eq!(chromium_profiles(&opera), vec![opera.clone()]);
+        let _ = std::fs::remove_dir_all(&root);
+    }
 
     #[test]
     fn names() {

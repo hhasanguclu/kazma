@@ -71,6 +71,16 @@ jobs:
             @('privacy', 'audit', '--json'),
             @('boot'),
             @('boot', '--json'),
+            @('install', '--list'),
+            @('install', '--dry-run', 'firefox', '7zip'),
+            @('features', '--list'),
+            @('services', '--dry-run'),
+            @('services', '--all'),
+            @('tasks', '--dry-run'),
+            @('tasks', '--all'),
+            @('tweak', 'profile'),
+            @('tweak', 'profile', 'gaming', '--dry-run'),
+            @('clean', '--dry-run', '--if-below', '1'),
             @('health', '--json'),
             @('history', '--json'),
             @('winapp2'),
@@ -100,6 +110,39 @@ jobs:
             $j = & $kz @a | Out-String
             if ($LASTEXITCODE -ne 0) { throw "kz $($a -join ' ') failed" }
             try { $null = $j | ConvertFrom-Json } catch { throw "kz $($a -join ' ') is not valid JSON: $j" }
+          }
+          # kz services for real: off, check, on, check that the old start type is back
+          $svc = 'WerSvc'
+          $was = (Get-CimInstance Win32_Service -Filter "Name='$svc'").StartMode
+          & $kz services off $svc
+          if ((Get-CimInstance Win32_Service -Filter "Name='$svc'").StartMode -ne 'Disabled') { throw 'kz services off did not disable' }
+          & $kz services on $svc
+          if ((Get-CimInstance Win32_Service -Filter "Name='$svc'").StartMode -ne $was) { throw "kz services on did not restore $was" }
+          # kz tasks for real: a throwaway task, off, check, on, check
+          Register-ScheduledTask -TaskName 'kazma-ci' -Action (New-ScheduledTaskAction -Execute 'cmd.exe' -Argument '/c exit') -Force | Out-Null
+          & $kz tasks off '\kazma-ci'
+          if ((Get-ScheduledTask -TaskName 'kazma-ci').State -ne 'Disabled') { throw 'kz tasks off did not disable' }
+          & $kz tasks on 'kazma-ci'
+          if ((Get-ScheduledTask -TaskName 'kazma-ci').State -eq 'Disabled') { throw 'kz tasks on did not enable' }
+          Unregister-ScheduledTask -TaskName 'kazma-ci' -Confirm:$false
+          # tweak export / import
+          & $kz tweak export "$env:RUNNER_TEMP\tweaks.txt"
+          if (-not (Test-Path "$env:RUNNER_TEMP\tweaks.txt")) { throw 'kz tweak export wrote nothing' }
+          Set-Content "$env:RUNNER_TEMP\menu.txt" "menu-delay"
+          & $kz tweak import "$env:RUNNER_TEMP\menu.txt" --no-restore-point
+          if ((Get-ItemProperty 'HKCU:\Control Panel\Desktop').MenuShowDelay -ne '100') { throw 'kz tweak import did not apply' }
+          & $kz tweak undo menu-delay
+          # low-disk schedule: registered with the threshold, then removed
+          & $kz schedule lowdisk --below 5
+          $a = (Get-ScheduledTask -TaskPath '\kazma\' -TaskName 'kazma clean').Actions[0].Arguments
+          if ($a -notmatch 'if-below 5') { throw "lowdisk task has arguments: $a" }
+          & $kz schedule off
+          # tab completion loads in PowerShell
+          & $kz completion powershell | Out-String | Invoke-Expression
+          # a real install through winget when the runner has it
+          if (Get-Command winget -ErrorAction SilentlyContinue) {
+            & $kz install 7zip
+            if ($LASTEXITCODE -ne 0) { throw 'kz install failed' }
           }
           # kz tweak for real: apply, check, undo, check that the earlier value is back
           Set-ItemProperty 'HKCU:\Control Panel\Desktop' MenuShowDelay '250'
@@ -153,6 +196,7 @@ jobs:
           $cmds = [ordered]@{
             health = @('health'); startup = @('startup', '--list'); clean = @('clean', '--dry-run')
             uninstall = @('uninstall', '--dry-run'); optimize = @('optimize', '--dry-run'); debloat = @('debloat', '--dry-run'); tweak = @('tweak', 'list'); keep = @('privacy', 'keep'); winapp2 = @('winapp2'); audit = @('privacy', 'audit'); boot = @('boot')
+            install = @('install', '--list'); features = @('features', '--list'); services = @('services', '--dry-run'); tasks = @('tasks', '--dry-run'); profiles = @('tweak', 'profile')
             privacy = @('privacy', '--dry-run'); power = @('power'); ports = @('ports'); schedule = @('schedule', 'status')
             whitelist = @('whitelist'); config = @('config'); drivers = @('drivers', '--installed'); deepclean = @('deepclean', '--dry-run')
             repair = @('repair', '--dry-run'); backup = @('backup', '--dry-run'); context = @('context', 'status')

@@ -44,7 +44,8 @@ pub struct Entry {
     pub warning: Option<String>,
     pub files: Vec<FileKey>,
     pub excludes: Vec<Exclude>,
-    pub reg_keys: usize,
+    /// `RegKeyN` values: `HIVE\\key` or `HIVE\\key|value`
+    pub reg_keys: Vec<String>,
 }
 
 /// A FileKey resolved to real folders on this PC.
@@ -72,6 +73,8 @@ pub struct Found {
     pub excludes: Vec<Excl>,
     /// some folder is under Windows / Program Files
     pub admin: bool,
+    /// registry rules that passed the safety checks and exist here
+    pub regs: Vec<String>,
 }
 
 // ---- parsing ------------------------------------------------------------------------
@@ -168,7 +171,7 @@ pub fn parse(text: &str) -> Vec<Entry> {
             "warning" => e.warning = Some(v.to_string()),
             "filekey" => e.files.extend(parse_filekey(v)),
             "excludekey" => e.excludes.extend(parse_exclude(v)),
-            "regkey" => e.reg_keys += 1,
+            "regkey" => e.reg_keys.push(v.to_string()),
             _ => {}
         }
     }
@@ -478,7 +481,13 @@ pub fn find(e: &Entry) -> Option<Found> {
             });
         }
     }
-    if rules.is_empty() {
+    let regs: Vec<String> = e
+        .reg_keys
+        .iter()
+        .filter(|r| reg_allowed(r) && reg_exists(r))
+        .cloned()
+        .collect();
+    if rules.is_empty() && regs.is_empty() {
         return None;
     }
     let excludes = e
@@ -494,14 +503,105 @@ pub fn find(e: &Entry) -> Option<Found> {
             })
         })
         .collect();
-    let admin = rules.iter().any(|r| under_admin_folder(&r.dir));
+    let admin = rules.iter().any(|r| under_admin_folder(&r.dir))
+        || (rules.is_empty() && regs.iter().all(|r| r.to_uppercase().starts_with("HKLM")));
     Some(Found {
         name: e.name.clone(),
         warning: e.warning.clone(),
         rules,
         excludes,
         admin,
+        regs,
     })
+}
+
+/// A registry rule kazma will carry out: HKCU or HKLM, deep enough to belong
+/// to one program, and never in places Windows itself depends on.
+pub fn reg_allowed(spec: &str) -> bool {
+    let key = spec.split('|').next().unwrap_or("").trim();
+    let parts: Vec<String> = key
+        .split('\\')
+        .filter(|p| !p.is_empty())
+        .map(|p| p.to_lowercase())
+        .collect();
+    let Some(hive) = parts.first() else {
+        return false;
+    };
+    if !matches!(
+        hive.as_str(),
+        "hkcu" | "hkey_current_user" | "hklm" | "hkey_local_machine"
+    ) {
+        return false;
+    }
+    let rest: Vec<&str> = parts[1..].iter().map(String::as_str).collect();
+    // only below Software, and not in file associations or policies
+    if rest.first() != Some(&"software")
+        || matches!(rest.get(1), Some(&"classes") | Some(&"policies"))
+    {
+        return false;
+    }
+    // keys Windows needs whole: startup programs, uninstall entries, shell folders
+    let joined = rest.join("\\");
+    if [
+        "\\run",
+        "\\runonce",
+        "\\uninstall",
+        "shell folders",
+        "\\app paths",
+    ]
+    .iter()
+    .any(|k| joined.ends_with(k) || joined.contains(&format!("{k}\\")))
+    {
+        return false;
+    }
+    // Software\Vendor\Product at least; Microsoft / WOW6432Node keys one deeper
+    let deep = match rest.get(1) {
+        Some(&"microsoft") | Some(&"wow6432node") => 5,
+        _ => 3,
+    };
+    rest.len() >= deep
+}
+
+#[cfg(windows)]
+fn reg_delete(spec: &str, backup: &Path) -> bool {
+    let (key, value) = match spec.split_once('|') {
+        Some((k, v)) => (k.trim(), Some(v.trim())),
+        None => (spec.trim(), None),
+    };
+    // a .reg copy of the whole key first: double-click it to undo
+    let saved = std::process::Command::new("reg")
+        .args(["export", key, &backup.to_string_lossy(), "/y"])
+        .output()
+        .is_ok_and(|o| o.status.success());
+    if !saved {
+        return false;
+    }
+    let mut cmd = std::process::Command::new("reg");
+    cmd.args(["delete", key]);
+    if let Some(v) = value {
+        cmd.args(["/v", v]);
+    }
+    cmd.arg("/f");
+    cmd.output().is_ok_and(|o| o.status.success())
+}
+
+#[cfg(not(windows))]
+fn reg_delete(_: &str, _: &Path) -> bool {
+    false
+}
+
+fn reg_backup_path(entry: &str, n: usize) -> Option<PathBuf> {
+    let dir = oplog::data_dir()?.join("backups");
+    std::fs::create_dir_all(&dir).ok()?;
+    let stamp: String = oplog::now_utc()
+        .chars()
+        .filter(|c| c.is_ascii_digit())
+        .collect();
+    let safe: String = entry
+        .chars()
+        .map(|c| if c.is_alphanumeric() { c } else { '-' })
+        .collect();
+    Some(dir.join(format!("winapp2-{stamp}-{safe}-{n}.reg")))
 }
 
 // ---- measuring and deleting -----------------------------------------------------------
@@ -572,6 +672,22 @@ pub fn run(f: &Found, dry: bool) -> Stats {
         st.failed += s.failed;
         if r.remove_self && !dry && fsutil::is_safe_target(&r.dir) && !top_level(&r.dir) {
             let _ = std::fs::remove_dir(&r.dir); // only when empty
+        }
+    }
+    // registry rules count as one item each; HKLM ones only when elevated
+    let admin = crate::sys::is_admin();
+    for (n, spec) in f.regs.iter().enumerate() {
+        if spec.to_uppercase().starts_with("HKLM") && !admin {
+            continue;
+        }
+        if dry {
+            st.files += 1;
+        } else if let Some(b) = reg_backup_path(&f.name, n) {
+            if reg_delete(spec, &b) {
+                st.files += 1;
+            } else {
+                st.failed += 1;
+            }
         }
     }
     st
@@ -863,7 +979,7 @@ RegKey1=HKCU\\Software\\Some\\MRU\n\n[Other *]\nDetectOS=|6.1\nWarning=Careful\n
         assert_eq!(e[0].excludes.len(), 2);
         assert_eq!(e[0].excludes[0].pattern.as_deref(), Some("keep.log"));
         assert!(e[0].excludes[1].tree && e[0].excludes[1].pattern.is_none());
-        assert_eq!(e[0].reg_keys, 1);
+        assert_eq!(e[0].reg_keys, vec!["HKCU\\Software\\Some\\MRU"]);
         assert_eq!(e[1].files[0].patterns, vec!["*"]);
         assert_eq!(e[1].warning.as_deref(), Some("Careful"));
         assert_eq!(version(SAMPLE).as_deref(), Some("260915"));
@@ -934,6 +1050,7 @@ RegKey1=HKCU\\Software\\Some\\MRU\n\n[Other *]\nDetectOS=|6.1\nWarning=Careful\n
             ],
             excludes: ex,
             admin: false,
+            regs: vec![],
         };
         let m = run(&f, true);
         assert_eq!((m.files, m.bytes), (3, 4 + 3 + 1));
@@ -958,6 +1075,28 @@ RegKey1=HKCU\\Software\\Some\\MRU\n\n[Other *]\nDetectOS=|6.1\nWarning=Careful\n
         let got = resolve(&spec);
         assert_eq!(got.len(), 2, "{got:?}");
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn registry_rules() {
+        assert!(reg_allowed(r"HKCU\Software\7-Zip\FM"));
+        assert!(reg_allowed(r"HKCU\Software\Vendor\App|LastPath"));
+        assert!(reg_allowed(
+            r"HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs"
+        ));
+        assert!(!reg_allowed(r"HKCU\Software\Vendor"));
+        assert!(!reg_allowed(r"HKCU\Software\Microsoft\Windows"));
+        assert!(!reg_allowed(r"HKCU\Software\Classes\.txt\OpenWithList"));
+        assert!(!reg_allowed(r"HKLM\SOFTWARE\Policies\Vendor\App"));
+        assert!(!reg_allowed(r"HKLM\SYSTEM\CurrentControlSet\Services\X"));
+        assert!(!reg_allowed(r"HKCR\Something\Deep\Enough"));
+        assert!(!reg_allowed(r"HKU\S-1-5\Software\X\Y"));
+        assert!(!reg_allowed(
+            r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run"
+        ));
+        assert!(!reg_allowed(
+            r"HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\App"
+        ));
     }
 
     #[test]

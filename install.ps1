@@ -26,5 +26,16 @@ if (-not ($parts | Where-Object { $_.TrimEnd('\') -ieq $dir })) {
 }
 if (-not (($env:Path -split ';') | Where-Object { $_.TrimEnd('\') -ieq $dir })) { $env:Path += ";$dir" }
 
+# Start menu entry, so kazma also opens without typing in a terminal
+try {
+    $lnk = Join-Path ([Environment]::GetFolderPath('Programs')) 'kazma.lnk'
+    $sc = (New-Object -ComObject WScript.Shell).CreateShortcut($lnk)
+    $sc.TargetPath = $exe
+    $sc.WorkingDirectory = $env:USERPROFILE
+    $sc.Description = 'kazma: system cleaner and toolkit'
+    $sc.Save()
+    Write-Host "  [ok] Start menu: kazma" -ForegroundColor Green
+} catch {}
+
 & $exe --version
 Write-Host "  [ok] done. run: kz" -ForegroundColor Green

@@ -1664,7 +1664,198 @@ fn list(build: u32, cur: &[Vec<Cur>], filter: &[usize]) {
     );
 }
 
+/// Ready-made sets: (key, English, Turkish, setting ids).
+pub const PROFILES: &[(&str, &str, &str, &[&str])] = &[
+    (
+        "recommended",
+        "safe choices for almost everyone",
+        "neredeyse herkes için güvenli seçimler",
+        &[
+            "feedback",
+            "activity-history",
+            "app-tracking",
+            "language-list",
+            "consumer-features",
+            "finish-setup",
+            "welcome-experience",
+            "edge-shopping",
+            "edge-first-run",
+            "edge-default-prompt",
+            "file-extensions",
+            "end-task",
+            "bsod-details",
+            "update-no-reboot",
+        ],
+    ),
+    (
+        "privacy",
+        "send Microsoft as little as possible, AI features off",
+        "Microsoft'a olabildiğince az veri, yapay zekâ özellikleri kapalı",
+        &[
+            "telemetry",
+            "feedback",
+            "error-reporting",
+            "activity-history",
+            "app-tracking",
+            "location",
+            "online-speech",
+            "typing-data",
+            "language-list",
+            "device-metadata",
+            "consumer-features",
+            "spotlight",
+            "copilot",
+            "recall",
+            "click-to-do",
+            "edge-ai",
+            "notepad-ai",
+            "paint-ai",
+        ],
+    ),
+    (
+        "gaming",
+        "fewer interruptions and background work while playing",
+        "oyun sırasında daha az kesinti ve arka plan işi",
+        &[
+            "game-dvr",
+            "game-bar-tips",
+            "mouse-acceleration",
+            "sticky-keys",
+            "power-throttling",
+            "background-apps",
+        ],
+    ),
+    (
+        "classic",
+        "File Explorer and taskbar the way Windows 10 had them",
+        "Dosya Gezgini ve görev çubuğu Windows 10'daki gibi",
+        &[
+            "file-extensions",
+            "this-pc",
+            "classic-menu",
+            "compact-view",
+            "taskbar-left",
+            "search-icon",
+            "task-view",
+            "end-task",
+        ],
+    ),
+];
+
+/// Ids of the settings that are on now (for `export` and `kz backup`).
+pub fn applied_ids() -> anyhow::Result<Vec<String>> {
+    let (build, cur) = read_state()?;
+    Ok(TWEAKS
+        .iter()
+        .enumerate()
+        .filter(|(i, t)| available(t, build) && state_of(t, &cur[*i]) == On::Yes)
+        .map(|(_, t)| t.id.to_string())
+        .collect())
+}
+
+/// Setting ids in a file written by `export` (one per line, # comments).
+pub fn parse_ids(text: &str) -> Vec<String> {
+    text.lines()
+        .map(|l| l.split('#').next().unwrap_or("").trim().to_lowercase())
+        .filter(|l| TWEAKS.iter().any(|t| t.id == l))
+        .collect()
+}
+
+fn list_profiles() {
+    let kw = PROFILES.iter().map(|p| p.0.len()).max().unwrap_or(0) + 2;
+    for (key, en, trd, ids) in PROFILES {
+        ui::info(&format!(
+            "{}{}  ({})",
+            ui::pad(key, kw),
+            ui::t(en, trd),
+            tr!("{} settings", "{} ayar", ids.len())
+        ));
+    }
+    println!(
+        "\n  {}\n",
+        tr!(
+            "apply one: kz tweak profile gaming   (--dry-run shows what would change)",
+            "uygulamak için: kz tweak profile gaming   (--dry-run ne değişeceğini gösterir)"
+        )
+    );
+}
+
 pub fn run(
+    action: Option<String>,
+    ids: Vec<String>,
+    dry: bool,
+    no_restore_point: bool,
+) -> anyhow::Result<()> {
+    // profile / import / export are apply and list in other clothes
+    let (action, ids) = match action.as_deref() {
+        Some("profile") | Some("profiles") => {
+            let Some(name) = ids.first() else {
+                ui::print_banner(&tr!(
+                    "tweak :: ready-made sets of settings",
+                    "tweak :: hazır ayar setleri"
+                ));
+                list_profiles();
+                return Ok(());
+            };
+            let Some(p) = PROFILES.iter().find(|p| p.0 == name.to_lowercase()) else {
+                anyhow::bail!(
+                    "{}",
+                    tr!(
+                        "unknown profile: {name}. use recommended | privacy | gaming | classic",
+                        "bilinmeyen profil: {name}. recommended | privacy | gaming | classic kullanın"
+                    )
+                );
+            };
+            (
+                Some("apply".to_string()),
+                p.3.iter().map(|s| s.to_string()).collect(),
+            )
+        }
+        Some("import") => {
+            let file = ids
+                .first()
+                .ok_or_else(|| anyhow::anyhow!("kz tweak import FILE"))?;
+            let list = parse_ids(&std::fs::read_to_string(crate::whitelist::expand(file))?);
+            if list.is_empty() {
+                anyhow::bail!(
+                    "{}",
+                    tr!("no setting ids in {file}", "{file} içinde ayar kimliği yok")
+                );
+            }
+            (Some("apply".to_string()), list)
+        }
+        Some("export") => {
+            ui::print_banner(&tr!(
+                "tweak :: save the settings that are on",
+                "tweak :: açık ayarları kaydet"
+            ));
+            let file = ids
+                .first()
+                .ok_or_else(|| anyhow::anyhow!("kz tweak export FILE"))?;
+            let on = applied_ids()?;
+            let path = crate::whitelist::expand(file);
+            std::fs::write(
+                &path,
+                format!(
+                    "# kazma tweak settings, apply with: kz tweak import FILE\n{}\n",
+                    on.join("\n")
+                ),
+            )?;
+            ui::ok(&tr!(
+                "{} settings saved to {}",
+                "{} ayar {} dosyasına kaydedildi",
+                on.len(),
+                path.display()
+            ));
+            println!();
+            return Ok(());
+        }
+        _ => (action, ids),
+    };
+    run_inner(action, ids, dry, no_restore_point)
+}
+
+fn run_inner(
     action: Option<String>,
     ids: Vec<String>,
     dry: bool,
@@ -1720,8 +1911,8 @@ pub fn run(
         Some(other) => anyhow::bail!(
             "{}",
             tr!(
-                "unknown action: {other}. use list | apply | undo",
-                "bilinmeyen işlem: {other}. list | apply | undo kullanın"
+                "unknown action: {other}. use list | apply | undo | profile | export | import",
+                "bilinmeyen işlem: {other}. list | apply | undo | profile | export | import kullanın"
             )
         ),
         None if dry || !ui::interactive() => {
@@ -2064,6 +2255,20 @@ mod tests {
             v: Some("1 2".into()),
         };
         assert!(op_from_saved(&r, &binary).is_none());
+    }
+
+    #[test]
+    fn profiles_name_real_settings() {
+        for (key, _, _, ids) in PROFILES {
+            assert!(!ids.is_empty(), "{key}");
+            for id in *ids {
+                assert!(TWEAKS.iter().any(|t| t.id == *id), "{key}: {id}");
+            }
+        }
+        assert_eq!(
+            parse_ids("# x\ntelemetry\nnope\n DARK-MODE # c\n"),
+            vec!["telemetry", "dark-mode"]
+        );
     }
 
     #[test]

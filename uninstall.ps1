@@ -9,7 +9,8 @@ $kept = @($userPath -split ';' | Where-Object { $_ -and ($_.TrimEnd('\') -ine $d
 [Environment]::SetEnvironmentVariable('Path', ($kept -join ';'), 'User')
 Write-Host "  [ok] PATH entry removed" -ForegroundColor Green
 
-foreach ($p in @($dir, $data)) {
+$lnk = Join-Path ([Environment]::GetFolderPath('Programs')) 'kazma.lnk'
+foreach ($p in @($dir, $data, $lnk)) {
     if (Test-Path $p) { Remove-Item -Recurse -Force $p; Write-Host "  [ok] removed $p" -ForegroundColor Green }
 }
 Write-Host "  kazma uninstalled." -ForegroundColor Green

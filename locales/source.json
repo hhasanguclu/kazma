@@ -342,6 +342,12 @@
   "file": "backup.rs"
  },
  {
+  "en": "tweaks.txt  ({} kz tweak settings)",
+  "tr": "tweaks.txt  ({} kz tweak ayarı)",
+  "kind": "fmt",
+  "file": "backup.rs"
+ },
+ {
   "en": "done. on the new PC run:",
   "tr": "bitti. yeni bilgisayarda şunu çalıştırın:",
   "kind": "plain",
@@ -1362,6 +1368,12 @@
   "file": "clean.rs"
  },
  {
+  "en": "{} free, more than {gb} GB: nothing to do.",
+  "tr": "{} boş, {gb} GB'tan fazla: yapılacak bir şey yok.",
+  "kind": "fmt",
+  "file": "clean.rs"
+ },
+ {
   "en": "clean :: dry run, nothing will be deleted",
   "tr": "clean :: deneme, hiçbir şey silinmeyecek",
   "kind": "plain",
@@ -1395,6 +1407,12 @@
   "en": "scanning...",
   "tr": "taranıyor...",
   "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "scanning... {}/{total}",
+  "tr": "taranıyor... {}/{total}",
+  "kind": "fmt",
   "file": "clean.rs"
  },
  {
@@ -1466,6 +1484,12 @@
  {
   "en": "files",
   "tr": "dosya",
+  "kind": "plain",
+  "file": "clean.rs"
+ },
+ {
+  "en": "free now",
+  "tr": "şimdi boş",
   "kind": "plain",
   "file": "clean.rs"
  },
@@ -2382,6 +2406,210 @@
   "file": "explain.rs"
  },
  {
+  "en": "Windows Subsystem for Linux",
+  "tr": "Linux için Windows Alt Sistemi",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "run Linux tools and distributions (WSL); also turn on the virtual machine platform",
+  "tr": "Linux araçları ve dağıtımları çalıştırın (WSL); sanal makine platformunu da açın",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Virtual Machine Platform",
+  "tr": "Sanal Makine Platformu",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "needed by WSL 2 and the Android subsystem",
+  "tr": "WSL 2 ve Android alt sistemi için gerekli",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Hyper-V",
+  "tr": "Hyper-V",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Microsoft's virtual machines (Pro, Enterprise, Education)",
+  "tr": "Microsoft'un sanal makineleri (Pro, Enterprise, Education)",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Windows Sandbox",
+  "tr": "Windows Korumalı Alanı",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "a throwaway desktop for trying unknown programs safely",
+  "tr": "bilinmeyen programları güvenle denemek için kullan-at bir masaüstü",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": ".NET Framework 3.5",
+  "tr": ".NET Framework 3.5",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "older programs and games ask for it (downloaded from Windows Update)",
+  "tr": "eski programlar ve oyunlar ister (Windows Update'ten indirilir)",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Telnet client",
+  "tr": "Telnet istemcisi",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "the telnet command, handy to test whether a port answers",
+  "tr": "telnet komutu; bir portun yanıt verip vermediğini denemek için",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "TFTP client",
+  "tr": "TFTP istemcisi",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "for flashing routers and network devices",
+  "tr": "modem ve ağ cihazlarına yazılım yüklemek için",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "SMB 1.0 file sharing (old, insecure)",
+  "tr": "SMB 1.0 dosya paylaşımı (eski, güvensiz)",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "only for very old NAS boxes; keep it off otherwise",
+  "tr": "yalnızca çok eski NAS cihazları için; değilse kapalı tutun",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "PowerShell 2.0 (old)",
+  "tr": "PowerShell 2.0 (eski)",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "an old engine attackers use to dodge logging; safe to turn off",
+  "tr": "saldırganların günlüklemeden kaçmak için kullandığı eski motor; kapatılabilir",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Microsoft Print to PDF",
+  "tr": "Microsoft PDF'ye Yazdır",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "the PDF printer in every print dialog",
+  "tr": "her yazdırma penceresindeki PDF yazıcısı",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "XPS printer",
+  "tr": "XPS yazıcısı",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "the old XPS document printer; rarely needed",
+  "tr": "eski XPS belge yazıcısı; nadiren gerekir",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "Work Folders",
+  "tr": "İş Klasörleri",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "file sync with a company server; not needed at home",
+  "tr": "şirket sunucusuyla dosya eşitleme; evde gerekmez",
+  "kind": "plain",
+  "file": "features.rs"
+ },
+ {
+  "en": "features :: Windows optional features",
+  "tr": "features :: Windows isteğe bağlı özellikleri",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "kz features works on Windows only.",
+  "tr": "kz features yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "Windows only shows its optional features to an elevated terminal (Run as administrator).",
+  "tr": "Windows isteğe bağlı özelliklerini yalnızca yönetici terminaline gösterir (Yönetici olarak çalıştır).",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "reading optional features (10-20 s)...",
+  "tr": "isteğe bağlı özellikler okunuyor (10-20 sn)...",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "[ok] on   [--] off   change them with: kz features",
+  "tr": "[ok] açık   [--] kapalı   değiştirmek için: kz features",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "kazma features :: [x] = on, enter applies the changes",
+  "tr": "kazma features :: [x] = açık, enter değişiklikleri uygular",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "Nothing to change.",
+  "tr": "Değiştirilecek bir şey yok.",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "Applying (this can take a few minutes)",
+  "tr": "Uygulanıyor (birkaç dakika sürebilir)",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "[on] ",
+  "tr": "[aç] ",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
+  "en": "restart Windows to finish the changes.",
+  "tr": "değişikliklerin tamamlanması için Windows'u yeniden başlatın.",
+  "kind": "fmt",
+  "file": "features.rs"
+ },
+ {
   "en": "health :: system health report",
   "tr": "health :: sistem sağlık raporu",
   "kind": "fmt",
@@ -2620,6 +2848,90 @@
   "tr": "kapalı: {0}",
   "kind": "ps",
   "file": "health.rs"
+ },
+ {
+  "en": "install :: programs for a new PC (winget)",
+  "tr": "install :: yeni bilgisayar için programlar (winget)",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "asking winget what is installed...",
+  "tr": "winget'e yüklü programlar soruluyor...",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "winget not found. Install 'App Installer' from the Microsoft Store, then try again.",
+  "tr": "winget bulunamadı. Microsoft Store'dan 'Uygulama Yükleyici'yi kurup tekrar deneyin.",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "(installed)",
+  "tr": "(yüklü)",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "install some: kz install firefox vlc 7zip   (or just kz install to pick)",
+  "tr": "kurmak için: kz install firefox vlc 7zip   (ya da seçmek için yalnızca kz install)",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "kz install works on Windows only.",
+  "tr": "kz install yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "not on the list: {n} (kz install --list; any winget id works with winget install)",
+  "tr": "listede yok: {n} (kz install --list; diğerleri için winget install)",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "Everything on the list is already installed.",
+  "tr": "Listedeki her şey zaten yüklü.",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "kazma install :: pick programs (installed ones are not listed)",
+  "tr": "kazma install :: programları seç (yüklü olanlar listelenmez)",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "Would install",
+  "tr": "Kurulacaklar",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "Installing",
+  "tr": "Kuruluyor",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "{line}  (already installed)",
+  "tr": "{line}  (zaten yüklü)",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "{line}  installing...",
+  "tr": "{line}  kuruluyor...",
+  "kind": "fmt",
+  "file": "install.rs"
+ },
+ {
+  "en": "installed {ok}, failed {fail}",
+  "tr": "kurulan {ok}, başarısız {fail}",
+  "kind": "fmt",
+  "file": "install.rs"
  },
  {
   "en": "installer :: dry run, nothing will be deleted",
@@ -2964,54 +3276,6 @@
   "file": "main.rs"
  },
  {
-  "en": "programs & drivers",
-  "tr": "programlar ve sürücüler",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "remove programs and their leftovers",
-  "tr": "program kaldır, kalıntılarını temizle",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "update installed programs (winget)",
-  "tr": "yüklü programları güncelle (winget)",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "driver updates from windows update",
-  "tr": "windows update'ten sürücü güncellemeleri",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "programs that start with windows",
-  "tr": "windows ile başlayan programlar",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "remove promo apps, turn off ads",
-  "tr": "tanıtım uygulamalarını kaldır, reklamları kapat",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "privacy, AI, Explorer, taskbar settings",
-  "tr": "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "move-to-a-new-PC kit: apps, drivers, settings",
-  "tr": "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
   "en": "system",
   "tr": "sistem",
   "kind": "plain",
@@ -3036,26 +3300,8 @@
   "file": "main.rs"
  },
  {
-  "en": "fix network, Windows Update, Store, system files",
-  "tr": "ağ, Windows Update, Store, sistem dosyası onarımı",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "dns flush, icon cache, ssd trim, dism, sfc",
-  "tr": "dns, ikon önbelleği, ssd trim, dism, sfc",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
   "en": "power plans, battery report, wake sources",
   "tr": "güç planı, pil raporu, uyandırma nedenleri",
-  "kind": "plain",
-  "file": "main.rs"
- },
- {
-  "en": "system restore points",
-  "tr": "sistem geri yükleme noktaları",
   "kind": "plain",
   "file": "main.rs"
  },
@@ -3104,6 +3350,102 @@
  {
   "en": "which program uses which port",
   "tr": "hangi port hangi programda",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "programs & drivers",
+  "tr": "programlar ve sürücüler",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "remove programs and their leftovers",
+  "tr": "program kaldır, kalıntılarını temizle",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "programs for a new PC (winget)",
+  "tr": "yeni bilgisayar için programlar (winget)",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "update installed programs (winget)",
+  "tr": "yüklü programları güncelle (winget)",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "driver updates from windows update",
+  "tr": "windows update'ten sürücü güncellemeleri",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "programs that start with windows",
+  "tr": "windows ile başlayan programlar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "move-to-a-new-PC kit: apps, drivers, settings",
+  "tr": "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "windows",
+  "tr": "yapılandırma",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "privacy, AI, Explorer, taskbar settings",
+  "tr": "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "remove promo apps, turn off ads",
+  "tr": "tanıtım uygulamalarını kaldır, reklamları kapat",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "services you may not need, explained",
+  "tr": "gerekmeyebilecek hizmetler, açıklamalı",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "scheduled tasks programs added",
+  "tr": "programların eklediği zamanlanmış görevler",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "WSL, Hyper-V, Sandbox, .NET 3.5...",
+  "tr": "WSL, Hyper-V, Korumalı Alan, .NET 3.5...",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "fix network, Windows Update, Store, system files",
+  "tr": "ağ, Windows Update, Store, sistem dosyası onarımı",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "dns flush, icon cache, ssd trim, dism, sfc",
+  "tr": "dns, ikon önbelleği, ssd trim, dism, sfc",
+  "kind": "plain",
+  "file": "main.rs"
+ },
+ {
+  "en": "system restore points",
+  "tr": "sistem geri yükleme noktaları",
   "kind": "plain",
   "file": "main.rs"
  },
@@ -4308,6 +4650,12 @@
   "file": "remove.rs"
  },
  {
+  "en": "Start menu entry removed",
+  "tr": "Başlat menüsü kaydı kaldırıldı",
+  "kind": "plain",
+  "file": "remove.rs"
+ },
+ {
   "en": "data & log removed",
   "tr": "veri ve log kaldırıldı",
   "kind": "plain",
@@ -4716,6 +5064,12 @@
   "file": "schedule.rs"
  },
  {
+  "en": "runs every day, cleans only when less than {} GB are free",
+  "tr": "her gün çalışır, yalnızca {} GB'tan az boş alan kalınca temizler",
+  "kind": "fmt",
+  "file": "schedule.rs"
+ },
+ {
   "en": "scheduled cleaning is off.  turn on: kz schedule weekly",
   "tr": "zamanlanmış temizlik kapalı.  açmak için: kz schedule weekly",
   "kind": "fmt",
@@ -4752,8 +5106,8 @@
   "file": "schedule.rs"
  },
  {
-  "en": "unknown: {other}. use daily | weekly | monthly | off | status",
-  "tr": "bilinmeyen: {other}. daily | weekly | monthly | off | status kullanın",
+  "en": "unknown: {other}. use daily | weekly | monthly | lowdisk | off | status",
+  "tr": "bilinmeyen: {other}. daily | weekly | monthly | lowdisk | off | status kullanın",
   "kind": "fmt",
   "file": "schedule.rs"
  },
@@ -4800,6 +5154,288 @@
   "file": "screen.rs"
  },
  {
+  "en": "Telemetry: sends usage and diagnostic data to Microsoft",
+  "tr": "Telemetri: kullanım ve tanılama verisini Microsoft'a gönderir",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Routes push messages for telemetry and device management",
+  "tr": "Telemetri ve cihaz yönetimi için anlık iletileri yönlendirir",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Preloads often used apps into memory; off can help on HDDs, little gain on SSDs",
+  "tr": "Sık kullanılan uygulamaları belleğe önceden yükler; HDD'de kapatmak yardımcı olabilir",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Indexes files for fast search; off makes Start and Explorer search slower",
+  "tr": "Hızlı arama için dosyaları dizinler; kapatılırsa Başlat ve Gezgin araması yavaşlar",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Print queue; keep it if you print or use Print to PDF",
+  "tr": "Yazdırma kuyruğu; yazdırıyor ya da PDF'ye Yazdır kullanıyorsanız açık kalsın",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Sending and receiving faxes",
+  "tr": "Faks gönderme ve alma",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Downloads offline maps for the Maps app",
+  "tr": "Haritalar uygulaması için çevrimdışı harita indirir",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Location for apps; off turns location off everywhere",
+  "tr": "Uygulamalar için konum; kapatılırsa her yerde konum kapanır",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Store demo mode for display PCs",
+  "tr": "Mağazadaki teşhir bilgisayarları için demo modu",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Fingerprint and face sign-in (Windows Hello); keep it if you use them",
+  "tr": "Parmak izi ve yüz ile oturum açma (Windows Hello); kullanıyorsanız açık kalsın",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Xbox Live sign-in for games",
+  "tr": "Oyunlar için Xbox Live oturumu",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Xbox cloud saves for games",
+  "tr": "Oyunlar için Xbox bulut kayıtları",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Xbox Live networking for games",
+  "tr": "Oyunlar için Xbox Live ağ hizmeti",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Xbox accessories (controller firmware and settings)",
+  "tr": "Xbox aksesuarları (kumanda yazılımı ve ayarları)",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Bluetooth; off disconnects Bluetooth mice, headsets and keyboards",
+  "tr": "Bluetooth; kapatılırsa Bluetooth fare, kulaklık ve klavyeler kopar",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Phone state for calling apps (Phone Link calls)",
+  "tr": "Arama uygulamaları için telefon durumu (Phone Link aramaları)",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Shares the Windows Media Player library on the network",
+  "tr": "Windows Media Player kitaplığını ağda paylaşır",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Internet connection sharing / mobile hotspot",
+  "tr": "İnternet bağlantısı paylaşımı / mobil erişim noktası",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Windows Error Reporting: sends crash reports",
+  "tr": "Windows Hata Bildirimi: çökme raporlarını gönderir",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Program Compatibility Assistant: offers fixes for old programs",
+  "tr": "Program Uyumluluk Yardımcısı: eski programlar için düzeltme önerir",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Windows Insider program",
+  "tr": "Windows Insider programı",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Keeps shortcuts working across network drives",
+  "tr": "Kısayolların ağ sürücüleri arasında çalışmasını sağlar",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Smart card readers (ID cards, some company logins)",
+  "tr": "Akıllı kart okuyucular (kimlik kartı, bazı şirket girişleri)",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Lets other PCs edit this registry; off by default, keep it off",
+  "tr": "Başka bilgisayarların bu kayıt defterini düzenlemesine izin verir; kapalı kalsın",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Microsoft Edge updater (also runs as a scheduled task)",
+  "tr": "Microsoft Edge güncelleyicisi (zamanlanmış görev olarak da çalışır)",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Microsoft Edge updater (on demand)",
+  "tr": "Microsoft Edge güncelleyicisi (gerektiğinde)",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Google updater for Chrome and other Google apps",
+  "tr": "Chrome ve diğer Google uygulamaları için Google güncelleyicisi",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Google updater (on demand)",
+  "tr": "Google güncelleyicisi (gerektiğinde)",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "Adobe Acrobat updater",
+  "tr": "Adobe Acrobat güncelleyicisi",
+  "kind": "plain",
+  "file": "services.rs"
+ },
+ {
+  "en": "automatic",
+  "tr": "otomatik",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "automatic (delayed)",
+  "tr": "otomatik (gecikmeli)",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "disabled",
+  "tr": "devre dışı",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "manual",
+  "tr": "elle",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "Third-party services",
+  "tr": "Üçüncü taraf hizmetler",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "Windows services",
+  "tr": "Windows hizmetleri",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "[ok] running   [--] stopped   change the optional ones with: kz services",
+  "tr": "[ok] çalışıyor   [--] durmuş   isteğe bağlı olanları değiştirmek için: kz services",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "services :: Windows services you may not need",
+  "tr": "services :: gerekmeyebilecek Windows hizmetleri",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "kz services works on Windows only.",
+  "tr": "kz services yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "reading services...",
+  "tr": "hizmetler okunuyor...",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "unknown action: {other}. use on | off NAME...",
+  "tr": "bilinmeyen işlem: {other}. on | off NAME... kullanın",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "{}  (already like that)",
+  "tr": "{}  (zaten öyle)",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "no such service: {n}",
+  "tr": "böyle bir hizmet yok: {n}",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "[ok] allowed to run   [--] disabled   kz services --all lists every service",
+  "tr": "[ok] çalışabilir   [--] devre dışı   tüm hizmetler için: kz services --all",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "running",
+  "tr": "çalışıyor",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "kazma services :: [x] = allowed to run, enter applies the changes",
+  "tr": "kazma services :: [x] = çalışabilir, enter değişiklikleri uygular",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "changing services needs an elevated terminal (Run as administrator)",
+  "tr": "hizmetleri değiştirmek için yönetici terminali gerekir (Yönetici olarak çalıştır)",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
+  "en": "turned-off services keep their old start type in services-backup.json; turn them on again here.",
+  "tr": "kapatılan hizmetlerin eski başlangıç türü services-backup.json'da saklanır; buradan yeniden açabilirsiniz.",
+  "kind": "fmt",
+  "file": "services.rs"
+ },
+ {
   "en": "invalid value. {k}: {hint}",
   "tr": "geçersiz değer. {k}: {hint}",
   "kind": "fmt",
@@ -4832,12 +5468,6 @@
  {
   "en": "COLOR THEME",
   "tr": "RENK TEMASI",
-  "kind": "plain",
-  "file": "settings.rs"
- },
- {
-  "en": "automatic",
-  "tr": "otomatik",
   "kind": "plain",
   "file": "settings.rs"
  },
@@ -4964,12 +5594,6 @@
  {
   "en": "enabled ",
   "tr": "açıldı  ",
-  "kind": "fmt",
-  "file": "startup.rs"
- },
- {
-  "en": "disabled",
-  "tr": "kapatıldı",
   "kind": "fmt",
   "file": "startup.rs"
  },
@@ -5116,6 +5740,72 @@
   "tr": "{name} sonlandırılamadı (yönetici terminalini deneyin)",
   "kind": "fmt",
   "file": "status.rs"
+ },
+ {
+  "en": "tasks :: scheduled tasks that programs added",
+  "tr": "tasks :: programların eklediği zamanlanmış görevler",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "kz tasks works on Windows only.",
+  "tr": "kz tasks yalnızca Windows'ta çalışır.",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "reading scheduled tasks...",
+  "tr": "zamanlanmış görevler okunuyor...",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "unknown action: {other}. use on | off TASK...",
+  "tr": "bilinmeyen işlem: {other}. on | off TASK... kullanın",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "no such task: {n}",
+  "tr": "böyle bir görev yok: {n}",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "No scheduled tasks from other programs.",
+  "tr": "Başka programlardan zamanlanmış görev yok.",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "Windows' own tasks",
+  "tr": "Windows'un kendi görevleri",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "Added by programs",
+  "tr": "Programların eklediği",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "[ok] enabled   [--] disabled   turn the programs' tasks on / off with: kz tasks",
+  "tr": "[ok] açık   [--] kapalı   programların görevlerini açıp kapatmak için: kz tasks",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "kazma tasks :: [x] = enabled, enter applies the changes",
+  "tr": "kazma tasks :: [x] = açık, enter değişiklikleri uygular",
+  "kind": "fmt",
+  "file": "tasks.rs"
+ },
+ {
+  "en": "some tasks belong to the system: run kz from an elevated terminal for those.",
+  "tr": "bazı görevler sisteme ait: bunlar için kz'yi yönetici terminalinde çalıştırın.",
+  "kind": "fmt",
+  "file": "tasks.rs"
  },
  {
   "en": "Send the least diagnostic data",
@@ -5886,6 +6576,48 @@
   "file": "tweak.rs"
  },
  {
+  "en": "{} settings",
+  "tr": "{} ayar",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "apply one: kz tweak profile gaming   (--dry-run shows what would change)",
+  "tr": "uygulamak için: kz tweak profile gaming   (--dry-run ne değişeceğini gösterir)",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "tweak :: ready-made sets of settings",
+  "tr": "tweak :: hazır ayar setleri",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "unknown profile: {name}. use recommended | privacy | gaming | classic",
+  "tr": "bilinmeyen profil: {name}. recommended | privacy | gaming | classic kullanın",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "no setting ids in {file}",
+  "tr": "{file} içinde ayar kimliği yok",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "tweak :: save the settings that are on",
+  "tr": "tweak :: açık ayarları kaydet",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
+  "en": "{} settings saved to {}",
+  "tr": "{} ayar {} dosyasına kaydedildi",
+  "kind": "fmt",
+  "file": "tweak.rs"
+ },
+ {
   "en": "tweak :: Windows settings, every change reversible",
   "tr": "tweak :: Windows ayarları, her değişiklik geri alınabilir",
   "kind": "fmt",
@@ -5904,8 +6636,8 @@
   "file": "tweak.rs"
  },
  {
-  "en": "unknown action: {other}. use list | apply | undo",
-  "tr": "bilinmeyen işlem: {other}. list | apply | undo kullanın",
+  "en": "unknown action: {other}. use list | apply | undo | profile | export | import",
+  "tr": "bilinmeyen işlem: {other}. list | apply | undo | profile | export | import kullanın",
   "kind": "fmt",
   "file": "tweak.rs"
  },
@@ -5918,18 +6650,6 @@
  {
   "en": "kazma tweak :: [x] = on, enter applies the changes",
   "tr": "kazma tweak :: [x] = açık, enter değişiklikleri uygular",
-  "kind": "fmt",
-  "file": "tweak.rs"
- },
- {
-  "en": "Nothing to change.",
-  "tr": "Değiştirilecek bir şey yok.",
-  "kind": "fmt",
-  "file": "tweak.rs"
- },
- {
-  "en": "[on] ",
-  "tr": "[aç] ",
   "kind": "fmt",
   "file": "tweak.rs"
  },
@@ -6518,12 +7238,6 @@
  {
   "en": "{line}  (skipped)",
   "tr": "{line}  (atlandı)",
-  "kind": "fmt",
-  "file": "upgrade.rs"
- },
- {
-  "en": "{line}  installing...",
-  "tr": "{line}  kuruluyor...",
   "kind": "fmt",
   "file": "upgrade.rs"
  },

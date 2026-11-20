@@ -35,8 +35,8 @@ Windows 電腦，帶著復古的綠色螢幕風格。不需安裝程式、沒有
 | | |
 |---|---|
 | **清理** | 100 多種快取、暫存檔、記錄檔與資源回收筒，包括 AI 工具、遊戲啟動器與顯示卡驅動程式殘留檔案（`clean`）· 來自 winapp2.ini 的 4,000 多個程式的額外規則（`winapp2`）· Windows.old、升級檔、記憶體傾印、休眠檔、舊的還原點（`deepclean`）· 附樹狀圖與最大檔案檢視的磁碟探索器（`analyze`）· 檔案類型（`types`）· 專案建置產物（`purge`）· 舊安裝檔（`installer`）· 重複檔案（`dupes`）· 空資料夾與失效捷徑（`empty`）· 使用痕跡（`privacy`） |
-| **程式與驅動程式** | 解除安裝程式及其殘留檔案（`uninstall`）· 用 winget 更新程式（`upgrade`）· 從 Windows Update 更新驅動程式（`drivers`）· 啟動應用程式（`startup`）· 推廣應用程式與 Windows 廣告（`debloat`）· 隱私權、AI、Edge、檔案總管、工作列與更新相關的 Windows 設定（`tweak`）· 搬到新電腦的備份（`backup`） |
-| **系統** | 健康報告（`health`）· 開機時間與拖慢開機的原因（`boot`）· 含 GPU 與電池的即時監控，以及會說明處理程序為何在執行的處理程序管理員（`status`）· 維護：DNS、圖示快取、SSD TRIM、DISM、SFC（`optimize`）· 修復：網路、Windows Update、Store、系統檔案（`repair`）· 電源計劃與電池（`power`）· 還原點（`restore`）· HTML 報告（`report`）· 磁碟速度測試（`bench`）· 自動清理（`schedule`） |
+| **程式與驅動程式** | 解除安裝程式及其殘留檔案（`uninstall`）· 用 winget 更新程式（`upgrade`）· 新電腦所需程式（`install`）· 從 Windows Update 更新驅動程式（`drivers`）· 啟動應用程式（`startup`）· 推廣應用程式與 Windows 廣告（`debloat`）· 隱私權、AI、Edge、檔案總管、工作列與更新相關的 Windows 設定（`tweak`）· 搬到新電腦的備份（`backup`） |
+| **系統** | 健康報告（`health`）· 開機時間與拖慢開機的原因（`boot`）· 附說明的服務、排程工作和選用功能（`services`、`tasks`、`features`）· 含 GPU 與電池的即時監控，以及會說明處理程序為何在執行的處理程序管理員（`status`）· 維護：DNS、圖示快取、SSD TRIM、DISM、SFC（`optimize`）· 修復：網路、Windows Update、Store、系統檔案（`repair`）· 電源計劃與電池（`power`）· 還原點（`restore`）· HTML 報告（`report`）· 磁碟速度測試（`bench`）· 自動清理（`schedule`） |
 | **網路** | IP、延遲、DNS 效能比較與切換、測速、已儲存的 Wi-Fi（`net`）· 哪個程式使用哪個連接埠（`ports`） |
 | **實用工具** | 哪個程式開著某個檔案（`lock`）· 讓螢幕保持開啟（`awake`）· 擦拭螢幕模式（`cleanscreen`） |
 | **kazma** | 受保護的路徑（`whitelist`）· 你自己的清理規則（`rules`）· 檔案總管右鍵選單（`context`）· 語言與主題（`config`）· 自我更新（`update`）· 記錄（`history`）· 解除安裝 kazma（`remove`） |
@@ -82,11 +82,15 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz empty [paths...]` | 空資料夾、失效捷徑與 0 位元組檔案（移至資源回收筒） |
 | `kz privacy` | 最近的檔案、執行 / 檔案總管記錄、剪貼簿、瀏覽器記錄與 Cookie（需自行勾選）；`keep` 選擇保留 Cookie 的網站；`audit` 顯示哪些應用程式使用過相機、麥克風和位置 |
 | `kz uninstall` | 移除傳統程式、Microsoft Store 與 Scoop 應用程式，再清除殘留的資料夾與登錄機碼（先備份）；`--leftovers` 可找出以其他方式移除的應用程式殘留 |
+| `kz install` | 從一份簡短清單（瀏覽器、聊天、媒體、工具、文件、開發、遊戲）透過 winget 安裝新電腦所需程式；`--list`，或依名稱：`kz install firefox vlc` |
 | `kz upgrade` | 透過 winget 更新已安裝的程式 |
 | `kz drivers` | 從 Windows Update 更新驅動程式；`--installed` 依年份列出第三方驅動程式 |
 | `kz startup` | 開啟/關閉啟動應用程式（與工作管理員使用相同旗標，完全可復原） |
 | `kz debloat` | 依固定清單移除預先安裝的推廣應用程式，並關閉廣告；`--restore` 可復原 |
-| `kz tweak` | 約 60 項 Windows 設定，以開關呈現：遙測、Copilot / Recall、Edge、檔案總管、工作列、遊戲、更新；`list`、`apply ID`、`undo ID`、`undo all` |
+| `kz tweak` | 約 60 項 Windows 設定，以開關呈現：遙測、Copilot / Recall、Edge、檔案總管、工作列、遊戲、更新；`list`、`apply ID`、`undo ID`、`undo all`; `profile recommended \| privacy \| gaming \| classic`, `export` / `import FILE` |
+| `kz services` | 可能不需要的服務，每項皆有說明；關閉時保存原啟動類型；`--all` 列出所有服務；`on` / `off NAME` |
+| `kz tasks` | 程式加入的排程工作（更新程式、輔助程式）的開 / 關；`--all` 也顯示 Windows 自己的工作 |
+| `kz features` | Windows 選用功能：WSL、Hyper-V、Windows 沙箱、.NET 3.5、SMB 1.0、PowerShell 2.0...（需系統管理員） |
 | `kz backup [folder]` | 新電腦套件：winget 應用程式清單、驅動程式、程式清單、kazma 設定；`kz backup restore FOLDER` 重新安裝 |
 | `kz health` | 磁碟 SMART、電池耗損、藍色畫面、錯誤、更新、Defender、防火牆 |
 | `kz boot` | Windows 開機需要多久，以及拖慢開機的應用程式、驅動程式和服務（來自 Windows 自己的開機記錄；需系統管理員） |
@@ -99,7 +103,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz ports [filter]` | 哪個程式在接聽哪個連接埠；`--kill PORT` 將它關閉 |
 | `kz optimize` | 失效的啟動項目（先備份）、重新啟動開始功能表/搜尋、清除 DNS、圖示快取，需要時執行 SSD TRIM / DISM / SFC |
 | `kz repair [fix]` | `network`、`update`（重設 Windows Update）、`store`、`dism`（+SFC）、`time`、`printer`；會先建立還原點（需系統管理員） |
-| `kz schedule weekly` | 自動執行 `kz clean --yes`（`daily`、`weekly`、`monthly`、`off`、`status`） |
+| `kz schedule weekly` | 自動執行 `kz clean --yes`（`daily`、`weekly`、`monthly`、`off`、`status`） · `kz schedule lowdisk --below 15` |
 | `kz lock <path>` | 哪個程式開著某個檔案或資料夾 |
 | `kz awake [minutes]` | 讓螢幕與電腦保持喚醒 |
 | `kz cleanscreen [seconds]` | 忽略輸入的黑畫面，方便擦拭螢幕 |
@@ -108,6 +112,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 | `kz winapp2` | 來自 [winapp2.ini](https://github.com/MoscaDotTo/Winapp2) 的 4,000 多個程式清理規則：`update` 下載後，`kz clean` 會列出這台電腦上找到的程式；`list`、`use FILE`、`remove` |
 | `kz context install` | 在檔案總管右鍵選單加入「Analyze with kazma」（`uninstall` 可移除） |
 | `kz config` | `kz config` ↑↓ enter · `kz config lang de`（auto、en、tr、zh-CN、zh-TW、ja、ko、de、fr、pl、uk、ru）、`kz config theme amber`（green、amber、white、blue） |
+| `kz completion` | Tab 自動完成：在 PowerShell 設定檔中加入 `kz completion \| Out-String \| Invoke-Expression` |
 | `kz update` | 從 GitHub 更新 kazma 本身（會驗證總和檢查碼） |
 | `kz history` | kazma 所有操作的記錄 |
 | `kz remove` | 解除安裝 kazma |
@@ -130,6 +135,7 @@ iwr -useb https://raw.githubusercontent.com/hhasanguclu/kazma/main/install.ps1 |
 - `startup` 只切換工作管理員的開/關旗標；`debloat` 只移除固定清單中的應用程式，`--restore` 可復原其設定。
 - `tweak` 會先把要修改的登錄值儲存到 `%LOCALAPPDATA%\kazma\tweaks.json`，`kz tweak undo` 會原樣寫回這些值。
 - winapp2.ini 不隨附，`kz winapp2 update` 會在需要時下載。kazma 只使用其中的檔案規則（不使用登錄規則），並拒絕會清空最上層資料夾（磁碟機、Windows、使用者設定檔、文件等）的規則。
+- `services` 會保存每個被關閉服務的啟動類型；winapp2 登錄規則在刪除前會把每個機碼匯出為 `%LOCALAPPDATA%\kazma\backups` 中的 `.reg` 檔案。
 - `update` 會用發行版本的 `SHA256SUMS.txt` 驗證下載的檔案。
 - `deepclean` 透過 Windows 內建的磁碟清理移除 Windows.old 與升級檔，並一律保留最新的還原點。
 - `repair` 會將 Windows Update 資料夾改名而非刪除，並先提供建立還原點。

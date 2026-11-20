@@ -17,10 +17,12 @@ mod drivers;
 mod dupes;
 mod empty;
 mod explain;
+mod features;
 mod fsutil;
 mod gpu;
 mod health;
 mod i18n;
+mod install;
 mod installer;
 mod locks;
 mod mft;
@@ -39,11 +41,13 @@ mod report;
 mod restore;
 mod schedule;
 mod screen;
+mod services;
 mod settings;
 mod sqlite;
 mod startup;
 mod status;
 mod sys;
+mod tasks;
 mod treemap;
 mod tweak;
 mod types;
@@ -83,6 +87,9 @@ enum Cmd {
         /// Skip the selection screen and clean every item
         #[arg(long, short)]
         yes: bool,
+        /// Only clean when the system drive has less than this many GB free
+        #[arg(long, value_name = "GB")]
+        if_below: Option<u64>,
     },
     /// Interactive disk usage explorer
     #[command(alias = "analyse")]
@@ -97,6 +104,44 @@ enum Cmd {
         dry_run: bool,
         #[arg(long, short)]
         yes: bool,
+    },
+    /// Install well-known programs for a new PC through winget (pick from a list)
+    Install {
+        /// Programs to install by name or winget id (default: pick from the list)
+        names: Vec<String>,
+        /// Show the list and what is installed
+        #[arg(long)]
+        list: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Turn Windows optional features on / off (WSL, Hyper-V, Sandbox, .NET 3.5...)
+    Features {
+        /// Only show which are on
+        #[arg(long)]
+        list: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Windows services you may not need, explained; --all lists every service
+    Services {
+        /// on | off, then service names (default: pick from the list)
+        action: Option<String>,
+        names: Vec<String>,
+        #[arg(long)]
+        all: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
+    },
+    /// Scheduled tasks that programs added (updaters, helpers); --all adds Windows' own
+    Tasks {
+        /// on | off, then \Path\Name or task names (default: pick from the list)
+        action: Option<String>,
+        names: Vec<String>,
+        #[arg(long)]
+        all: bool,
+        #[arg(long, short = 'n')]
+        dry_run: bool,
     },
     /// Update installed programs with winget
     Upgrade {
@@ -231,10 +276,19 @@ enum Cmd {
     },
     /// Automatic cleaning: daily | weekly | monthly | off | status
     Schedule {
+        /// daily | weekly | monthly | lowdisk | off | status
         frequency: Option<String>,
         /// Time of day, HH:MM
         #[arg(long, default_value = "11:00")]
         time: String,
+        /// lowdisk: clean when less than this many GB are free
+        #[arg(long, default_value_t = 15, value_name = "GB")]
+        below: u64,
+    },
+    /// Print tab completion for a shell: powershell | bash | zsh | fish
+    Completion {
+        #[arg(default_value = "powershell")]
+        shell: String,
     },
     /// Update kazma itself from GitHub
     Update {
@@ -430,49 +484,6 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "who used the camera, mic and location",
         "kamerayı, mikrofonu, konumu kim kullandı",
     ),
-    (' ', "", "programs & drivers", "programlar ve sürücüler"),
-    (
-        '8',
-        "uninstall",
-        "remove programs and their leftovers",
-        "program kaldır, kalıntılarını temizle",
-    ),
-    (
-        '9',
-        "upgrade",
-        "update installed programs (winget)",
-        "yüklü programları güncelle (winget)",
-    ),
-    (
-        '0',
-        "drivers",
-        "driver updates from windows update",
-        "windows update'ten sürücü güncellemeleri",
-    ),
-    (
-        's',
-        "startup",
-        "programs that start with windows",
-        "windows ile başlayan programlar",
-    ),
-    (
-        'b',
-        "debloat",
-        "remove promo apps, turn off ads",
-        "tanıtım uygulamalarını kaldır, reklamları kapat",
-    ),
-    (
-        'T',
-        "tweak",
-        "privacy, AI, Explorer, taskbar settings",
-        "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
-    ),
-    (
-        'a',
-        "backup",
-        "move-to-a-new-PC kit: apps, drivers, settings",
-        "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
-    ),
     (' ', "", "system", "sistem"),
     (
         'c',
@@ -493,28 +504,10 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "canlı izleme ve süreç yöneticisi",
     ),
     (
-        'f',
-        "repair",
-        "fix network, Windows Update, Store, system files",
-        "ağ, Windows Update, Store, sistem dosyası onarımı",
-    ),
-    (
-        'o',
-        "optimize",
-        "dns flush, icon cache, ssd trim, dism, sfc",
-        "dns, ikon önbelleği, ssd trim, dism, sfc",
-    ),
-    (
         'p',
         "power",
         "power plans, battery report, wake sources",
         "güç planı, pil raporu, uyandırma nedenleri",
-    ),
-    (
-        'e',
-        "restore",
-        "system restore points",
-        "sistem geri yükleme noktaları",
     ),
     (
         'r',
@@ -548,6 +541,92 @@ const MENU: &[(char, &str, &str, &str)] = &[
         "ports",
         "which program uses which port",
         "hangi port hangi programda",
+    ),
+    (' ', "", "programs & drivers", "programlar ve sürücüler"),
+    (
+        '8',
+        "uninstall",
+        "remove programs and their leftovers",
+        "program kaldır, kalıntılarını temizle",
+    ),
+    (
+        'I',
+        "install",
+        "programs for a new PC (winget)",
+        "yeni bilgisayar için programlar (winget)",
+    ),
+    (
+        '9',
+        "upgrade",
+        "update installed programs (winget)",
+        "yüklü programları güncelle (winget)",
+    ),
+    (
+        '0',
+        "drivers",
+        "driver updates from windows update",
+        "windows update'ten sürücü güncellemeleri",
+    ),
+    (
+        's',
+        "startup",
+        "programs that start with windows",
+        "windows ile başlayan programlar",
+    ),
+    (
+        'a',
+        "backup",
+        "move-to-a-new-PC kit: apps, drivers, settings",
+        "yeni bilgisayara taşıma: programlar, sürücüler, ayarlar",
+    ),
+    (' ', "", "windows", "yapılandırma"),
+    (
+        'T',
+        "tweak",
+        "privacy, AI, Explorer, taskbar settings",
+        "gizlilik, yapay zekâ, Gezgin, görev çubuğu ayarları",
+    ),
+    (
+        'b',
+        "debloat",
+        "remove promo apps, turn off ads",
+        "tanıtım uygulamalarını kaldır, reklamları kapat",
+    ),
+    (
+        'S',
+        "services",
+        "services you may not need, explained",
+        "gerekmeyebilecek hizmetler, açıklamalı",
+    ),
+    (
+        'K',
+        "tasks",
+        "scheduled tasks programs added",
+        "programların eklediği zamanlanmış görevler",
+    ),
+    (
+        'F',
+        "features",
+        "WSL, Hyper-V, Sandbox, .NET 3.5...",
+        "WSL, Hyper-V, Korumalı Alan, .NET 3.5...",
+    ),
+    (
+        'f',
+        "repair",
+        "fix network, Windows Update, Store, system files",
+        "ağ, Windows Update, Store, sistem dosyası onarımı",
+    ),
+    (
+        'o',
+        "optimize",
+        "dns flush, icon cache, ssd trim, dism, sfc",
+        "dns, ikon önbelleği, ssd trim, dism, sfc",
+    ),
+    (
+        'e',
+        "restore",
+        "system restore points",
+        "sistem geri yükleme noktaları",
     ),
     (' ', "", "kazma", "kazma"),
     (
@@ -657,12 +736,6 @@ fn menu(
             }
             terminal.draw(|f| {
                 let full = f.area();
-                let big_banner = full.height >= 34;
-                let top_h = if big_banner {
-                    ui::BANNER.lines().count() as u16 + 2
-                } else {
-                    3
-                };
                 // the menu frame is only as tall as its longest column
                 let two_cols = full.width >= 102;
                 let rows = if two_cols {
@@ -670,6 +743,10 @@ fn menu(
                 } else {
                     MENU.len()
                 } as u16;
+                // the big banner only when the whole menu still fits under it
+                let banner_h = ui::BANNER.lines().count() as u16 + 2;
+                let big_banner = full.height >= banner_h + rows + 2 + 4;
+                let top_h = if big_banner { banner_h } else { 3 };
                 let [top, body, foot, _] = Layout::vertical([
                     Constraint::Length(top_h),
                     Constraint::Max(rows + 2),
@@ -1032,6 +1109,22 @@ fn menu_help() -> Vec<(String, String)> {
     ]
 }
 
+/// `kz completion powershell`: tab completion for every command and flag.
+/// Add it to your profile: kz completion | Out-String | Invoke-Expression
+fn completion(shell: &str) -> anyhow::Result<()> {
+    use clap::CommandFactory;
+    use clap_complete::Shell;
+    let sh = match shell.to_lowercase().as_str() {
+        "powershell" | "pwsh" => Shell::PowerShell,
+        "bash" => Shell::Bash,
+        "zsh" => Shell::Zsh,
+        "fish" => Shell::Fish,
+        other => anyhow::bail!("unknown shell: {other}. use powershell | bash | zsh | fish"),
+    };
+    clap_complete::generate(sh, &mut Cli::command(), "kz", &mut std::io::stdout());
+    Ok(())
+}
+
 fn pause() {
     if ui::interactive() {
         println!(
@@ -1075,6 +1168,10 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "privacy" => privacy::run(false, false)?,
         "uninstall" => uninstall::run(false, false)?,
         "upgrade" => upgrade::run(false, false)?,
+        "install" => install::run(vec![], false, false)?,
+        "services" => services::run(None, vec![], false, false)?,
+        "tasks" => tasks::run(None, vec![], false, false)?,
+        "features" => features::run(false, false)?,
         "drivers" => drivers::run(false, false, false, false)?,
         "startup" => startup::run(false)?,
         "debloat" => debloat::run(false, false)?,
@@ -1089,7 +1186,7 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
         "restore" => restore::run(None, None)?,
         "report" => report::run(None, true)?,
         "bench" => bench::run(None, 1024)?,
-        "schedule" => schedule::run(None, "11:00".into())?,
+        "schedule" => schedule::run(None, "11:00".into(), 15)?,
         "net" => net::run(None, None, None, false)?,
         "ports" => ports::run(None, None)?,
         "whitelist" => whitelist::run(vec![], vec![], false)?,
@@ -1108,13 +1205,25 @@ fn run_menu_item(name: &str) -> anyhow::Result<bool> {
 }
 
 fn main() -> anyhow::Result<()> {
+    // `kz ... | Select-Object -First 5` closes the pipe early: stop quietly, no panic
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        if info.to_string().contains("failed printing to stdout") {
+            std::process::exit(0);
+        }
+        default_hook(info);
+    }));
     let cli = Cli::parse();
     update::cleanup_old();
     ui::init();
     // Load protected paths first; an unreadable whitelist stops everything.
     whitelist::init()?;
     match cli.cmd {
-        Some(Cmd::Clean { dry_run, yes }) => clean::run(dry_run, yes),
+        Some(Cmd::Clean {
+            dry_run,
+            yes,
+            if_below,
+        }) => clean::run_if_below(dry_run, yes, if_below),
         Some(Cmd::Analyze { path }) => analyze::run(path),
         Some(Cmd::Status) => status::run(),
         Some(Cmd::Purge {
@@ -1139,6 +1248,24 @@ fn main() -> anyhow::Result<()> {
             }
         }
         Some(Cmd::Upgrade { dry_run, yes }) => upgrade::run(dry_run, yes),
+        Some(Cmd::Install {
+            names,
+            list,
+            dry_run,
+        }) => install::run(names, dry_run, list),
+        Some(Cmd::Features { list, dry_run }) => features::run(list, dry_run),
+        Some(Cmd::Services {
+            action,
+            names,
+            all,
+            dry_run,
+        }) => services::run(action, names, all, dry_run),
+        Some(Cmd::Tasks {
+            action,
+            names,
+            all,
+            dry_run,
+        }) => tasks::run(action, names, all, dry_run),
         Some(Cmd::Drivers {
             installed,
             dry_run,
@@ -1174,8 +1301,13 @@ fn main() -> anyhow::Result<()> {
             Some("audit") => audit::run(json),
             Some(other) => anyhow::bail!("kz privacy [keep]: {other}?"),
         },
-        Some(Cmd::Schedule { frequency, time }) => schedule::run(frequency, time),
+        Some(Cmd::Schedule {
+            frequency,
+            time,
+            below,
+        }) => schedule::run(frequency, time, below),
         Some(Cmd::Update { check }) => update::run(check),
+        Some(Cmd::Completion { shell }) => completion(&shell),
         Some(Cmd::Config { key, value }) => settings::run(key, value),
         Some(Cmd::Backup {
             action,

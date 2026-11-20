@@ -5,10 +5,11 @@
 use crate::{oplog, ps, tr, ui};
 
 const REGISTER: &str = r#"
-$a = New-ScheduledTaskAction -Execute $env:KAZMA_EXE -Argument 'clean --yes'
+$a = New-ScheduledTaskAction -Execute $env:KAZMA_EXE -Argument $env:KAZMA_ARGS
 $at = [datetime]::ParseExact($env:KAZMA_TIME, 'HH:mm', $null)
 $t = switch ($env:KAZMA_FREQ) {
   'daily'   { New-ScheduledTaskTrigger -Daily -At $at }
+  'lowdisk' { New-ScheduledTaskTrigger -Daily -At $at }
   'weekly'  { New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At $at }
   'monthly' { New-ScheduledTaskTrigger -Weekly -WeeksInterval 4 -DaysOfWeek Sunday -At $at }
 }
@@ -27,6 +28,7 @@ $i = $t | Get-ScheduledTaskInfo
   Next  = $(if ($i.NextRunTime) { $i.NextRunTime.ToString('yyyy-MM-dd HH:mm') } else { '' })
   Last  = $(if ($i.LastRunTime -and $i.LastRunTime.Year -gt 2000) { $i.LastRunTime.ToString('yyyy-MM-dd HH:mm') } else { '' })
   Exe   = [string]$t.Actions[0].Execute
+  Args  = [string]$t.Actions[0].Arguments
 } | ConvertTo-Json -Compress
 }
 "#;
@@ -42,6 +44,8 @@ struct Status {
     next: String,
     last: String,
     exe: String,
+    #[serde(default)]
+    args: String,
 }
 
 fn valid_time(t: &str) -> bool {
@@ -73,7 +77,17 @@ fn show_status() -> anyhow::Result<()> {
                 ui::pad(&tr!("last run", "son"), 10),
                 if s.last.is_empty() { "-" } else { &s.last }
             );
-            println!("  {:<10} {}", "exe", s.exe);
+            println!("  {:<10} {} {}", "exe", s.exe, s.args);
+            if let Some(gb) = s.args.split("--if-below ").nth(1) {
+                println!(
+                    "  {}",
+                    tr!(
+                        "runs every day, cleans only when less than {} GB are free",
+                        "her gün çalışır, yalnızca {} GB'tan az boş alan kalınca temizler",
+                        gb.trim()
+                    )
+                );
+            }
         }
         None => ui::skip(&tr!(
             "scheduled cleaning is off.  turn on: kz schedule weekly",
@@ -84,7 +98,7 @@ fn show_status() -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn run(freq: Option<String>, time: String) -> anyhow::Result<()> {
+pub fn run(freq: Option<String>, time: String, below: u64) -> anyhow::Result<()> {
     ui::print_banner(&tr!(
         "schedule :: automatic cleaning",
         "schedule :: otomatik temizlik"
@@ -108,7 +122,7 @@ pub fn run(freq: Option<String>, time: String) -> anyhow::Result<()> {
             ));
             Ok(())
         }
-        "daily" | "weekly" | "monthly" => {
+        "daily" | "weekly" | "monthly" | "lowdisk" => {
             if !valid_time(&time) {
                 anyhow::bail!(
                     "{}",
@@ -118,6 +132,11 @@ pub fn run(freq: Option<String>, time: String) -> anyhow::Result<()> {
                     )
                 );
             }
+            let args = if freq == "lowdisk" {
+                format!("clean --yes --if-below {below}")
+            } else {
+                "clean --yes".to_string()
+            };
             let exe = std::env::current_exe()?;
             let lower = exe.to_string_lossy().to_lowercase();
             if lower.contains("\\downloads\\") || lower.contains("\\temp\\") {
@@ -136,6 +155,7 @@ pub fn run(freq: Option<String>, time: String) -> anyhow::Result<()> {
                     ("KAZMA_EXE", &exe.to_string_lossy()),
                     ("KAZMA_FREQ", &freq),
                     ("KAZMA_TIME", &time),
+                    ("KAZMA_ARGS", &args),
                 ],
             )?;
             if !out.status.success() {
@@ -148,14 +168,14 @@ pub fn run(freq: Option<String>, time: String) -> anyhow::Result<()> {
                         .trim()
                 );
             }
-            oplog::record("schedule", &format!("{freq} {time}"));
+            oplog::record("schedule", &format!("{freq} {time} {args}"));
             show_status()
         }
         other => anyhow::bail!(
             "{}",
             tr!(
-                "unknown: {other}. use daily | weekly | monthly | off | status",
-                "bilinmeyen: {other}. daily | weekly | monthly | off | status kullanın"
+                "unknown: {other}. use daily | weekly | monthly | lowdisk | off | status",
+                "bilinmeyen: {other}. daily | weekly | monthly | lowdisk | off | status kullanın"
             )
         ),
     }
