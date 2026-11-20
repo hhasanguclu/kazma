@@ -2808,6 +2808,12 @@
   "file": "main.rs"
  },
  {
+  "en": "yesterday",
+  "tr": "dün",
+  "kind": "fmt",
+  "file": "main.rs"
+ },
+ {
   "en": "{d} days ago",
   "tr": "{d} gün önce",
   "kind": "fmt",

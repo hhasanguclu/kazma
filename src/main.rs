@@ -957,6 +957,7 @@ fn status_strip() -> Vec<(String, String, bool)> {
     }
     let (clean, stale) = match oplog::days_since_clean() {
         Some(0) => (tr!("today", "bugün"), false),
+        Some(1) => (tr!("yesterday", "dün"), false),
         Some(d) => (tr!("{d} days ago", "{d} gün önce"), d > 30),
         None => (tr!("never", "hiç"), false),
     };
